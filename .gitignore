@@ -1,0 +1,36 @@
+# ===== Frontend =====
+Frontend/node_modules/
+Frontend/dist/
+Frontend/.env
+Frontend/.env.local
+Frontend/.env.*.local
+
+# ===== Backend =====
+Backend/bin/
+Backend/obj/
+Backend/**/.vs/
+Backend/**/*.user
+Backend/**/bin/
+Backend/**/obj/
+
+# ===== Environment =====
+.env
+*.env.local
+.env.production
+
+# ===== OS =====
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ===== IDE =====
+.vscode/launch.json
+.vscode/tasks.json
+*.suo
+*.swp
+*.swo
+.idea/
+
+# ===== Logs =====
+logs/
+*.log
