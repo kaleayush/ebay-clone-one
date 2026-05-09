@@ -51,3 +51,15 @@ export const useDeleteListing = () => {
     onError: (err) => toast.error(err?.response?.data?.message || 'Failed to delete listing'),
   })
 }
+
+export const useRestoreListing = () => {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: listingService.restore,
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: LISTING_KEYS.all })
+      toast.success('Listing restored')
+    },
+    onError: (err) => toast.error(err?.response?.data?.message || 'Failed to restore listing'),
+  })
+}

@@ -18,12 +18,17 @@ export const API_ENDPOINTS = {
     BASE: '/api/v1/listings',
     BY_ID: (id) => `/api/v1/listings/${id}`,
     MY: '/api/v1/listings/my',
+    RESTORE: (id) => `/api/v1/listings/${id}/restore`,
+    IMAGES: '/api/v1/listings/images',
   },
   // Categories
   CATEGORIES: {
     BASE: '/api/v1/categories',
     BY_ID: (id) => `/api/v1/categories/${id}`,
     TREE: '/api/v1/categories/tree',
+    METADATA: (id) => `/api/v1/categories/${id}/metadata`,
+    ATTRIBUTES: (id) => `/api/v1/categories/${id}/attributes`,
+    ATTRIBUTE_BY_ID: (id, attributeId) => `/api/v1/categories/${id}/attributes/${attributeId}`,
   },
   // Cart
   CART: {

@@ -56,7 +56,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             FirstName = "Admin",
             LastName = "User",
             Email = "admin@ebay-clone.com",
-            PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin@123"),
+            PasswordHash = "$2a$11$l3lJC3jsNR5QSFrF2rnpG.seNn4lfnarYcu1ph79C.gVsyp69mkYa",
             AccountType = AccountType.Business,
             Role = UserRole.Admin,
             IsEmailVerified = true,

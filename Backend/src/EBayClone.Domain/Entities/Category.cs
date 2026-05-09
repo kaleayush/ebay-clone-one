@@ -12,5 +12,6 @@ public class Category : BaseEntity
 
     public Category? ParentCategory { get; set; }
     public ICollection<Category> SubCategories { get; set; } = new List<Category>();
+    public ICollection<CategoryAttribute> Attributes { get; set; } = new List<CategoryAttribute>();
     public ICollection<Listing> Listings { get; set; } = new List<Listing>();
 }

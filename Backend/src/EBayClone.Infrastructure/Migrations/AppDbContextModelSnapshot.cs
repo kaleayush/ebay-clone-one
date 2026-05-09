@@ -22,6 +22,53 @@ namespace EBayClone.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("EBayClone.Domain.Entities.AttributeOption", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CategoryAttributeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Label")
+                        .IsRequired()
+                        .HasMaxLength(160)
+                        .HasColumnType("nvarchar(160)");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryAttributeId", "Value")
+                        .IsUnique()
+                        .HasDatabaseName("IX_AttributeOptions_AttributeId_Value")
+                        .HasFilter("[IsDeleted] = 0");
+
+                    b.ToTable("AttributeOptions");
+                });
+
             modelBuilder.Entity("EBayClone.Domain.Entities.BusinessProfile", b =>
                 {
                     b.Property<Guid>("Id")
@@ -287,11 +334,116 @@ namespace EBayClone.Infrastructure.Migrations
                         });
                 });
 
+            modelBuilder.Entity("EBayClone.Domain.Entities.CategoryAttribute", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CategoryId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ConditionAttributeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("ConditionOperator")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ConditionValue")
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("DataType")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("DisplayName")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsFilterable")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsRequired")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("MaxLength")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("MaxValue")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int?>("MinLength")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("MinValue")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.Property<string>("Placeholder")
+                        .HasMaxLength(160)
+                        .HasColumnType("nvarchar(160)");
+
+                    b.Property<string>("RegexPattern")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Unit")
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ConditionAttributeId");
+
+                    b.HasIndex("CategoryId", "Name")
+                        .IsUnique()
+                        .HasDatabaseName("IX_CategoryAttributes_CategoryId_Name")
+                        .HasFilter("[IsDeleted] = 0");
+
+                    b.ToTable("CategoryAttributes");
+                });
+
             modelBuilder.Entity("EBayClone.Domain.Entities.Listing", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("AuctionEndAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("AuctionStartAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal?>("BuyItNowPrice")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<Guid?>("CategoryId")
                         .HasColumnType("uniqueidentifier");
@@ -312,6 +464,9 @@ namespace EBayClone.Infrastructure.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
+                    b.Property<int>("ListingType")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("Price")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
@@ -323,8 +478,16 @@ namespace EBayClone.Infrastructure.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
+                    b.Property<decimal?>("ReservePrice")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<Guid>("SellerId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal?>("StartingBid")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -342,6 +505,9 @@ namespace EBayClone.Infrastructure.Migrations
                     b.HasIndex("CategoryId")
                         .HasDatabaseName("IX_Listings_CategoryId");
 
+                    b.HasIndex("ListingType")
+                        .HasDatabaseName("IX_Listings_ListingType");
+
                     b.HasIndex("SellerId")
                         .HasDatabaseName("IX_Listings_SellerId");
 
@@ -349,6 +515,47 @@ namespace EBayClone.Infrastructure.Migrations
                         .HasDatabaseName("IX_Listings_Status");
 
                     b.ToTable("Listings");
+                });
+
+            modelBuilder.Entity("EBayClone.Domain.Entities.ListingAttributeValue", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CategoryAttributeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("ListingId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryAttributeId");
+
+                    b.HasIndex("ListingId", "CategoryAttributeId")
+                        .IsUnique()
+                        .HasDatabaseName("IX_ListingAttributeValues_ListingId_AttributeId")
+                        .HasFilter("[IsDeleted] = 0");
+
+                    b.ToTable("ListingAttributeValues");
                 });
 
             modelBuilder.Entity("EBayClone.Domain.Entities.ListingImage", b =>
@@ -685,6 +892,17 @@ namespace EBayClone.Infrastructure.Migrations
                     b.ToTable("UserDocuments");
                 });
 
+            modelBuilder.Entity("EBayClone.Domain.Entities.AttributeOption", b =>
+                {
+                    b.HasOne("EBayClone.Domain.Entities.CategoryAttribute", "CategoryAttribute")
+                        .WithMany("Options")
+                        .HasForeignKey("CategoryAttributeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CategoryAttribute");
+                });
+
             modelBuilder.Entity("EBayClone.Domain.Entities.BusinessProfile", b =>
                 {
                     b.HasOne("EBayClone.Domain.Entities.User", "User")
@@ -736,6 +954,24 @@ namespace EBayClone.Infrastructure.Migrations
                     b.Navigation("ParentCategory");
                 });
 
+            modelBuilder.Entity("EBayClone.Domain.Entities.CategoryAttribute", b =>
+                {
+                    b.HasOne("EBayClone.Domain.Entities.Category", "Category")
+                        .WithMany("Attributes")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("EBayClone.Domain.Entities.CategoryAttribute", "ConditionAttribute")
+                        .WithMany()
+                        .HasForeignKey("ConditionAttributeId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Category");
+
+                    b.Navigation("ConditionAttribute");
+                });
+
             modelBuilder.Entity("EBayClone.Domain.Entities.Listing", b =>
                 {
                     b.HasOne("EBayClone.Domain.Entities.Category", "Category")
@@ -752,6 +988,25 @@ namespace EBayClone.Infrastructure.Migrations
                     b.Navigation("Category");
 
                     b.Navigation("Seller");
+                });
+
+            modelBuilder.Entity("EBayClone.Domain.Entities.ListingAttributeValue", b =>
+                {
+                    b.HasOne("EBayClone.Domain.Entities.CategoryAttribute", "CategoryAttribute")
+                        .WithMany("ListingValues")
+                        .HasForeignKey("CategoryAttributeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("EBayClone.Domain.Entities.Listing", "Listing")
+                        .WithMany("AttributeValues")
+                        .HasForeignKey("ListingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CategoryAttribute");
+
+                    b.Navigation("Listing");
                 });
 
             modelBuilder.Entity("EBayClone.Domain.Entities.ListingImage", b =>
@@ -829,13 +1084,24 @@ namespace EBayClone.Infrastructure.Migrations
 
             modelBuilder.Entity("EBayClone.Domain.Entities.Category", b =>
                 {
+                    b.Navigation("Attributes");
+
                     b.Navigation("Listings");
 
                     b.Navigation("SubCategories");
                 });
 
+            modelBuilder.Entity("EBayClone.Domain.Entities.CategoryAttribute", b =>
+                {
+                    b.Navigation("ListingValues");
+
+                    b.Navigation("Options");
+                });
+
             modelBuilder.Entity("EBayClone.Domain.Entities.Listing", b =>
                 {
+                    b.Navigation("AttributeValues");
+
                     b.Navigation("CartItems");
 
                     b.Navigation("Images");

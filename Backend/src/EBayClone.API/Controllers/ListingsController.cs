@@ -9,7 +9,9 @@ namespace EBayClone.API.Controllers;
 
 [ApiController]
 [Route("api/v1/[controller]")]
-public class ListingsController(IListingService listingService) : ControllerBase
+public class ListingsController(
+    IListingService listingService,
+    IFileStorageService fileStorageService) : ControllerBase
 {
     [HttpGet]
     public async Task<ActionResult<ApiResponse<PagedResult<ListingResponse>>>> GetAll(
@@ -47,6 +49,23 @@ public class ListingsController(IListingService listingService) : ControllerBase
             ApiResponse<ListingResponse>.Ok(result, "Listing created"));
     }
 
+    [HttpPost("images")]
+    [Authorize]
+    [Consumes("multipart/form-data")]
+    public async Task<ActionResult<ApiResponse<ListingImageUploadResponse>>> UploadImage(
+        [FromForm] IFormFile? file, CancellationToken ct)
+    {
+        if (file is null || file.Length == 0)
+            return BadRequest(ApiResponse.Fail("Image is required"));
+
+        if (!file.ContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase))
+            return BadRequest(ApiResponse.Fail("Only image uploads are allowed"));
+
+        await using var stream = file.OpenReadStream();
+        var url = await fileStorageService.UploadAsync(stream, file.FileName, file.ContentType, ct, "listings");
+        return Ok(ApiResponse<ListingImageUploadResponse>.Ok(new ListingImageUploadResponse(url), "Image uploaded"));
+    }
+
     [HttpPut("{id:guid}")]
     [Authorize]
     public async Task<ActionResult<ApiResponse<ListingResponse>>> Update(
@@ -64,6 +83,15 @@ public class ListingsController(IListingService listingService) : ControllerBase
         var sellerId = GetUserId();
         await listingService.DeleteAsync(id, sellerId, ct);
         return Ok(ApiResponse.Ok("Listing deleted"));
+    }
+
+    [HttpPatch("{id:guid}/restore")]
+    [Authorize]
+    public async Task<ActionResult<ApiResponse<ListingResponse>>> Restore(Guid id, CancellationToken ct)
+    {
+        var sellerId = GetUserId();
+        var result = await listingService.RestoreAsync(id, sellerId, ct);
+        return Ok(ApiResponse<ListingResponse>.Ok(result, "Listing restored"));
     }
 
     private Guid GetUserId() =>

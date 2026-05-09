@@ -9,7 +9,10 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<User> Users => Set<User>();
     public DbSet<Listing> Listings => Set<Listing>();
     public DbSet<ListingImage> ListingImages => Set<ListingImage>();
+    public DbSet<ListingAttributeValue> ListingAttributeValues => Set<ListingAttributeValue>();
     public DbSet<Category> Categories => Set<Category>();
+    public DbSet<CategoryAttribute> CategoryAttributes => Set<CategoryAttribute>();
+    public DbSet<AttributeOption> AttributeOptions => Set<AttributeOption>();
     public DbSet<Order> Orders => Set<Order>();
     public DbSet<OrderItem> OrderItems => Set<OrderItem>();
     public DbSet<Cart> Carts => Set<Cart>();

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { ShoppingCart, Package, Shield, Heart, Store, ChevronRight, Minus, Plus } from 'lucide-react'
 import { useListing } from '../hooks/useListings'
@@ -7,9 +7,10 @@ import Button from '@/components/common/Button'
 import Badge from '@/components/common/Badge'
 import Breadcrumbs from '@/components/common/Breadcrumbs'
 import { formatCurrency, formatDate } from '@/utils/formatters'
+import { assetUrl } from '@/utils/assets'
 import { useCartStore } from '@/store/cartStore'
 import { useWishlistStore } from '@/store/wishlistStore'
-import { ListingStatus, ListingStatusLabel } from '@/constants/enums'
+import { ListingStatus, ListingStatusLabel, ListingType, ListingTypeLabel } from '@/constants/enums'
 import { ROUTES } from '@/constants/routes'
 import toast from 'react-hot-toast'
 
@@ -27,6 +28,11 @@ export default function ListingDetailPage() {
   const addItem = useCartStore((s) => s.addItem)
   const { toggleItem, isInWishlist } = useWishlistStore()
   const [qty, setQty] = useState(1)
+  const [activeImageIndex, setActiveImageIndex] = useState(0)
+
+  useEffect(() => {
+    setActiveImageIndex(0)
+  }, [id])
 
   if (isLoading) {
     return (
@@ -49,6 +55,12 @@ export default function ListingDetailPage() {
 
   const inWishlist = isInWishlist(listing.id)
   const isAvailable = listing.status === ListingStatus.ACTIVE && listing.quantity > 0
+  const galleryImages = (listing.images?.length
+    ? [...listing.images].sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
+    : listing.primaryImageUrl
+      ? [{ id: 'primary', url: listing.primaryImageUrl, altText: listing.title, sortOrder: 0 }]
+      : [])
+  const activeImage = galleryImages[activeImageIndex] || galleryImages[0]
 
   const handleAddToCart = () => {
     addItem(listing, qty)
@@ -75,21 +87,45 @@ export default function ListingDetailPage() {
       <Breadcrumbs items={breadcrumbs} />
 
       <div className="grid md:grid-cols-2 gap-8">
-        {/* ── Image ── */}
-        <div className="card overflow-hidden aspect-square bg-gray-50">
-          {listing.primaryImageUrl ? (
-            <img
-              src={listing.primaryImageUrl}
-              alt={listing.title}
-              className="w-full h-full object-contain p-4"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center text-8xl text-gray-200">
-              📦
+        <div className="flex flex-col gap-3 sm:flex-row-reverse sm:items-start">
+          <div className="card aspect-square w-full overflow-hidden bg-gray-50 sm:flex-1">
+            {activeImage ? (
+              <img
+                src={assetUrl(activeImage.url)}
+                alt={activeImage.altText || listing.title}
+                className="w-full h-full object-contain p-4"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-gray-200">
+                <Package size={84} strokeWidth={1.25} />
+              </div>
+            )}
+          </div>
+
+          {!!galleryImages.length && (
+            <div className="flex gap-2 overflow-x-auto pb-1 sm:max-h-[32rem] sm:w-20 sm:flex-col sm:overflow-x-hidden sm:overflow-y-auto sm:pb-0 sm:pr-1">
+              {galleryImages.map((image, index) => (
+                <button
+                  key={image.id || `${image.url}-${index}`}
+                  type="button"
+                  onClick={() => setActiveImageIndex(index)}
+                  className={`h-16 w-16 shrink-0 overflow-hidden rounded-md border bg-white transition-all sm:h-20 sm:w-20 ${
+                    index === activeImageIndex
+                      ? 'border-primary ring-2 ring-primary/25'
+                      : 'border-gray-200 hover:border-primary/50'
+                  }`}
+                  aria-label={`Show image ${index + 1}`}
+                >
+                  <img
+                    src={assetUrl(image.url)}
+                    alt={image.altText || `${listing.title} image ${index + 1}`}
+                    className="w-full h-full object-contain p-1"
+                  />
+                </button>
+              ))}
             </div>
           )}
         </div>
-
         {/* ── Details panel ── */}
         <div className="space-y-5">
           {/* Title + badge */}
@@ -113,6 +149,12 @@ export default function ListingDetailPage() {
           {/* Price */}
           <div>
             <p className="text-4xl font-extrabold text-gray-900">{formatCurrency(listing.price)}</p>
+            {listing.listingType === ListingType.AUCTION && (
+              <p className="text-sm text-gray-500 mt-1">
+                {ListingTypeLabel[listing.listingType]}
+                {listing.auctionEndAt ? ` ends ${formatDate(listing.auctionEndAt)}` : ''}
+              </p>
+            )}
             {listing.freeShipping && (
               <p className="text-sm text-success font-semibold mt-1">✓ Free Shipping</p>
             )}
@@ -201,6 +243,20 @@ export default function ListingDetailPage() {
       )}
 
       {/* ── Shipping & Returns ── */}
+      {!!listing.attributeValues?.length && (
+        <div className="card p-6">
+          <h2 className="font-bold text-gray-900 text-lg mb-4">Item Specifics</h2>
+          <dl className="grid sm:grid-cols-2 gap-x-8 gap-y-3 text-sm">
+            {listing.attributeValues.map((attribute) => (
+              <div key={attribute.categoryAttributeId} className="flex justify-between gap-4 border-b border-gray-100 pb-2">
+                <dt className="text-gray-500">{attribute.displayName}</dt>
+                <dd className="font-medium text-gray-900 text-right">{attribute.displayValue || attribute.value}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      )}
+
       <div className="card p-6">
         <h2 className="font-bold text-gray-900 text-lg mb-5">Shipping &amp; Returns</h2>
         <div className="grid sm:grid-cols-2 gap-5 text-sm text-gray-600">

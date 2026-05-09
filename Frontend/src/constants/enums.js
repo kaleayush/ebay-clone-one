@@ -24,6 +24,26 @@ export const ListingStatusLabel = {
   [ListingStatus.REMOVED]: 'Removed',
 }
 
+export const ListingType = {
+  FIXED_PRICE: 0,
+  AUCTION: 1,
+}
+
+export const ListingTypeLabel = {
+  [ListingType.FIXED_PRICE]: 'Fixed Price',
+  [ListingType.AUCTION]: 'Auction',
+}
+
+export const AttributeDataType = {
+  TEXT: 0,
+  NUMBER: 1,
+  DECIMAL: 2,
+  BOOLEAN: 3,
+  DATE: 4,
+  DROPDOWN: 5,
+  MULTI_SELECT: 6,
+}
+
 export const OrderStatus = {
   PENDING: 0,
   CONFIRMED: 1,

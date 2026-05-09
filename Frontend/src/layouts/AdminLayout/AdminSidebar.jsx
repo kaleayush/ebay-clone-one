@@ -1,6 +1,6 @@
 import { NavLink } from 'react-router-dom'
 import {
-  LayoutDashboard, Package, Users, ShoppingBag, Tag, X,
+  LayoutDashboard, Package, Users, ShoppingBag, Tag, X, ShieldCheck,
 } from 'lucide-react'
 import { ROUTES } from '@/constants/routes'
 
@@ -25,37 +25,64 @@ export default function AdminSidebar({ isOpen, onClose }) {
 
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 h-full w-64 bg-gray-900 text-white z-40 transform transition-transform duration-300
+        className={`fixed top-0 left-0 h-full w-64 bg-[#071b45] text-white z-40 transform transition-transform duration-300 shadow-2xl shadow-blue-950/30
           ${isOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 lg:static lg:z-auto`}
       >
         {/* Header */}
-        <div className="flex items-center justify-between h-16 px-6 border-b border-gray-700">
-          <span className="font-bold text-lg text-white">Admin Panel</span>
-          <button onClick={onClose} className="lg:hidden text-gray-400 hover:text-white">
+        <div className="h-16 px-5 border-b border-white/10 flex items-center justify-between">
+          <div>
+            <div className="flex items-center gap-0.5 leading-none">
+              <span className="text-ebay-blue font-extrabold text-2xl">e</span>
+              <span className="text-ebay-red font-extrabold text-2xl">B</span>
+              <span className="text-ebay-yellow font-extrabold text-2xl">a</span>
+              <span className="text-ebay-green font-extrabold text-2xl">y</span>
+              <span className="ml-2 text-sm font-bold text-white">Admin</span>
+            </div>
+            <p className="mt-1 text-[11px] font-medium uppercase tracking-wider text-blue-100/70">Seller Operations</p>
+          </div>
+          <button onClick={onClose} className="lg:hidden text-blue-100/70 hover:text-white">
             <X size={18} />
           </button>
         </div>
 
         {/* Navigation */}
-        <nav className="p-4 space-y-1">
+        <div className="px-4 py-4">
+          <div className="mb-4 rounded-md border border-white/10 bg-white/5 px-3 py-2">
+            <div className="flex items-center gap-2 text-xs font-semibold text-white">
+              <ShieldCheck size={15} className="text-ebay-green" />
+              Marketplace Control
+            </div>
+          </div>
+          <p className="px-2 pb-2 text-[11px] font-bold uppercase tracking-wider text-blue-100/60">Manage</p>
+          <nav className="space-y-1">
           {navItems.map(({ to, icon: Icon, label }) => (
             <NavLink
               key={to}
               to={to}
               onClick={onClose}
               className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-colors ${
+                `group flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-semibold transition-colors ${
                   isActive
-                    ? 'bg-primary text-white'
-                    : 'text-gray-300 hover:bg-gray-800 hover:text-white'
+                    ? 'bg-white text-[#071b45] shadow-sm'
+                    : 'text-blue-100/80 hover:bg-white/10 hover:text-white'
                 }`
               }
             >
-              <Icon size={18} />
+              <Icon size={17} />
               {label}
             </NavLink>
           ))}
-        </nav>
+          </nav>
+        </div>
+
+        <div className="absolute bottom-0 left-0 right-0 border-t border-white/10 p-4">
+          <div className="grid grid-cols-4 gap-1">
+            <span className="h-1 rounded-full bg-ebay-blue" />
+            <span className="h-1 rounded-full bg-ebay-red" />
+            <span className="h-1 rounded-full bg-ebay-yellow" />
+            <span className="h-1 rounded-full bg-ebay-green" />
+          </div>
+        </div>
       </aside>
     </>
   )

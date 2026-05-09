@@ -1,12 +1,13 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Plus, Pencil, Trash2 } from 'lucide-react'
-import { useMyListings, useDeleteListing } from '@/features/listings/hooks/useListings'
+import { Plus, Pencil, RotateCcw, Trash2 } from 'lucide-react'
+import { useMyListings, useDeleteListing, useRestoreListing } from '@/features/listings/hooks/useListings'
 import Badge from '@/components/common/Badge'
 import Button from '@/components/common/Button'
 import Spinner from '@/components/common/Spinner'
 import Pagination from '@/components/common/Pagination'
 import { formatCurrency, formatDate } from '@/utils/formatters'
+import { assetUrl } from '@/utils/assets'
 import { ListingStatus, ListingStatusLabel } from '@/constants/enums'
 import { buildRoute, ROUTES } from '@/constants/routes'
 
@@ -20,8 +21,9 @@ const statusVariant = {
 
 export default function MyListingsPage() {
   const [page, setPage] = useState(1)
-  const { data, isLoading } = useMyListings({ page, pageSize: 10 })
+  const { data, isLoading } = useMyListings({ page, pageSize: 10, includeDeleted: true })
   const { mutate: deleteListing } = useDeleteListing()
+  const { mutate: restoreListing } = useRestoreListing()
 
   if (isLoading) return <div className="flex justify-center py-20"><Spinner size="lg" /></div>
 
@@ -51,31 +53,45 @@ export default function MyListingsPage() {
               <div key={listing.id} className="flex items-center gap-4 p-4">
                 <div className="w-14 h-14 bg-gray-100 rounded-lg flex items-center justify-center text-2xl flex-shrink-0">
                   {listing.primaryImageUrl
-                    ? <img src={listing.primaryImageUrl} alt="" className="w-full h-full object-cover rounded-lg" />
+                    ? <img src={assetUrl(listing.primaryImageUrl)} alt="" className="w-full h-full object-cover rounded-lg" />
                     : '📦'}
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-gray-900 truncate">{listing.title}</p>
                   <div className="flex items-center gap-3 mt-1">
-                    <Badge variant={statusVariant[listing.status]}>{ListingStatusLabel[listing.status]}</Badge>
+                    <Badge variant={listing.isDeleted ? 'danger' : statusVariant[listing.status]}>
+                      {listing.isDeleted ? 'Deleted' : ListingStatusLabel[listing.status]}
+                    </Badge>
                     <span className="text-xs text-gray-500">{formatDate(listing.createdAt)}</span>
                   </div>
                 </div>
                 <p className="font-bold text-gray-900 text-sm">{formatCurrency(listing.price)}</p>
                 <div className="flex items-center gap-2">
-                  <Link to={buildRoute(ROUTES.EDIT_LISTING, { id: listing.id })}>
-                    <button className="p-1.5 text-gray-400 hover:text-primary hover:bg-blue-50 rounded-md">
-                      <Pencil size={16} />
+                  {listing.isDeleted ? (
+                    <button
+                      onClick={() => restoreListing(listing.id)}
+                      className="p-1.5 text-gray-400 hover:text-primary hover:bg-blue-50 rounded-md"
+                      title="Restore listing"
+                    >
+                      <RotateCcw size={16} />
                     </button>
-                  </Link>
-                  <button
-                    onClick={() => {
-                      if (confirm('Delete this listing?')) deleteListing(listing.id)
-                    }}
-                    className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-md"
-                  >
-                    <Trash2 size={16} />
-                  </button>
+                  ) : (
+                    <>
+                      <Link to={buildRoute(ROUTES.EDIT_LISTING, { id: listing.id })}>
+                        <button className="p-1.5 text-gray-400 hover:text-primary hover:bg-blue-50 rounded-md">
+                          <Pencil size={16} />
+                        </button>
+                      </Link>
+                      <button
+                        onClick={() => {
+                          if (confirm('Delete this listing?')) deleteListing(listing.id)
+                        }}
+                        className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-md"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </>
+                  )}
                 </div>
               </div>
             ))}

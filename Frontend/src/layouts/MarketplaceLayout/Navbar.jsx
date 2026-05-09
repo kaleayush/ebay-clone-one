@@ -1,7 +1,7 @@
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import {
   ShoppingCart, User, Search, LogOut, Package,
-  ChevronDown, Heart, Menu, X, Home, ShoppingBag, Store,
+  ChevronDown, Heart, Menu, X, Home, ShoppingBag, Store, LayoutDashboard,
 } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
 import { useAuth } from '@/hooks/useAuth'
@@ -30,7 +30,7 @@ function CountBadge({ count }) {
 }
 
 export default function Navbar() {
-  const { isAuthenticated, user, logout } = useAuth()
+  const { isAuthenticated, user, isAdmin, logout } = useAuth()
   const totalItems = useCartStore((s) => s.totalItems)
   const wishlistCount = useWishlistStore((s) => s.items.length)
   const navigate = useNavigate()
@@ -153,6 +153,7 @@ export default function Navbar() {
                         <p className="text-xs text-gray-500 truncate mt-0.5">{user?.email}</p>
                       </div>
                       {[
+                        ...(isAdmin ? [{ to: ROUTES.ADMIN_DASHBOARD, icon: LayoutDashboard, label: 'Admin Panel' }] : []),
                         { to: ROUTES.PROFILE, icon: User, label: 'My Profile' },
                         { to: ROUTES.MY_LISTINGS, icon: Package, label: 'My Listings' },
                         { to: ROUTES.ORDERS, icon: ShoppingBag, label: 'My Orders' },
@@ -279,6 +280,7 @@ export default function Navbar() {
                   <nav className="p-3 space-y-0.5">
                     {[
                       { to: ROUTES.HOME, icon: Home, label: 'Home' },
+                      ...(isAdmin ? [{ to: ROUTES.ADMIN_DASHBOARD, icon: LayoutDashboard, label: 'Admin Panel' }] : []),
                       { to: ROUTES.PROFILE, icon: User, label: 'My Profile' },
                       { to: ROUTES.MY_LISTINGS, icon: Package, label: 'My Listings' },
                       { to: ROUTES.ORDERS, icon: ShoppingBag, label: 'My Orders' },

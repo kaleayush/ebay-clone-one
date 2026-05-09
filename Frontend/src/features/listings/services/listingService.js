@@ -8,4 +8,10 @@ export const listingService = {
   create: (data) => api.post(API_ENDPOINTS.LISTINGS.BASE, data),
   update: (id, data) => api.put(API_ENDPOINTS.LISTINGS.BY_ID(id), data),
   delete: (id) => api.delete(API_ENDPOINTS.LISTINGS.BY_ID(id)),
+  restore: (id) => api.patch(API_ENDPOINTS.LISTINGS.RESTORE(id)),
+  uploadImage: (file) => {
+    const formData = new FormData()
+    formData.append('file', file)
+    return api.post(API_ENDPOINTS.LISTINGS.IMAGES, formData)
+  },
 }

@@ -25,8 +25,8 @@ export default function AdminOrdersPage() {
     queryFn: () => api.get(API_ENDPOINTS.ADMIN.ORDERS, { params: { page, pageSize: 15 } }),
   })
 
-  const orders = data?.data?.items || []
-  const totalPages = data?.data?.totalPages || 1
+  const orders = data?.items || data?.data?.items || []
+  const totalPages = data?.totalPages || data?.data?.totalPages || 1
 
   return (
     <div className="space-y-5">

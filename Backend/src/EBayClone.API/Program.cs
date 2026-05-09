@@ -2,6 +2,7 @@ using EBayClone.API.Extensions;
 using EBayClone.API.Middleware;
 using EBayClone.Application.Extensions;
 using EBayClone.Infrastructure.Data;
+using EBayClone.Infrastructure.Data.Seed;
 using EBayClone.Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -43,6 +44,7 @@ using (var scope = app.Services.CreateScope())
     {
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
         await db.Database.MigrateAsync();
+        await CategoryFormSeeder.SeedAsync(db);
         Log.Information("Database migration applied successfully");
     }
     catch (Exception ex)

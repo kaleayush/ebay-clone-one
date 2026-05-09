@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { Heart, ShoppingCart } from 'lucide-react'
 import { buildRoute, ROUTES } from '@/constants/routes'
 import { formatCurrency } from '@/utils/formatters'
+import { assetUrl } from '@/utils/assets'
 import { useCartStore } from '@/store/cartStore'
 import { useWishlistStore } from '@/store/wishlistStore'
 import toast from 'react-hot-toast'
@@ -34,7 +35,7 @@ export default function ListingCard({ listing }) {
       <div className="relative aspect-square overflow-hidden bg-gray-100">
         {listing.primaryImageUrl ? (
           <img
-            src={listing.primaryImageUrl}
+            src={assetUrl(listing.primaryImageUrl)}
             alt={listing.title}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             loading="lazy"

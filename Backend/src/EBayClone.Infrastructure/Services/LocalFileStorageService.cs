@@ -11,9 +11,12 @@ public class LocalFileStorageService(
     private readonly string _uploadBasePath = Path.GetFullPath(
         configuration["FileStorage:UploadDirectory"] ?? "wwwroot/uploads");
 
-    public async Task<string> UploadAsync(Stream fileStream, string fileName, string contentType, CancellationToken ct = default)
+    public async Task<string> UploadAsync(Stream fileStream, string fileName, string contentType, CancellationToken ct = default, string folder = "documents")
     {
-        var dir = Path.Combine(_uploadBasePath, "documents");
+        var safeFolder = string.IsNullOrWhiteSpace(folder)
+            ? "documents"
+            : folder.Replace("..", string.Empty).Trim('/', '\\');
+        var dir = Path.Combine(_uploadBasePath, safeFolder);
         Directory.CreateDirectory(dir);
 
         var extension = Path.GetExtension(fileName);
@@ -25,7 +28,7 @@ public class LocalFileStorageService(
 
         logger.LogInformation("File uploaded: {FileName} -> {Path}", fileName, filePath);
 
-        return $"/uploads/documents/{uniqueName}";
+        return $"/uploads/{safeFolder.Replace("\\", "/")}/{uniqueName}";
     }
 
     public Task DeleteAsync(string fileUrl, CancellationToken ct = default)

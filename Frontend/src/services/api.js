@@ -4,7 +4,6 @@ import { useAuthStore } from '@/store/authStore'
 
 const api = axios.create({
   baseURL: API_BASE_URL,
-  headers: { 'Content-Type': 'application/json' },
   timeout: 15000,
 })
 
@@ -14,6 +13,9 @@ api.interceptors.request.use(
     const token = useAuthStore.getState().accessToken
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
+    }
+    if (config.data instanceof FormData) {
+      delete config.headers['Content-Type']
     }
     return config
   },

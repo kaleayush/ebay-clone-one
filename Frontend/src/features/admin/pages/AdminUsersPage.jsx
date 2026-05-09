@@ -17,8 +17,8 @@ export default function AdminUsersPage() {
     queryFn: () => api.get(API_ENDPOINTS.ADMIN.USERS, { params: { page, pageSize: 15, search: search || undefined } }),
   })
 
-  const users = data?.data?.items || []
-  const totalPages = data?.data?.totalPages || 1
+  const users = data?.items || data?.data?.items || []
+  const totalPages = data?.totalPages || data?.data?.totalPages || 1
 
   return (
     <div className="space-y-5">
@@ -57,14 +57,17 @@ export default function AdminUsersPage() {
                     </td>
                     <td className="px-4 py-3 text-gray-500">{formatDate(user.createdAt)}</td>
                     <td className="px-4 py-3">
-                      <Badge variant={user.isDeleted ? 'danger' : 'success'}>
-                        {user.isDeleted ? 'Banned' : 'Active'}
+                      <Badge variant={user.isDeleted || user.isSuspended ? 'danger' : 'success'}>
+                        {user.isDeleted ? 'Deleted' : user.isSuspended ? 'Suspended' : 'Active'}
                       </Badge>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
+            {!users.length && (
+              <p className="px-4 py-8 text-center text-sm text-gray-500">No users found</p>
+            )}
           </div>
           <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
         </>

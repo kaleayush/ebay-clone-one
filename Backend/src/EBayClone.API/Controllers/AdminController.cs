@@ -35,16 +35,35 @@ public class AdminController(
     }
 
     [HttpGet("users")]
-    public async Task<ActionResult> GetUsers([FromQuery] int page = 1, [FromQuery] int pageSize = 15,
+    public async Task<ActionResult<ApiResponse<PagedResult<AdminUserResponse>>>> GetUsers([FromQuery] int page = 1, [FromQuery] int pageSize = 15,
         [FromQuery] string? search = null, CancellationToken ct = default)
     {
+        (page, pageSize) = NormalizePaging(page, pageSize);
+
         var q = userRepository.Query().IgnoreQueryFilters().AsNoTracking();
+
         if (!string.IsNullOrWhiteSpace(search))
             q = q.Where(u => u.Email.Contains(search) || u.FirstName.Contains(search) || u.LastName.Contains(search));
+
         var total = await q.CountAsync(ct);
         var items = await q.OrderByDescending(u => u.CreatedAt)
-            .Skip((page - 1) * pageSize).Take(pageSize).ToListAsync(ct);
-        return Ok(new { items, total, page, pageSize, totalPages = (int)Math.Ceiling((double)total / pageSize) });
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .Select(u => new AdminUserResponse(
+                u.Id,
+                u.FirstName,
+                u.LastName,
+                u.Email,
+                (int)u.AccountType,
+                u.Role.ToString(),
+                u.IsEmailVerified,
+                u.IsSuspended,
+                u.IsDeleted,
+                u.CreatedAt))
+            .ToListAsync(ct);
+
+        return Ok(ApiResponse<PagedResult<AdminUserResponse>>.Ok(
+            PagedResult<AdminUserResponse>.Create(items, total, page, pageSize)));
     }
 
     [HttpPatch("users/{id:guid}/suspend")]
@@ -74,32 +93,59 @@ public class AdminController(
     }
 
     [HttpGet("listings")]
-    public async Task<ActionResult> GetListings([FromQuery] int page = 1, [FromQuery] int pageSize = 15,
+    public async Task<ActionResult<ApiResponse<PagedResult<AdminListingResponse>>>> GetListings([FromQuery] int page = 1, [FromQuery] int pageSize = 15,
         [FromQuery] string? search = null, CancellationToken ct = default)
     {
+        (page, pageSize) = NormalizePaging(page, pageSize);
+
         var q = listingRepository.Query().Include(l => l.Seller).IgnoreQueryFilters().AsNoTracking();
+
         if (!string.IsNullOrWhiteSpace(search))
             q = q.Where(l => l.Title.Contains(search));
+
         var total = await q.CountAsync(ct);
         var items = await q.OrderByDescending(l => l.CreatedAt)
-            .Skip((page - 1) * pageSize).Take(pageSize)
-            .Select(l => new { l.Id, l.Title, sellerName = $"{l.Seller.FirstName} {l.Seller.LastName}", l.Price, l.Status, l.CreatedAt })
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .Select(l => new AdminListingResponse(
+                l.Id,
+                l.Title,
+                $"{l.Seller.FirstName} {l.Seller.LastName}",
+                l.Price,
+                (int)l.Status,
+                l.IsDeleted,
+                l.CreatedAt))
             .ToListAsync(ct);
-        return Ok(new { items, total, page, pageSize, totalPages = (int)Math.Ceiling((double)total / pageSize) });
+
+        return Ok(ApiResponse<PagedResult<AdminListingResponse>>.Ok(
+            PagedResult<AdminListingResponse>.Create(items, total, page, pageSize)));
     }
 
     [HttpGet("orders")]
-    public async Task<ActionResult> GetOrders([FromQuery] int page = 1, [FromQuery] int pageSize = 15,
+    public async Task<ActionResult<ApiResponse<PagedResult<AdminOrderResponse>>>> GetOrders([FromQuery] int page = 1, [FromQuery] int pageSize = 15,
         CancellationToken ct = default)
     {
+        (page, pageSize) = NormalizePaging(page, pageSize);
+
         var q = orderRepository.Query().Include(o => o.Buyer).Include(o => o.Items)
             .IgnoreQueryFilters().AsNoTracking();
+
         var total = await q.CountAsync(ct);
         var items = await q.OrderByDescending(o => o.CreatedAt)
-            .Skip((page - 1) * pageSize).Take(pageSize)
-            .Select(o => new { o.Id, o.OrderNumber, buyerName = $"{o.Buyer.FirstName} {o.Buyer.LastName}", itemCount = o.Items.Count, o.TotalAmount, o.Status, o.CreatedAt })
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .Select(o => new AdminOrderResponse(
+                o.Id,
+                o.OrderNumber,
+                $"{o.Buyer.FirstName} {o.Buyer.LastName}",
+                o.Items.Count,
+                o.TotalAmount,
+                (int)o.Status,
+                o.CreatedAt))
             .ToListAsync(ct);
-        return Ok(new { items, total, page, pageSize, totalPages = (int)Math.Ceiling((double)total / pageSize) });
+
+        return Ok(ApiResponse<PagedResult<AdminOrderResponse>>.Ok(
+            PagedResult<AdminOrderResponse>.Create(items, total, page, pageSize)));
     }
 
     [HttpGet("business-profiles")]
@@ -119,6 +165,19 @@ public class AdminController(
         return Ok(ApiResponse<BusinessProfileResponse>.Ok(result,
             request.IsApproved ? "Business profile approved" : "Business profile rejected"));
     }
+
+    private static (int Page, int PageSize) NormalizePaging(int page, int pageSize)
+    {
+        page = page < 1 ? 1 : page;
+        pageSize = pageSize switch
+        {
+            < 1 => 15,
+            > 100 => 100,
+            _ => pageSize,
+        };
+
+        return (page, pageSize);
+    }
 }
 
 public record AdminStatsResponse(
@@ -126,4 +185,37 @@ public record AdminStatsResponse(
     int ActiveListings,
     int TotalOrders,
     decimal TotalRevenue
+);
+
+public record AdminUserResponse(
+    Guid Id,
+    string FirstName,
+    string LastName,
+    string Email,
+    int AccountType,
+    string Role,
+    bool IsEmailVerified,
+    bool IsSuspended,
+    bool IsDeleted,
+    DateTime CreatedAt
+);
+
+public record AdminListingResponse(
+    Guid Id,
+    string Title,
+    string SellerName,
+    decimal Price,
+    int Status,
+    bool IsDeleted,
+    DateTime CreatedAt
+);
+
+public record AdminOrderResponse(
+    Guid Id,
+    string OrderNumber,
+    string BuyerName,
+    int ItemCount,
+    decimal TotalAmount,
+    int Status,
+    DateTime CreatedAt
 );

@@ -1,0 +1,275 @@
+import { useEffect, useMemo, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { Upload, X } from 'lucide-react'
+import { useForm } from 'react-hook-form'
+import toast from 'react-hot-toast'
+import Button from '@/components/common/Button'
+import Input from '@/components/common/Input'
+import Select from '@/components/common/Select'
+import Spinner from '@/components/common/Spinner'
+import { AttributeDataType, ListingStatus, ListingType } from '@/constants/enums'
+import { categoryService } from '@/features/categories/services/categoryService'
+import { assetUrl } from '@/utils/assets'
+import { listingService } from '../services/listingService'
+import DynamicAttributeFields from './DynamicAttributeFields'
+import { isAttributeVisible } from '../utils/attributeVisibility'
+
+const flattenLeafCategories = (items = [], parentLabel = '') =>
+  items.flatMap((item) => {
+    const label = parentLabel ? `${parentLabel} / ${item.name}` : item.name
+    return item.children?.length
+      ? flattenLeafCategories(item.children, label)
+      : [{ value: item.id, label }]
+  })
+
+const toDateInput = (value) => value ? String(value).slice(0, 10) : ''
+
+const buildAttributeDefaults = (listing) => {
+  const defaults = {}
+  listing?.attributeValues?.forEach((value) => {
+    if (value.dataType === AttributeDataType.MULTI_SELECT) {
+      try {
+        defaults[value.categoryAttributeId] = JSON.parse(value.value)
+      } catch {
+        defaults[value.categoryAttributeId] = value.value?.split(',').map((item) => item.trim()).filter(Boolean) || []
+      }
+    } else if (value.dataType === AttributeDataType.BOOLEAN) {
+      defaults[value.categoryAttributeId] = value.value === 'true'
+    } else {
+      defaults[value.categoryAttributeId] = value.value
+    }
+  })
+  return defaults
+}
+
+export default function ListingForm({ initialListing, onSubmit, isPending, submitLabel }) {
+  const [images, setImages] = useState([])
+  const [uploading, setUploading] = useState(false)
+
+  const { data: treeData, isLoading: loadingCategories } = useQuery({
+    queryKey: ['categories', 'tree'],
+    queryFn: categoryService.getTree,
+  })
+
+  const categoryOptions = useMemo(() => flattenLeafCategories(treeData?.data || []), [treeData])
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    watch,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      listingType: ListingType.FIXED_PRICE,
+      status: ListingStatus.ACTIVE,
+      quantity: 1,
+      freeShipping: false,
+      attributes: {},
+    },
+  })
+
+  const categoryId = watch('categoryId')
+  const listingType = Number(watch('listingType'))
+
+  const { data: metadataData, isLoading: loadingMetadata } = useQuery({
+    queryKey: ['categories', 'metadata', categoryId],
+    queryFn: () => categoryService.getMetadata(categoryId),
+    enabled: !!categoryId,
+  })
+
+  const attributes = metadataData?.data?.attributes || []
+
+  useEffect(() => {
+    if (!initialListing) return
+
+    reset({
+      title: initialListing.title,
+      description: initialListing.description,
+      listingType: initialListing.listingType ?? ListingType.FIXED_PRICE,
+      price: initialListing.price,
+      startingBid: initialListing.startingBid || '',
+      reservePrice: initialListing.reservePrice || '',
+      buyItNowPrice: initialListing.buyItNowPrice || '',
+      auctionEndAt: toDateInput(initialListing.auctionEndAt),
+      quantity: initialListing.quantity,
+      freeShipping: initialListing.freeShipping,
+      categoryId: initialListing.categoryId || '',
+      status: initialListing.status ?? ListingStatus.ACTIVE,
+      attributes: buildAttributeDefaults(initialListing),
+    })
+    setImages(initialListing.images || [])
+  }, [initialListing, reset])
+
+  const handleImages = async (event) => {
+    const files = Array.from(event.target.files || [])
+    if (!files.length) return
+
+    setUploading(true)
+    try {
+      const uploaded = []
+      for (const file of files) {
+        const response = await listingService.uploadImage(file)
+        uploaded.push({
+          url: response.data.url,
+          altText: file.name,
+          sortOrder: images.length + uploaded.length,
+        })
+      }
+      setImages((current) => [...current, ...uploaded])
+      toast.success(uploaded.length > 1 ? 'Images uploaded' : 'Image uploaded')
+    } catch (err) {
+      toast.error(err?.response?.data?.message || 'Image upload failed')
+    } finally {
+      setUploading(false)
+      event.target.value = ''
+    }
+  }
+
+  const submit = (values) => {
+    const visibleValues = values.attributes || {}
+    const attributeValues = attributes
+      .filter((attribute) => isAttributeVisible(attribute, visibleValues))
+      .map((attribute) => {
+        const raw = visibleValues[attribute.id]
+        const value = Array.isArray(raw) ? JSON.stringify(raw) : raw
+        return { categoryAttributeId: attribute.id, value: value === undefined || value === null ? '' : String(value) }
+      })
+
+    onSubmit({
+      title: values.title,
+      description: values.description,
+      listingType: Number(values.listingType),
+      price: Number(values.price || values.startingBid || 0),
+      startingBid: values.startingBid ? Number(values.startingBid) : null,
+      reservePrice: values.reservePrice ? Number(values.reservePrice) : null,
+      buyItNowPrice: values.buyItNowPrice ? Number(values.buyItNowPrice) : null,
+      auctionEndAt: values.auctionEndAt || null,
+      quantity: Number(values.quantity || 1),
+      freeShipping: Boolean(values.freeShipping),
+      categoryId: values.categoryId || null,
+      status: Number(values.status),
+      attributeValues,
+      images: images.map((image, index) => ({
+        url: image.url,
+        altText: image.altText || values.title,
+        sortOrder: index,
+      })),
+    })
+  }
+
+  if (loadingCategories) {
+    return <div className="flex justify-center py-16"><Spinner size="lg" /></div>
+  }
+
+  return (
+    <form onSubmit={handleSubmit(submit)} className="card p-6 space-y-5">
+      <div className="grid sm:grid-cols-2 gap-4">
+        <Select
+          label="Child Category"
+          placeholder="Choose a child category"
+          required
+          options={categoryOptions}
+          error={errors.categoryId?.message}
+          {...register('categoryId', { required: 'Category is required' })}
+        />
+        <Select
+          label="Listing Type"
+          options={[
+            { value: ListingType.FIXED_PRICE, label: 'Fixed Price' },
+            { value: ListingType.AUCTION, label: 'Auction' },
+          ]}
+          {...register('listingType')}
+        />
+      </div>
+
+      <Input
+        label="Title"
+        placeholder="What are you selling?"
+        required
+        error={errors.title?.message}
+        {...register('title', { required: 'Title is required', minLength: { value: 3, message: 'Minimum 3 characters' }, maxLength: { value: 80, message: 'Maximum 80 characters' } })}
+      />
+
+      <div>
+        <label className="form-label">Description <span className="text-red-500">*</span></label>
+        <textarea
+          rows={5}
+          className={`form-input resize-none ${errors.description ? 'border-red-400' : ''}`}
+          placeholder="Describe condition, features, dimensions, and anything buyers should know"
+          {...register('description', { required: 'Description is required', minLength: { value: 10, message: 'Minimum 10 characters' } })}
+        />
+        {errors.description && <p className="form-error">{errors.description.message}</p>}
+      </div>
+
+      <div className="grid sm:grid-cols-3 gap-4">
+        {listingType === ListingType.FIXED_PRICE ? (
+          <Input
+            label="Price (USD)"
+            type="number"
+            step="0.01"
+            required
+            error={errors.price?.message}
+            {...register('price', { required: 'Price is required', min: { value: 0.01, message: 'Price must be positive' } })}
+          />
+        ) : (
+          <>
+            <Input label="Starting Bid" type="number" step="0.01" required error={errors.startingBid?.message} {...register('startingBid', { required: 'Starting bid is required', min: { value: 0.01, message: 'Starting bid must be positive' } })} />
+            <Input label="Reserve Price" type="number" step="0.01" {...register('reservePrice')} />
+            <Input label="Buy It Now" type="number" step="0.01" {...register('buyItNowPrice')} />
+            <Input label="Auction Ends" type="date" className="sm:col-span-1" {...register('auctionEndAt')} />
+          </>
+        )}
+        <Input label="Quantity" type="number" required error={errors.quantity?.message} {...register('quantity', { required: 'Quantity is required', min: { value: 1, message: 'Quantity must be at least 1' } })} />
+        <Select
+          label="Status"
+          options={[
+            { value: ListingStatus.DRAFT, label: 'Save as Draft' },
+            { value: ListingStatus.ACTIVE, label: 'Publish Now' },
+          ]}
+          {...register('status')}
+        />
+      </div>
+
+      <label className="flex items-center gap-3 cursor-pointer">
+        <input type="checkbox" className="w-4 h-4 text-primary rounded border-gray-300" {...register('freeShipping')} />
+        <span className="text-sm font-medium text-gray-700">Offer free shipping</span>
+      </label>
+
+      {loadingMetadata ? (
+        <div className="py-6 flex justify-center"><Spinner /></div>
+      ) : (
+        <DynamicAttributeFields attributes={attributes} register={register} errors={errors} watch={watch} />
+      )}
+
+      <div className="space-y-3 border-t border-gray-100 pt-5">
+        <label className="form-label">Images</label>
+        <label className="inline-flex items-center gap-2 btn-secondary px-4 py-2 text-sm cursor-pointer">
+          <Upload size={16} />
+          {uploading ? 'Uploading...' : 'Upload Images'}
+          <input type="file" accept="image/*" multiple className="hidden" onChange={handleImages} disabled={uploading} />
+        </label>
+        {!!images.length && (
+          <div className="grid grid-cols-3 sm:grid-cols-5 gap-3">
+            {images.map((image, index) => (
+              <div key={`${image.url}-${index}`} className="relative aspect-square rounded-md border border-gray-200 bg-gray-50 overflow-hidden">
+                <img src={assetUrl(image.url)} alt={image.altText || ''} className="w-full h-full object-cover" />
+                <button
+                  type="button"
+                  onClick={() => setImages((current) => current.filter((_, i) => i !== index))}
+                  className="absolute top-1 right-1 p-1 rounded-full bg-white text-gray-500 shadow hover:text-red-500"
+                >
+                  <X size={14} />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div className="flex gap-3 pt-2">
+        <Button type="submit" loading={isPending || uploading} className="flex-1">{submitLabel}</Button>
+      </div>
+    </form>
+  )
+}

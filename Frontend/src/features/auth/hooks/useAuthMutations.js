@@ -4,6 +4,7 @@ import toast from 'react-hot-toast'
 import { authService } from '../services/authService'
 import { useAuthStore } from '@/store/authStore'
 import { ROUTES } from '@/constants/routes'
+import { UserRole } from '@/constants/enums'
 
 export const useLoginMutation = () => {
   const { setAuth } = useAuthStore()
@@ -16,8 +17,12 @@ export const useLoginMutation = () => {
       const { user, accessToken, refreshToken } = data.data
       setAuth(user, accessToken, refreshToken)
       toast.success(`Welcome back, ${user.firstName}!`)
-      const from = location.state?.from?.pathname || '/'
-      navigate(from, { replace: true })
+      const from = location.state?.from?.pathname
+      const fallback = String(user?.role || '').toLowerCase() === UserRole.ADMIN.toLowerCase()
+        ? ROUTES.ADMIN_DASHBOARD
+        : ROUTES.HOME
+      const target = from && ![ROUTES.LOGIN, ROUTES.REGISTER].includes(from) ? from : fallback
+      navigate(target, { replace: true })
     },
     onError: (error) => {
       toast.error(error?.response?.data?.message || 'Login failed. Please try again.')

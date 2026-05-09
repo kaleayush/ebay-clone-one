@@ -25,8 +25,8 @@ export default function AdminListingsPage() {
     queryFn: () => api.get(API_ENDPOINTS.ADMIN.LISTINGS, { params: { page, pageSize: 15, search: search || undefined } }),
   })
 
-  const listings = data?.data?.items || []
-  const totalPages = data?.data?.totalPages || 1
+  const listings = data?.items || data?.data?.items || []
+  const totalPages = data?.totalPages || data?.data?.totalPages || 1
 
   return (
     <div className="space-y-5">

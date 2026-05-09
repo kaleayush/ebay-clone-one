@@ -36,7 +36,7 @@ export default function OrdersPage() {
     queryFn: () => orderService.getAll({ page, pageSize: 10 }),
   })
 
-  const orders = data?.data?.items || []
+  const orders = useMemo(() => data?.data?.items || [], [data])
   const totalPages = data?.data?.totalPages || 1
   const filteredOrders = useMemo(() => (
     statusFilter === 'all'

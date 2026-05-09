@@ -7,7 +7,13 @@ public class Listing : BaseEntity
 {
     public string Title { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
+    public ListingType ListingType { get; set; } = ListingType.FixedPrice;
     public decimal Price { get; set; }
+    public decimal? StartingBid { get; set; }
+    public decimal? ReservePrice { get; set; }
+    public decimal? BuyItNowPrice { get; set; }
+    public DateTime? AuctionStartAt { get; set; }
+    public DateTime? AuctionEndAt { get; set; }
     public int Quantity { get; set; } = 1;
     public bool FreeShipping { get; set; } = false;
     public ListingStatus Status { get; set; } = ListingStatus.Draft;
@@ -20,6 +26,7 @@ public class Listing : BaseEntity
     public Category? Category { get; set; }
 
     public ICollection<ListingImage> Images { get; set; } = new List<ListingImage>();
+    public ICollection<ListingAttributeValue> AttributeValues { get; set; } = new List<ListingAttributeValue>();
     public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
     public ICollection<CartItem> CartItems { get; set; } = new List<CartItem>();
 }
