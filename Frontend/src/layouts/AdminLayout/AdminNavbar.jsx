@@ -20,7 +20,7 @@ export default function AdminNavbar({ onMenuToggle }) {
 
   const handleLogout = () => {
     logout()
-    navigate('/login')
+    navigate(ROUTES.HOME)
   }
 
   return (
@@ -38,14 +38,14 @@ export default function AdminNavbar({ onMenuToggle }) {
       </div>
 
       <div className="hidden md:flex flex-1 max-w-xl">
-        <div className="relative w-full">
+        {/* <div className="relative w-full">
           <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           <input
             type="search"
             placeholder="Search admin records"
             className="w-full rounded-md border border-gray-200 bg-gray-50 py-2 pl-9 pr-3 text-sm text-gray-700 focus:border-primary focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20"
           />
-        </div>
+        </div> */}
       </div>
 
       <Link

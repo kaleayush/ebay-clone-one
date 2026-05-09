@@ -20,6 +20,8 @@ export const API_ENDPOINTS = {
     MY: '/api/v1/listings/my',
     RESTORE: (id) => `/api/v1/listings/${id}/restore`,
     IMAGES: '/api/v1/listings/images',
+    AUTOCOMPLETE: '/api/v1/listings/autocomplete',
+    FACETS: '/api/v1/listings/facets',
   },
   // Categories
   CATEGORIES: {

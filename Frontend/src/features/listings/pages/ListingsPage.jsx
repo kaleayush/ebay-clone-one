@@ -1,120 +1,113 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { SlidersHorizontal, X, LayoutGrid, List } from 'lucide-react'
-import { useListings } from '../hooks/useListings'
-import ListingGrid from '../components/ListingGrid'
+import { useQuery } from '@tanstack/react-query'
+import { SlidersHorizontal, X } from 'lucide-react'
+import { useListings, useSearchFacets } from '../hooks/useListings'
 import { useDebounce } from '@/hooks/useDebounce'
+import ListingGrid from '../components/ListingGrid'
+import FilterSidebar from '../components/FilterSidebar'
+import CategoryBrowserGrid from '../components/CategoryBrowserGrid'
 import Breadcrumbs from '@/components/common/Breadcrumbs'
 import { ROUTES } from '@/constants/routes'
+import { categoryService } from '@/features/categories/services/categoryService'
 
-const SORT_OPTIONS = [
-  { label: 'Newest First', value: 'createdAt_desc' },
-  { label: 'Price: Low to High', value: 'price_asc' },
-  { label: 'Price: High to Low', value: 'price_desc' },
-  { label: 'Title A–Z', value: 'title_asc' },
-]
+function findInTree(cats, id) {
+  for (const cat of cats) {
+    if (cat.id === id) return cat
+    if (cat.children?.length) {
+      const found = findInTree(cat.children, id)
+      if (found) return found
+    }
+  }
+  return null
+}
 
-function FilterPanel({ minPrice, setMinPrice, maxPrice, setMaxPrice, sortKey, setSortKey, onReset, setPage }) {
-  return (
-    <div className="space-y-6">
-      {/* Sort */}
-      <div>
-        <p className="form-label">Sort By</p>
-        <div className="space-y-0.5 mt-1">
-          {SORT_OPTIONS.map((opt) => (
-            <button
-              key={opt.value}
-              onClick={() => { setSortKey(opt.value); setPage(1) }}
-              className={`w-full text-left px-3 py-2 text-sm rounded-lg transition-colors ${
-                sortKey === opt.value
-                  ? 'bg-primary/10 text-primary font-semibold'
-                  : 'text-gray-700 hover:bg-gray-50'
-              }`}
-            >
-              {opt.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Price range */}
-      <div>
-        <p className="form-label">Price Range</p>
-        <div className="flex items-center gap-2 mt-1">
-          <input
-            type="number"
-            placeholder="Min $"
-            value={minPrice}
-            onChange={(e) => { setMinPrice(e.target.value); setPage(1) }}
-            className="form-input text-xs py-2"
-          />
-          <span className="text-gray-400 shrink-0">—</span>
-          <input
-            type="number"
-            placeholder="Max $"
-            value={maxPrice}
-            onChange={(e) => { setMaxPrice(e.target.value); setPage(1) }}
-            className="form-input text-xs py-2"
-          />
-        </div>
-      </div>
-
-      {/* Condition */}
-      <div>
-        <p className="form-label">Condition</p>
-        <div className="space-y-1.5 mt-1">
-          {['New', 'Like New', 'Good', 'Acceptable'].map((c) => (
-            <label key={c} className="flex items-center gap-2.5 cursor-pointer text-sm text-gray-700 hover:text-primary">
-              <input type="checkbox" className="rounded border-gray-300 text-primary focus:ring-primary" />
-              {c}
-            </label>
-          ))}
-        </div>
-      </div>
-
-      {/* Shipping */}
-      <div>
-        <p className="form-label">Shipping</p>
-        <label className="flex items-center gap-2.5 cursor-pointer text-sm text-gray-700 hover:text-primary mt-1">
-          <input type="checkbox" className="rounded border-gray-300 text-primary focus:ring-primary" />
-          Free shipping only
-        </label>
-      </div>
-
-      <button
-        onClick={onReset}
-        className="w-full text-xs text-gray-400 hover:text-red-500 transition-colors pt-2 border-t border-gray-100"
-      >
-        Clear all filters
-      </button>
-    </div>
-  )
+function getCategoryPath(cats, id, path = []) {
+  for (const cat of cats) {
+    const next = [...path, { id: cat.id, name: cat.name }]
+    if (cat.id === id) return next
+    if (cat.children?.length) {
+      const found = getCategoryPath(cat.children, id, next)
+      if (found) return found
+    }
+  }
+  return null
 }
 
 export default function ListingsPage() {
-  const [searchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams()
+
+  const q = searchParams.get('q') || ''
+  const categoryId = searchParams.get('categoryId') || ''
+  const categoryName = searchParams.get('category') || ''
+
   const [page, setPage] = useState(1)
   const [minPrice, setMinPrice] = useState('')
   const [maxPrice, setMaxPrice] = useState('')
   const [sortKey, setSortKey] = useState('createdAt_desc')
+  const [freeShipping, setFreeShipping] = useState(false)
+  const [listingType, setListingType] = useState('')
+  const [attributeFilters, setAttributeFilters] = useState({})
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
 
-  const q = searchParams.get('q') || ''
-  const category = searchParams.get('category') || ''
   const debouncedQ = useDebounce(q, 400)
   const [sortBy, sortDir] = sortKey.split('_')
 
-  const { data, isLoading } = useListings({
+  // ── Category tree ─────────────────────────────────────────────────────
+  const { data: categoryTree = [] } = useQuery({
+    queryKey: ['categories', 'tree'],
+    queryFn: categoryService.getTree,
+    staleTime: 5 * 60_000,
+    select: (res) => res?.data ?? [],
+  })
+
+  const selectedNode = categoryId ? findInTree(categoryTree, categoryId) : null
+  const subCategories = selectedNode?.children ?? []
+  const isBrowsingCategory = !!categoryId && subCategories.length > 0
+  const categoryPath = categoryId ? (getCategoryPath(categoryTree, categoryId) ?? []) : []
+
+  // ── Listings hooks (always called — disabled when browsing categories) ─
+  const listingParams = {
     page,
     pageSize: 24,
     status: 1,
     search: debouncedQ || undefined,
-    category: category || undefined,
+    categoryId: categoryId || undefined,
+    category: !categoryId && categoryName ? categoryName : undefined,
     minPrice: minPrice || undefined,
     maxPrice: maxPrice || undefined,
+    freeShipping: freeShipping || undefined,
+    listingType: listingType !== '' ? Number(listingType) : undefined,
     sortBy,
     sortDirection: sortDir,
+    attributeFilters: Object.keys(attributeFilters).length > 0 ? attributeFilters : undefined,
+  }
+
+  // Pass null when browsing — hook's enabled:false guard skips the fetch
+  const { data, isLoading } = useListings(isBrowsingCategory ? null : listingParams)
+
+  const { data: facets } = useSearchFacets({
+    categoryId: categoryId || undefined,
+    search: debouncedQ || undefined,
   })
+
+  // ── Handlers ──────────────────────────────────────────────────────────
+  const handleCategoryChange = useCallback(
+    (id, name) => {
+      const next = new URLSearchParams(searchParams)
+      if (id) {
+        next.set('categoryId', id)
+        next.set('category', name)
+      } else {
+        next.delete('categoryId')
+        next.delete('category')
+      }
+      setSearchParams(next)
+      setAttributeFilters({})
+      setPage(1)
+    },
+    [searchParams, setSearchParams],
+  )
 
   const handlePageChange = (p) => {
     setPage(p)
@@ -125,37 +118,92 @@ export default function ListingsPage() {
     setMinPrice('')
     setMaxPrice('')
     setSortKey('createdAt_desc')
+    setFreeShipping(false)
+    setListingType('')
+    setAttributeFilters({})
     setPage(1)
+    const next = new URLSearchParams(searchParams)
+    next.delete('categoryId')
+    next.delete('category')
+    setSearchParams(next)
   }
 
-  const activeFilterCount = [minPrice, maxPrice].filter(Boolean).length
+  // ── Shared derived values ──────────────────────────────────────────────
+  const breadcrumbs = categoryPath.length > 0
+    ? categoryPath.map((cat, i) => {
+        const isLast = i === categoryPath.length - 1
+        return {
+          label: cat.name,
+          to: isLast
+            ? undefined
+            : `${ROUTES.LISTINGS}?categoryId=${cat.id}&category=${encodeURIComponent(cat.name)}`,
+        }
+      })
+    : q
+      ? [{ label: 'All Listings', to: ROUTES.LISTINGS }, { label: `"${q}"` }]
+      : [{ label: 'All Listings' }]
 
-  const breadcrumbs = [
-    ...(category ? [{ label: decodeURIComponent(category), to: `${ROUTES.LISTINGS}?category=${category}` }] : [{ label: 'All Listings' }]),
-    ...(q ? [{ label: `"${q}"` }] : []),
-  ]
+  const pageTitle = selectedNode?.name
+    ?? (categoryName ? decodeURIComponent(categoryName) : null)
+    ?? (q ? `Results for "${q}"` : 'All Listings')
+
+  // ── Category browser mode ─────────────────────────────────────────────
+  if (isBrowsingCategory) {
+    return (
+      <div>
+        <div className="mb-4">
+          <Breadcrumbs items={breadcrumbs} />
+        </div>
+        <div className="mb-6">
+          <h1 className="text-xl font-bold text-gray-900">{pageTitle}</h1>
+          <p className="text-sm text-gray-500 mt-0.5">Select a category to continue browsing</p>
+        </div>
+        <CategoryBrowserGrid categories={subCategories} onSelect={handleCategoryChange} />
+      </div>
+    )
+  }
+
+  // ── Listings mode ─────────────────────────────────────────────────────
+  const activeFilterCount = [
+    minPrice,
+    maxPrice,
+    freeShipping,
+    listingType,
+    categoryId,
+    ...Object.keys(attributeFilters),
+  ].filter(Boolean).length
+
+  const filterProps = {
+    categoryId,
+    onCategoryChange: handleCategoryChange,
+    minPrice, setMinPrice,
+    maxPrice, setMaxPrice,
+    listingType, setListingType,
+    freeShipping, setFreeShipping,
+    attributeFilters, setAttributeFilters,
+    facets,
+    sortKey, setSortKey,
+    onReset: handleReset,
+    setPage,
+  }
 
   return (
     <div>
-      {/* Breadcrumbs */}
       <div className="mb-4">
         <Breadcrumbs items={breadcrumbs} />
       </div>
 
-      {/* Page header */}
       <div className="flex flex-wrap items-end gap-3 mb-5">
         <div>
-          <h1 className="text-xl font-bold text-gray-900">
-            {q ? `Results for "${q}"` : category ? decodeURIComponent(category) : 'All Listings'}
-          </h1>
+          <h1 className="text-xl font-bold text-gray-900">{pageTitle}</h1>
           {data?.data?.totalCount != null && !isLoading && (
             <p className="text-sm text-gray-500 mt-0.5">
-              {data.data.totalCount.toLocaleString()} {data.data.totalCount === 1 ? 'item' : 'items'} found
+              {data.data.totalCount.toLocaleString()}{' '}
+              {data.data.totalCount === 1 ? 'item' : 'items'} found
             </p>
           )}
         </div>
 
-        {/* Mobile filter toggle */}
         <button
           onClick={() => setMobileFiltersOpen(true)}
           className="lg:hidden ml-auto flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 hover:border-primary hover:text-primary bg-white transition-colors"
@@ -171,64 +219,63 @@ export default function ListingsPage() {
       </div>
 
       <div className="flex gap-6">
-        {/* Desktop sidebar */}
-        <aside className="hidden lg:block w-52 shrink-0">
-          <div className="card p-4 sticky top-[108px]">
+        <aside className="hidden lg:block w-56 shrink-0">
+          <div className="card p-4 sticky top-[146px] max-h-[calc(100vh-168px)] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-semibold text-gray-900 flex items-center gap-2 text-sm">
                 <SlidersHorizontal size={15} /> Filters
               </h3>
               {activeFilterCount > 0 && (
-                <button onClick={handleReset} className="text-xs text-red-400 hover:text-red-600 transition-colors">
-                  Reset
+                <button
+                  onClick={handleReset}
+                  className="text-xs text-red-400 hover:text-red-600 transition-colors"
+                >
+                  Reset ({activeFilterCount})
                 </button>
               )}
             </div>
-            <FilterPanel
-              minPrice={minPrice} setMinPrice={setMinPrice}
-              maxPrice={maxPrice} setMaxPrice={setMaxPrice}
-              sortKey={sortKey} setSortKey={setSortKey}
-              onReset={handleReset} setPage={setPage}
-            />
+            <FilterSidebar {...filterProps} />
           </div>
         </aside>
 
-        {/* Main content */}
         <div className="flex-1 min-w-0">
-          <ListingGrid data={data?.data} isLoading={isLoading} onPageChange={handlePageChange} />
+          <ListingGrid
+            data={data?.data}
+            isLoading={isLoading}
+            onPageChange={handlePageChange}
+          />
         </div>
       </div>
 
-      {/* Mobile filter bottom sheet */}
       {mobileFiltersOpen && (
         <>
           <div
             className="fixed inset-0 bg-black/50 z-50 lg:hidden"
             onClick={() => setMobileFiltersOpen(false)}
           />
-          <div className="fixed bottom-0 inset-x-0 bg-white z-50 rounded-t-2xl shadow-2xl max-h-[85vh] flex flex-col lg:hidden">
+          <div className="fixed bottom-0 inset-x-0 bg-white z-50 rounded-t-2xl shadow-2xl max-h-[88vh] flex flex-col lg:hidden">
             <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 shrink-0">
               <h3 className="font-semibold text-gray-900 flex items-center gap-2">
                 <SlidersHorizontal size={16} /> Filters
               </h3>
-              <button onClick={() => setMobileFiltersOpen(false)} className="p-1 text-gray-400 hover:text-gray-700">
+              <button
+                onClick={() => setMobileFiltersOpen(false)}
+                className="p-1 text-gray-400 hover:text-gray-700"
+              >
                 <X size={20} />
               </button>
             </div>
             <div className="overflow-y-auto flex-1 p-5">
-              <FilterPanel
-                minPrice={minPrice} setMinPrice={setMinPrice}
-                maxPrice={maxPrice} setMaxPrice={setMaxPrice}
-                sortKey={sortKey} setSortKey={setSortKey}
-                onReset={handleReset} setPage={setPage}
-              />
+              <FilterSidebar {...filterProps} />
             </div>
             <div className="p-4 border-t border-gray-100 shrink-0">
               <button
                 onClick={() => setMobileFiltersOpen(false)}
-                className="w-full btn-primary py-3 rounded-xl text-sm"
+                className="w-full bg-primary text-white py-3 rounded-xl text-sm font-semibold hover:bg-blue-700 transition-colors"
               >
-                Show Results
+                {data?.data?.totalCount != null
+                  ? `Show ${data.data.totalCount.toLocaleString()} results`
+                  : 'Show Results'}
               </button>
             </div>
           </div>

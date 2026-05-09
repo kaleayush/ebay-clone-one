@@ -45,6 +45,7 @@ using (var scope = app.Services.CreateScope())
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
         await db.Database.MigrateAsync();
         await CategoryFormSeeder.SeedAsync(db);
+        await ListingAndUserSeeder.SeedAsync(db);
         Log.Information("Database migration applied successfully");
     }
     catch (Exception ex)

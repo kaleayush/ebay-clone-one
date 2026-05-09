@@ -34,14 +34,31 @@ public class ListingService(
         if (!string.IsNullOrWhiteSpace(query.Category))
             q = q.Where(l => l.Category != null && l.Category.Name.Contains(query.Category));
 
+        if (query.CategoryId.HasValue)
+            q = q.Where(l => l.CategoryId == query.CategoryId.Value);
+
         if (query.MinPrice.HasValue)
             q = q.Where(l => l.Price >= query.MinPrice.Value);
 
         if (query.MaxPrice.HasValue)
             q = q.Where(l => l.Price <= query.MaxPrice.Value);
 
+        if (query.FreeShipping == true)
+            q = q.Where(l => l.FreeShipping);
+
         if (query.SellerId.HasValue)
             q = q.Where(l => l.SellerId == query.SellerId.Value);
+
+        if (query.AttributeFilters?.Count > 0)
+        {
+            foreach (var (attrIdStr, value) in query.AttributeFilters)
+            {
+                if (!Guid.TryParse(attrIdStr, out var attrId) || string.IsNullOrWhiteSpace(value))
+                    continue;
+                q = q.Where(l => l.AttributeValues.Any(
+                    v => !v.IsDeleted && v.CategoryAttributeId == attrId && v.Value == value));
+            }
+        }
 
         q = query.SortBy?.ToLower() switch
         {
@@ -158,6 +175,108 @@ public class ListingService(
         await listingRepository.SaveChangesAsync(ct);
 
         return MapToResponse(listing);
+    }
+
+    public async Task<AutocompleteResponse> GetAutocompleteSuggestionsAsync(string q, CancellationToken ct = default)
+    {
+        if (string.IsNullOrWhiteSpace(q) || q.Length < 2)
+            return new AutocompleteResponse([]);
+
+        var suggestions = await listingRepository.Query()
+            .AsNoTracking()
+            .Where(l => l.Status == ListingStatus.Active && l.Title.Contains(q))
+            .Select(l => l.Title)
+            .Distinct()
+            .Take(8)
+            .ToListAsync(ct);
+
+        return new AutocompleteResponse(suggestions);
+    }
+
+    public async Task<SearchFacetsResponse> GetSearchFacetsAsync(Guid? categoryId, string? search, CancellationToken ct = default)
+    {
+        var q = listingRepository.Query()
+            .AsNoTracking()
+            .Where(l => l.Status == ListingStatus.Active);
+
+        if (!string.IsNullOrWhiteSpace(search))
+            q = q.Where(l => l.Title.Contains(search) || l.Description.Contains(search));
+
+        if (categoryId.HasValue)
+            q = q.Where(l => l.CategoryId == categoryId.Value);
+
+        var priceStats = await q
+            .GroupBy(_ => 1)
+            .Select(g => new { Min = g.Min(l => l.Price), Max = g.Max(l => l.Price) })
+            .FirstOrDefaultAsync(ct);
+
+        var priceFacet = priceStats != null
+            ? new PriceFacet(priceStats.Min, priceStats.Max)
+            : null;
+
+        List<AttributeFacet> attributeFacets = [];
+
+        if (categoryId.HasValue)
+        {
+            var category = await categoryRepository.Query()
+                .Include(c => c.Attributes.OrderBy(a => a.SortOrder))
+                    .ThenInclude(a => a.Options.Where(o => o.IsActive).OrderBy(o => o.SortOrder))
+                .AsNoTracking()
+                .FirstOrDefaultAsync(c => c.Id == categoryId.Value, ct);
+
+            if (category != null)
+            {
+                var filterableAttrs = category.Attributes
+                    .Where(a => a.DataType is AttributeDataType.Dropdown
+                        or AttributeDataType.MultiSelect
+                        or AttributeDataType.Boolean)
+                    .ToList();
+
+                var filterableAttrIds = filterableAttrs.Select(a => a.Id).ToHashSet();
+
+                var allValueCounts = await listingRepository.Query()
+                    .AsNoTracking()
+                    .Where(l => l.Status == ListingStatus.Active && l.CategoryId == categoryId.Value)
+                    .SelectMany(l => l.AttributeValues
+                        .Where(v => !v.IsDeleted && filterableAttrIds.Contains(v.CategoryAttributeId)))
+                    .GroupBy(v => new { v.CategoryAttributeId, v.Value })
+                    .Select(g => new { g.Key.CategoryAttributeId, g.Key.Value, Count = g.Count() })
+                    .ToListAsync(ct);
+
+                var countLookup = allValueCounts
+                    .GroupBy(x => x.CategoryAttributeId)
+                    .ToDictionary(g => g.Key, g => g.ToDictionary(x => x.Value, x => x.Count));
+
+                foreach (var attr in filterableAttrs)
+                {
+                    countLookup.TryGetValue(attr.Id, out var attrCounts);
+                    attrCounts ??= [];
+
+                    IReadOnlyCollection<FacetOption> options;
+
+                    if (attr.DataType == AttributeDataType.Boolean)
+                    {
+                        options = new[]
+                        {
+                            new FacetOption("true", "Yes", attrCounts.GetValueOrDefault("true") + attrCounts.GetValueOrDefault("True")),
+                            new FacetOption("false", "No", attrCounts.GetValueOrDefault("false") + attrCounts.GetValueOrDefault("False")),
+                        }.Where(o => o.Count > 0).ToList();
+                    }
+                    else
+                    {
+                        options = attr.Options
+                            .Select(o => new FacetOption(o.Value, o.Label, attrCounts.GetValueOrDefault(o.Value)))
+                            .Where(o => o.Count > 0)
+                            .ToList();
+                    }
+
+                    if (options.Count > 0)
+                        attributeFacets.Add(new AttributeFacet(attr.Id, attr.Name, attr.DisplayName, (int)attr.DataType, options));
+                }
+            }
+        }
+
+        return new SearchFacetsResponse(attributeFacets, priceFacet);
     }
 
     private IQueryable<Listing> ListingQueryBase(bool includeDeleted)

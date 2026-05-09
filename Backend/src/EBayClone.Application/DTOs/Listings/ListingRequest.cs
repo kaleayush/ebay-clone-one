@@ -58,12 +58,15 @@ public record ListingQuery(
     int PageSize = 24,
     string? Search = null,
     string? Category = null,
+    Guid? CategoryId = null,
     decimal? MinPrice = null,
     decimal? MaxPrice = null,
+    bool? FreeShipping = null,
     ListingStatus? Status = null,
     ListingType? ListingType = null,
     Guid? SellerId = null,
     bool IncludeDeleted = false,
     string SortBy = "createdAt",
-    string SortDirection = "desc"
+    string SortDirection = "desc",
+    Dictionary<string, string>? AttributeFilters = null
 );

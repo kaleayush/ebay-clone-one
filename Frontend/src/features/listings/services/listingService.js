@@ -14,4 +14,6 @@ export const listingService = {
     formData.append('file', file)
     return api.post(API_ENDPOINTS.LISTINGS.IMAGES, formData)
   },
+  autocomplete: (q) => api.get(API_ENDPOINTS.LISTINGS.AUTOCOMPLETE, { params: { q } }),
+  getFacets: (params) => api.get(API_ENDPOINTS.LISTINGS.FACETS, { params }),
 }

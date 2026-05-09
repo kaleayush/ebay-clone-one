@@ -9,10 +9,12 @@ export const LISTING_KEYS = {
   my: (params) => ['listings', 'my', params],
 }
 
-export const useListings = (params) =>
+export const useListings = (params, options = {}) =>
   useQuery({
     queryKey: LISTING_KEYS.list(params),
     queryFn: () => listingService.getAll(params),
+    enabled: params !== null,
+    ...options,
   })
 
 export const useListing = (id) =>
@@ -63,3 +65,20 @@ export const useRestoreListing = () => {
     onError: (err) => toast.error(err?.response?.data?.message || 'Failed to restore listing'),
   })
 }
+
+export const useListingAutocomplete = (q) =>
+  useQuery({
+    queryKey: ['listings', 'autocomplete', q],
+    queryFn: () => listingService.autocomplete(q),
+    enabled: typeof q === 'string' && q.length >= 2,
+    staleTime: 30_000,
+    select: (res) => res?.data?.suggestions ?? [],
+  })
+
+export const useSearchFacets = (params) =>
+  useQuery({
+    queryKey: ['listings', 'facets', params],
+    queryFn: () => listingService.getFacets(params),
+    staleTime: 60_000,
+    select: (res) => res?.data ?? null,
+  })

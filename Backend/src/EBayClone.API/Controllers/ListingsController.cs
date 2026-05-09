@@ -21,6 +21,22 @@ public class ListingsController(
         return Ok(ApiResponse<PagedResult<ListingResponse>>.Ok(result));
     }
 
+    [HttpGet("autocomplete")]
+    public async Task<ActionResult<ApiResponse<AutocompleteResponse>>> Autocomplete(
+        [FromQuery] string? q, CancellationToken ct)
+    {
+        var result = await listingService.GetAutocompleteSuggestionsAsync(q ?? string.Empty, ct);
+        return Ok(ApiResponse<AutocompleteResponse>.Ok(result));
+    }
+
+    [HttpGet("facets")]
+    public async Task<ActionResult<ApiResponse<SearchFacetsResponse>>> GetFacets(
+        [FromQuery] Guid? categoryId, [FromQuery] string? search, CancellationToken ct)
+    {
+        var result = await listingService.GetSearchFacetsAsync(categoryId, search, ct);
+        return Ok(ApiResponse<SearchFacetsResponse>.Ok(result));
+    }
+
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<ApiResponse<ListingResponse>>> GetById(Guid id, CancellationToken ct)
     {

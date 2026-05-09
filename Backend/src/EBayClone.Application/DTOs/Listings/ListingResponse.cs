@@ -1,5 +1,24 @@
 namespace EBayClone.Application.DTOs.Listings;
 
+public record AutocompleteResponse(IReadOnlyCollection<string> Suggestions);
+
+public record SearchFacetsResponse(
+    IReadOnlyCollection<AttributeFacet> AttributeFacets,
+    PriceFacet? Price
+);
+
+public record AttributeFacet(
+    Guid AttributeId,
+    string Name,
+    string DisplayName,
+    int DataType,
+    IReadOnlyCollection<FacetOption> Options
+);
+
+public record FacetOption(string Value, string Label, int Count);
+
+public record PriceFacet(decimal Min, decimal Max);
+
 public record ListingResponse(
     Guid Id,
     string Title,

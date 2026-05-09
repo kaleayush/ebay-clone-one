@@ -5,6 +5,24 @@ import { useAuthStore } from '@/store/authStore'
 const api = axios.create({
   baseURL: API_BASE_URL,
   timeout: 15000,
+  paramsSerializer: {
+    serialize: (params) => {
+      const sp = new URLSearchParams()
+      for (const [key, val] of Object.entries(params)) {
+        if (val === undefined || val === null || val === '') continue
+        if (Array.isArray(val)) {
+          val.forEach((v) => sp.append(key, v))
+        } else if (typeof val === 'object') {
+          for (const [k, v] of Object.entries(val)) {
+            if (v !== undefined && v !== null) sp.append(`${key}[${k}]`, v)
+          }
+        } else {
+          sp.append(key, val)
+        }
+      }
+      return sp.toString()
+    },
+  },
 })
 
 // Request interceptor — attach access token
