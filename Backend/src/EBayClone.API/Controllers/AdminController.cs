@@ -3,6 +3,7 @@ using EBayClone.Application.Common;
 using EBayClone.Application.DTOs.BusinessProfile;
 using EBayClone.Application.Interfaces;
 using EBayClone.Domain.Entities;
+using EBayClone.Domain.Enums;
 using EBayClone.Domain.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -36,7 +37,9 @@ public class AdminController(
 
     [HttpGet("users")]
     public async Task<ActionResult<ApiResponse<PagedResult<AdminUserResponse>>>> GetUsers([FromQuery] int page = 1, [FromQuery] int pageSize = 15,
-        [FromQuery] string? search = null, CancellationToken ct = default)
+        [FromQuery] string? search = null, [FromQuery] int? accountType = null, [FromQuery] string? role = null,
+        [FromQuery] string? status = null, [FromQuery] string? sortBy = "createdAt", [FromQuery] string? sortDirection = "desc",
+        CancellationToken ct = default)
     {
         (page, pageSize) = NormalizePaging(page, pageSize);
 
@@ -45,8 +48,37 @@ public class AdminController(
         if (!string.IsNullOrWhiteSpace(search))
             q = q.Where(u => u.Email.Contains(search) || u.FirstName.Contains(search) || u.LastName.Contains(search));
 
+        if (accountType.HasValue && Enum.IsDefined(typeof(AccountType), accountType.Value))
+            q = q.Where(u => u.AccountType == (AccountType)accountType.Value);
+
+        if (!string.IsNullOrWhiteSpace(role) && Enum.TryParse<UserRole>(role, true, out var parsedRole))
+            q = q.Where(u => u.Role == parsedRole);
+
+        q = status?.ToLowerInvariant() switch
+        {
+            "active" => q.Where(u => !u.IsDeleted && !u.IsSuspended),
+            "suspended" => q.Where(u => u.IsSuspended),
+            "deleted" => q.Where(u => u.IsDeleted),
+            "unverified" => q.Where(u => !u.IsEmailVerified),
+            _ => q,
+        };
+
         var total = await q.CountAsync(ct);
-        var items = await q.OrderByDescending(u => u.CreatedAt)
+        q = (sortBy?.ToLowerInvariant(), sortDirection?.ToLowerInvariant()) switch
+        {
+            ("name", "asc") => q.OrderBy(u => u.FirstName).ThenBy(u => u.LastName),
+            ("name", _) => q.OrderByDescending(u => u.FirstName).ThenByDescending(u => u.LastName),
+            ("email", "asc") => q.OrderBy(u => u.Email),
+            ("email", _) => q.OrderByDescending(u => u.Email),
+            ("accounttype", "asc") => q.OrderBy(u => u.AccountType),
+            ("accounttype", _) => q.OrderByDescending(u => u.AccountType),
+            ("role", "asc") => q.OrderBy(u => u.Role),
+            ("role", _) => q.OrderByDescending(u => u.Role),
+            ("createdat", "asc") => q.OrderBy(u => u.CreatedAt),
+            _ => q.OrderByDescending(u => u.CreatedAt),
+        };
+
+        var items = await q
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .Select(u => new AdminUserResponse(
@@ -94,17 +126,45 @@ public class AdminController(
 
     [HttpGet("listings")]
     public async Task<ActionResult<ApiResponse<PagedResult<AdminListingResponse>>>> GetListings([FromQuery] int page = 1, [FromQuery] int pageSize = 15,
-        [FromQuery] string? search = null, CancellationToken ct = default)
+        [FromQuery] string? search = null, [FromQuery] int? status = null, [FromQuery] string? visibility = null,
+        [FromQuery] string? sortBy = "createdAt", [FromQuery] string? sortDirection = "desc", CancellationToken ct = default)
     {
         (page, pageSize) = NormalizePaging(page, pageSize);
 
         var q = listingRepository.Query().Include(l => l.Seller).IgnoreQueryFilters().AsNoTracking();
 
         if (!string.IsNullOrWhiteSpace(search))
-            q = q.Where(l => l.Title.Contains(search));
+            q = q.Where(l => l.Title.Contains(search) || l.Seller.Email.Contains(search) ||
+                l.Seller.FirstName.Contains(search) || l.Seller.LastName.Contains(search));
+
+        if (status.HasValue && Enum.IsDefined(typeof(ListingStatus), status.Value))
+            q = q.Where(l => l.Status == (ListingStatus)status.Value);
+
+        q = visibility?.ToLowerInvariant() switch
+        {
+            "active" => q.Where(l => !l.IsDeleted),
+            "deleted" => q.Where(l => l.IsDeleted),
+            _ => q,
+        };
 
         var total = await q.CountAsync(ct);
-        var items = await q.OrderByDescending(l => l.CreatedAt)
+        q = (sortBy?.ToLowerInvariant(), sortDirection?.ToLowerInvariant()) switch
+        {
+            ("title", "asc") => q.OrderBy(l => l.Title),
+            ("title", _) => q.OrderByDescending(l => l.Title),
+            ("seller", "asc") => q.OrderBy(l => l.Seller.FirstName).ThenBy(l => l.Seller.LastName),
+            ("seller", _) => q.OrderByDescending(l => l.Seller.FirstName).ThenByDescending(l => l.Seller.LastName),
+            ("price", "asc") => q.OrderBy(l => l.Price - l.DiscountAmount),
+            ("price", _) => q.OrderByDescending(l => l.Price - l.DiscountAmount),
+            ("status", "asc") => q.OrderBy(l => l.Status),
+            ("status", _) => q.OrderByDescending(l => l.Status),
+            ("updatedat", "asc") => q.OrderBy(l => l.UpdatedAt),
+            ("updatedat", _) => q.OrderByDescending(l => l.UpdatedAt),
+            ("createdat", "asc") => q.OrderBy(l => l.CreatedAt),
+            _ => q.OrderByDescending(l => l.CreatedAt),
+        };
+
+        var items = await q
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .Select(l => new AdminListingResponse(
@@ -112,6 +172,8 @@ public class AdminController(
                 l.Title,
                 $"{l.Seller.FirstName} {l.Seller.LastName}",
                 l.Price,
+                l.DiscountAmount,
+                l.Price - l.DiscountAmount,
                 (int)l.Status,
                 l.IsDeleted,
                 l.CreatedAt))
@@ -123,6 +185,8 @@ public class AdminController(
 
     [HttpGet("orders")]
     public async Task<ActionResult<ApiResponse<PagedResult<AdminOrderResponse>>>> GetOrders([FromQuery] int page = 1, [FromQuery] int pageSize = 15,
+        [FromQuery] string? search = null, [FromQuery] int? status = null,
+        [FromQuery] string? sortBy = "createdAt", [FromQuery] string? sortDirection = "desc",
         CancellationToken ct = default)
     {
         (page, pageSize) = NormalizePaging(page, pageSize);
@@ -130,8 +194,31 @@ public class AdminController(
         var q = orderRepository.Query().Include(o => o.Buyer).Include(o => o.Items)
             .IgnoreQueryFilters().AsNoTracking();
 
+        if (!string.IsNullOrWhiteSpace(search))
+            q = q.Where(o => o.OrderNumber.Contains(search) || o.Buyer.Email.Contains(search) ||
+                o.Buyer.FirstName.Contains(search) || o.Buyer.LastName.Contains(search));
+
+        if (status.HasValue && Enum.IsDefined(typeof(OrderStatus), status.Value))
+            q = q.Where(o => o.Status == (OrderStatus)status.Value);
+
         var total = await q.CountAsync(ct);
-        var items = await q.OrderByDescending(o => o.CreatedAt)
+        q = (sortBy?.ToLowerInvariant(), sortDirection?.ToLowerInvariant()) switch
+        {
+            ("ordernumber", "asc") => q.OrderBy(o => o.OrderNumber),
+            ("ordernumber", _) => q.OrderByDescending(o => o.OrderNumber),
+            ("buyer", "asc") => q.OrderBy(o => o.Buyer.FirstName).ThenBy(o => o.Buyer.LastName),
+            ("buyer", _) => q.OrderByDescending(o => o.Buyer.FirstName).ThenByDescending(o => o.Buyer.LastName),
+            ("itemcount", "asc") => q.OrderBy(o => o.Items.Count),
+            ("itemcount", _) => q.OrderByDescending(o => o.Items.Count),
+            ("totalamount", "asc") => q.OrderBy(o => o.TotalAmount),
+            ("totalamount", _) => q.OrderByDescending(o => o.TotalAmount),
+            ("status", "asc") => q.OrderBy(o => o.Status),
+            ("status", _) => q.OrderByDescending(o => o.Status),
+            ("createdat", "asc") => q.OrderBy(o => o.CreatedAt),
+            _ => q.OrderByDescending(o => o.CreatedAt),
+        };
+
+        var items = await q
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .Select(o => new AdminOrderResponse(
@@ -205,6 +292,8 @@ public record AdminListingResponse(
     string Title,
     string SellerName,
     decimal Price,
+    decimal DiscountAmount,
+    decimal FinalPrice,
     int Status,
     bool IsDeleted,
     DateTime CreatedAt
