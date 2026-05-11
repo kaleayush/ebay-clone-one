@@ -26,6 +26,7 @@ public class User : BaseEntity
     public DateTime? PasswordResetTokenExpiry { get; set; }
 
     public ICollection<Listing> Listings { get; set; } = new List<Listing>();
+    public ICollection<ListingView> ListingViews { get; set; } = new List<ListingView>();
     public ICollection<Order> BuyerOrders { get; set; } = new List<Order>();
     public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
     public Cart? Cart { get; set; }

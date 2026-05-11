@@ -30,4 +30,5 @@ public class Listing : BaseEntity
     public ICollection<ListingAttributeValue> AttributeValues { get; set; } = new List<ListingAttributeValue>();
     public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
     public ICollection<CartItem> CartItems { get; set; } = new List<CartItem>();
+    public ICollection<ListingView> Views { get; set; } = new List<ListingView>();
 }

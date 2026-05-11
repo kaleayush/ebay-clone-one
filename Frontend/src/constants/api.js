@@ -19,6 +19,8 @@ export const API_ENDPOINTS = {
     BY_ID: (id) => `/api/v1/listings/${id}`,
     MY: '/api/v1/listings/my',
     RESTORE: (id) => `/api/v1/listings/${id}/restore`,
+    RECENTLY_VIEWED: '/api/v1/listings/recently-viewed',
+    VIEW: (id) => `/api/v1/listings/${id}/views`,
     IMAGES: '/api/v1/listings/images',
     AUTOCOMPLETE: '/api/v1/listings/autocomplete',
     FACETS: '/api/v1/listings/facets',

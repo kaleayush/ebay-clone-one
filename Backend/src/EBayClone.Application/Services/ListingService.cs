@@ -17,6 +17,7 @@ public class ListingService(
     IRepository<Category> categoryRepository,
     IRepository<ListingImage> listingImageRepository,
     IRepository<ListingAttributeValue> listingAttributeValueRepository,
+    IRepository<ListingView> listingViewRepository,
     ILogger<ListingService> logger) : IListingService
 {
     public async Task<PagedResult<ListingResponse>> GetListingsAsync(ListingQuery query, CancellationToken ct = default)
@@ -189,6 +190,76 @@ public class ListingService(
         await listingRepository.SaveChangesAsync(ct);
 
         return MapToResponse(listing);
+    }
+
+    public async Task RecordViewAsync(Guid userId, Guid listingId, CancellationToken ct = default)
+    {
+        var listing = await listingRepository.Query()
+            .AsNoTracking()
+            .Where(l => l.Id == listingId && l.SellerId != userId)
+            .Select(l => new { l.Id })
+            .FirstOrDefaultAsync(ct);
+
+        if (listing is null)
+            return;
+
+        var now = DateTime.UtcNow;
+        var existing = await listingViewRepository.Query()
+            .FirstOrDefaultAsync(v => v.UserId == userId && v.ListingId == listingId, ct);
+
+        if (existing is null)
+        {
+            await listingViewRepository.AddAsync(new ListingView
+            {
+                UserId = userId,
+                ListingId = listingId,
+                LastViewedAt = now,
+            }, ct);
+        }
+        else
+        {
+            existing.LastViewedAt = now;
+            existing.UpdatedAt = now;
+        }
+
+        await listingViewRepository.SaveChangesAsync(ct);
+    }
+
+    public async Task<IReadOnlyList<ListingResponse>> GetRecentlyViewedAsync(
+        Guid userId,
+        int days = 3,
+        int take = 12,
+        CancellationToken ct = default)
+    {
+        var cutoff = DateTime.UtcNow.AddDays(-Math.Max(1, days));
+        take = Math.Clamp(take, 1, 24);
+
+        var recentViews = await listingViewRepository.Query()
+            .AsNoTracking()
+            .Where(v => v.UserId == userId && v.LastViewedAt >= cutoff)
+            .OrderByDescending(v => v.LastViewedAt)
+            .Take(take)
+            .Select(v => new { v.ListingId, v.LastViewedAt })
+            .ToListAsync(ct);
+
+        if (recentViews.Count == 0)
+            return [];
+
+        var orderedIds = recentViews.Select(v => v.ListingId).ToList();
+        var rank = orderedIds.Select((id, index) => new { id, index })
+            .ToDictionary(x => x.id, x => x.index);
+
+        var listings = await ListingQueryBase(includeDeleted: false)
+            .AsNoTracking()
+            .Where(l => orderedIds.Contains(l.Id) &&
+                l.SellerId != userId &&
+                l.Status == ListingStatus.Active)
+            .ToListAsync(ct);
+
+        return listings
+            .OrderBy(l => rank.GetValueOrDefault(l.Id, int.MaxValue))
+            .Select(MapToResponse)
+            .ToList();
     }
 
     public async Task<AutocompleteResponse> GetAutocompleteSuggestionsAsync(string q, CancellationToken ct = default)

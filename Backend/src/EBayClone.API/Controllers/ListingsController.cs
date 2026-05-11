@@ -37,6 +37,23 @@ public class ListingsController(
         return Ok(ApiResponse<SearchFacetsResponse>.Ok(result));
     }
 
+    [HttpGet("recently-viewed")]
+    [Authorize]
+    public async Task<ActionResult<ApiResponse<IReadOnlyList<ListingResponse>>>> GetRecentlyViewed(
+        [FromQuery] int days = 3, [FromQuery] int take = 12, CancellationToken ct = default)
+    {
+        var result = await listingService.GetRecentlyViewedAsync(GetUserId(), days, take, ct);
+        return Ok(ApiResponse<IReadOnlyList<ListingResponse>>.Ok(result));
+    }
+
+    [HttpPost("{id:guid}/views")]
+    [Authorize]
+    public async Task<ActionResult<ApiResponse>> RecordView(Guid id, CancellationToken ct)
+    {
+        await listingService.RecordViewAsync(GetUserId(), id, ct);
+        return Ok(ApiResponse.Ok("Listing view recorded"));
+    }
+
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<ApiResponse<ListingResponse>>> GetById(Guid id, CancellationToken ct)
     {

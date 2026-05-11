@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { ShoppingCart, Package, Shield, Heart, Store, ChevronRight, Minus, Plus } from 'lucide-react'
-import { useListing } from '../hooks/useListings'
+import { useListing, useRecordListingView } from '../hooks/useListings'
 import Spinner from '@/components/common/Spinner'
 import Button from '@/components/common/Button'
 import Badge from '@/components/common/Badge'
@@ -9,6 +9,7 @@ import Breadcrumbs from '@/components/common/Breadcrumbs'
 import { formatCurrency, formatDate } from '@/utils/formatters'
 import { assetUrl } from '@/utils/assets'
 import { useCartStore } from '@/store/cartStore'
+import { useAuthStore } from '@/store/authStore'
 import { useWishlistStore } from '@/store/wishlistStore'
 import { ListingStatus, ListingStatusLabel, ListingType, ListingTypeLabel } from '@/constants/enums'
 import { ROUTES } from '@/constants/routes'
@@ -25,7 +26,11 @@ const statusVariant = {
 export default function ListingDetailPage() {
   const { id } = useParams()
   const { data, isLoading } = useListing(id)
+  const listing = data?.data
+  const user = useAuthStore((state) => state.user)
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
   const addItem = useCartStore((s) => s.addItem)
+  const recordListingView = useRecordListingView()
   const { toggleItem, isInWishlist } = useWishlistStore()
   const [qty, setQty] = useState(1)
   const [activeImageIndex, setActiveImageIndex] = useState(0)
@@ -33,6 +38,12 @@ export default function ListingDetailPage() {
   useEffect(() => {
     setActiveImageIndex(0)
   }, [id])
+
+  useEffect(() => {
+    if (isAuthenticated && user?.id && listing?.id) {
+      recordListingView.mutate(listing.id)
+    }
+  }, [isAuthenticated, listing?.id, user?.id])
 
   if (isLoading) {
     return (
@@ -42,7 +53,6 @@ export default function ListingDetailPage() {
     )
   }
 
-  const listing = data?.data
   if (!listing) {
     return (
       <div className="text-center py-24">

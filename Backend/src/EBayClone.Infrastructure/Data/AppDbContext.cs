@@ -8,6 +8,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 {
     public DbSet<User> Users => Set<User>();
     public DbSet<Listing> Listings => Set<Listing>();
+    public DbSet<ListingView> ListingViews => Set<ListingView>();
     public DbSet<ListingImage> ListingImages => Set<ListingImage>();
     public DbSet<ListingAttributeValue> ListingAttributeValues => Set<ListingAttributeValue>();
     public DbSet<Category> Categories => Set<Category>();

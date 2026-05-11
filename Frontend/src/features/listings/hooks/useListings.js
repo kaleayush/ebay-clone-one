@@ -7,6 +7,7 @@ export const LISTING_KEYS = {
   list: (params) => ['listings', 'list', params],
   detail: (id) => ['listings', 'detail', id],
   my: (params) => ['listings', 'my', params],
+  recentlyViewed: (params) => ['listings', 'recently-viewed', params],
 }
 
 export const useListings = (params, options = {}) =>
@@ -29,6 +30,23 @@ export const useMyListings = (params) =>
     queryKey: LISTING_KEYS.my(params),
     queryFn: () => listingService.getMyListings(params),
   })
+
+export const useRecentlyViewedListings = (params, options = {}) =>
+  useQuery({
+    queryKey: LISTING_KEYS.recentlyViewed(params),
+    queryFn: () => listingService.getRecentlyViewed(params),
+    ...options,
+  })
+
+export const useRecordListingView = () => {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: listingService.recordView,
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['listings', 'recently-viewed'] })
+    },
+  })
+}
 
 export const useCreateListing = () => {
   const qc = useQueryClient()

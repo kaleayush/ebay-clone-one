@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ChevronRight, Shield, Zap, RotateCcw } from 'lucide-react'
-import { useListings } from '../hooks/useListings'
+import { useListings, useRecentlyViewedListings } from '../hooks/useListings'
+import ListingCard from '../components/ListingCard'
 import ListingGrid from '../components/ListingGrid'
 import { ROUTES } from '@/constants/routes'
 import { useAuthStore } from '@/store/authStore'
@@ -35,6 +36,11 @@ export default function HomePage() {
     sortBy: 'updatedAt',
     sortDirection: 'desc',
   })
+  const { data: recentViewedData } = useRecentlyViewedListings(
+    { days: 3, take: 12 },
+    { enabled: isAuthenticated },
+  )
+  const recentViewedItems = recentViewedData?.data || []
 
   return (
     <div className="space-y-10">
@@ -115,6 +121,31 @@ export default function HomePage() {
           ))}
         </div>
       </section>
+
+      {isAuthenticated && recentViewedItems.length > 0 && (
+        <section>
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h2 className="text-xl font-bold text-gray-900">Recently Viewed</h2>
+              <p className="text-sm text-gray-500 mt-0.5">Items you opened recently</p>
+            </div>
+            <Link
+              to={ROUTES.LISTINGS}
+              className="text-sm text-primary hover:text-primary-700 font-medium flex items-center gap-1 transition-colors"
+            >
+              See all <ChevronRight size={14} />
+            </Link>
+          </div>
+
+          <div className="flex gap-4 overflow-x-auto pb-2">
+            {recentViewedItems.map((listing) => (
+              <div key={listing.id} className="w-[180px] shrink-0 sm:w-[210px]">
+                <ListingCard listing={listing} />
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* ── Featured Listings ── */}
       <section>
