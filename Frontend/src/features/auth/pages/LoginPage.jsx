@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom'
 import { Eye, EyeOff } from 'lucide-react'
 import Button from '@/components/common/Button'
 import { useLoginMutation } from '../hooks/useAuthMutations'
+import { authService } from '../services/authService'
 import { ROUTES } from '@/constants/routes'
 
 const emailSchema = z.object({
@@ -18,6 +19,7 @@ const schema = emailSchema.extend({
 export default function LoginPage() {
   const [step, setStep] = useState('email')
   const [showPassword, setShowPassword] = useState(false)
+  const [checkingEmail, setCheckingEmail] = useState(false)
   const {
     register,
     handleSubmit,
@@ -29,15 +31,31 @@ export default function LoginPage() {
 
   const { mutate: login, isPending } = useLoginMutation()
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
     const result = emailSchema.safeParse({ email: getValues('email') })
     if (!result.success) {
       setError('email', { type: 'manual', message: result.error.issues[0].message })
       return
     }
 
-    clearErrors('email')
-    setStep('password')
+    setCheckingEmail(true)
+    try {
+      const response = await authService.checkEmail(result.data.email)
+      if (!response?.data?.exists) {
+        setError('email', { type: 'manual', message: 'No account found with this email' })
+        return
+      }
+
+      clearErrors('email')
+      setStep('password')
+    } catch (error) {
+      setError('email', {
+        type: 'manual',
+        message: error?.response?.data?.message || 'Could not verify this email. Please try again.',
+      })
+    } finally {
+      setCheckingEmail(false)
+    }
   }
 
   const onSubmit = (values) => {
@@ -107,18 +125,12 @@ export default function LoginPage() {
                     Sign in with mobile
                   </Link>
                 </p>
-                <Button type="button" size="lg" className="w-full rounded-full bg-[#3665f3] py-3" onClick={handleContinue}>
+                <Button type="button" loading={checkingEmail} size="lg" className="w-full rounded-full bg-[#3665f3] py-3" onClick={handleContinue}>
                   Continue
                 </Button>
               </>
             ) : (
               <>
-                <div className="rounded-lg bg-gray-50 px-4 py-3 text-sm">
-                  <p className="font-medium truncate">{getValues('email')}</p>
-                  <button type="button" className="mt-1 text-xs underline" onClick={() => setStep('email')}>
-                    Change
-                  </button>
-                </div>
                 <div>
                   <div className="relative">
                     <input

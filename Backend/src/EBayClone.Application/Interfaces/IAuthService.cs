@@ -5,6 +5,7 @@ namespace EBayClone.Application.Interfaces;
 public interface IAuthService
 {
     Task<AuthResponse> RegisterAsync(RegisterRequest request, CancellationToken ct = default);
+    Task<CheckEmailResponse> CheckEmailAsync(CheckEmailRequest request, CancellationToken ct = default);
     Task<AuthResponse> LoginAsync(LoginRequest request, CancellationToken ct = default);
     Task<AuthResponse> RefreshTokenAsync(string refreshToken, CancellationToken ct = default);
     Task RevokeTokenAsync(string refreshToken, CancellationToken ct = default);

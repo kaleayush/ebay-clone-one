@@ -47,6 +47,13 @@ public class AuthService(
         return await IssueTokensAsync(user, ct);
     }
 
+    public async Task<CheckEmailResponse> CheckEmailAsync(CheckEmailRequest request, CancellationToken ct = default)
+    {
+        var email = request.Email.ToLower().Trim();
+        var exists = await userRepository.ExistsAsync(u => u.Email == email, ct);
+        return new CheckEmailResponse(exists);
+    }
+
     public async Task<AuthResponse> LoginAsync(LoginRequest request, CancellationToken ct = default)
     {
         var user = await userRepository.Query()

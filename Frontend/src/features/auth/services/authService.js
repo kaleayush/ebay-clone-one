@@ -3,6 +3,7 @@ import { API_ENDPOINTS } from '@/constants/api'
 
 export const authService = {
   login: (data) => api.post(API_ENDPOINTS.AUTH.LOGIN, data),
+  checkEmail: (email) => api.post(API_ENDPOINTS.AUTH.CHECK_EMAIL, { email }),
   register: (data) => api.post(API_ENDPOINTS.AUTH.REGISTER, data),
   logout: (data) => api.post(API_ENDPOINTS.AUTH.LOGOUT, data),
   refreshToken: (refreshToken) => api.post(API_ENDPOINTS.AUTH.REFRESH, { refreshToken }),

@@ -27,6 +27,14 @@ public class AuthController(IAuthService authService) : ControllerBase
         return Ok(ApiResponse<AuthResponse>.Ok(result, "Login successful"));
     }
 
+    [HttpPost("check-email")]
+    public async Task<ActionResult<ApiResponse<CheckEmailResponse>>> CheckEmail(
+        [FromBody] CheckEmailRequest request, CancellationToken ct)
+    {
+        var result = await authService.CheckEmailAsync(request, ct);
+        return Ok(ApiResponse<CheckEmailResponse>.Ok(result));
+    }
+
     [HttpPost("refresh")]
     public async Task<ActionResult<ApiResponse<AuthResponse>>> Refresh(
         [FromBody] RefreshRequest request, CancellationToken ct)
