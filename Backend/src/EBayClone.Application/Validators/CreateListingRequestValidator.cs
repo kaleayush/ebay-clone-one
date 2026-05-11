@@ -21,6 +21,15 @@ public class CreateListingRequestValidator : AbstractValidator<CreateListingRequ
             .GreaterThan(0).When(x => x.ListingType == ListingType.FixedPrice)
             .WithMessage("Price must be greater than 0");
 
+        RuleFor(x => x.DiscountAmount)
+            .GreaterThanOrEqualTo(0)
+            .WithMessage("Discount amount cannot be negative")
+            .LessThan(x => x.ListingType == ListingType.Auction
+                ? x.BuyItNowPrice ?? x.StartingBid ?? 0
+                : x.Price)
+            .When(x => x.DiscountAmount > 0)
+            .WithMessage("Discount amount must be less than the listing price");
+
         RuleFor(x => x.StartingBid)
             .NotNull().GreaterThan(0)
             .When(x => x.ListingType == ListingType.Auction)
@@ -40,6 +49,14 @@ public class UpdateListingRequestValidator : AbstractValidator<UpdateListingRequ
         RuleFor(x => x.Price)
             .GreaterThan(0).When(x => x.ListingType == ListingType.FixedPrice)
             .WithMessage("Price must be greater than 0");
+        RuleFor(x => x.DiscountAmount)
+            .GreaterThanOrEqualTo(0)
+            .WithMessage("Discount amount cannot be negative")
+            .LessThan(x => x.ListingType == ListingType.Auction
+                ? x.BuyItNowPrice ?? x.StartingBid ?? 0
+                : x.Price)
+            .When(x => x.DiscountAmount > 0)
+            .WithMessage("Discount amount must be less than the listing price");
         RuleFor(x => x.StartingBid)
             .NotNull().GreaterThan(0)
             .When(x => x.ListingType == ListingType.Auction)

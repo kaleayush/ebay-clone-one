@@ -45,10 +45,10 @@ public class ListingService(
         }
 
         if (query.MinPrice.HasValue)
-            q = q.Where(l => l.Price >= query.MinPrice.Value);
+            q = q.Where(l => l.Price - l.DiscountAmount >= query.MinPrice.Value);
 
         if (query.MaxPrice.HasValue)
-            q = q.Where(l => l.Price <= query.MaxPrice.Value);
+            q = q.Where(l => l.Price - l.DiscountAmount <= query.MaxPrice.Value);
 
         if (query.FreeShipping == true)
             q = q.Where(l => l.FreeShipping);
@@ -72,7 +72,9 @@ public class ListingService(
 
         q = query.SortBy?.ToLower() switch
         {
-            "price" => query.SortDirection == "asc" ? q.OrderBy(l => l.Price) : q.OrderByDescending(l => l.Price),
+            "price" => query.SortDirection == "asc"
+                ? q.OrderBy(l => l.Price - l.DiscountAmount)
+                : q.OrderByDescending(l => l.Price - l.DiscountAmount),
             "title" => query.SortDirection == "asc" ? q.OrderBy(l => l.Title) : q.OrderByDescending(l => l.Title),
             "createdat" => query.SortDirection == "asc" ? q.OrderBy(l => l.CreatedAt) : q.OrderByDescending(l => l.CreatedAt),
             "updatedat" => query.SortDirection == "asc" ? q.OrderBy(l => l.UpdatedAt) : q.OrderByDescending(l => l.UpdatedAt),
@@ -223,7 +225,7 @@ public class ListingService(
 
         var priceStats = await q
             .GroupBy(_ => 1)
-            .Select(g => new { Min = g.Min(l => l.Price), Max = g.Max(l => l.Price) })
+            .Select(g => new { Min = g.Min(l => l.Price - l.DiscountAmount), Max = g.Max(l => l.Price - l.DiscountAmount) })
             .FirstOrDefaultAsync(ct);
 
         var priceFacet = priceStats != null
@@ -404,13 +406,13 @@ public class ListingService(
 
     private static void ValidateListingRequest(CreateListingRequest request, IReadOnlyCollection<CategoryAttribute> metadata)
     {
-        ValidateListingBasics(request.ListingType, request.Price, request.Quantity, request.StartingBid, request.AuctionEndAt);
+        ValidateListingBasics(request.ListingType, request.Price, request.Quantity, request.DiscountAmount, request.StartingBid, request.BuyItNowPrice, request.AuctionEndAt);
         ValidateAttributeValues(request.AttributeValues, metadata);
     }
 
     private static void ValidateListingRequest(UpdateListingRequest request, IReadOnlyCollection<CategoryAttribute> metadata)
     {
-        ValidateListingBasics(request.ListingType, request.Price, request.Quantity, request.StartingBid, request.AuctionEndAt);
+        ValidateListingBasics(request.ListingType, request.Price, request.Quantity, request.DiscountAmount, request.StartingBid, request.BuyItNowPrice, request.AuctionEndAt);
         ValidateAttributeValues(request.AttributeValues, metadata);
     }
 
@@ -418,7 +420,9 @@ public class ListingService(
         ListingType listingType,
         decimal price,
         int quantity,
+        decimal discountAmount,
         decimal? startingBid,
+        decimal? buyItNowPrice,
         DateTime? auctionEndAt)
     {
         if (listingType == ListingType.FixedPrice && price <= 0)
@@ -432,6 +436,16 @@ public class ListingService(
             if (auctionEndAt.HasValue && auctionEndAt.Value <= DateTime.UtcNow)
                 throw new InvalidOperationException("Auction end time must be in the future.");
         }
+
+        var effectivePrice = listingType == ListingType.Auction
+            ? buyItNowPrice ?? startingBid ?? 0
+            : price;
+
+        if (discountAmount < 0)
+            throw new InvalidOperationException("Discount amount cannot be negative.");
+
+        if (discountAmount >= effectivePrice)
+            throw new InvalidOperationException("Discount amount must be less than the listing price.");
 
         if (quantity < 1)
             throw new InvalidOperationException("Quantity must be at least 1.");
@@ -555,6 +569,7 @@ public class ListingService(
         listing.Description = request.Description.Trim();
         listing.ListingType = request.ListingType;
         listing.Price = request.ListingType == ListingType.Auction ? request.BuyItNowPrice ?? request.StartingBid!.Value : request.Price;
+        listing.DiscountAmount = request.DiscountAmount;
         listing.StartingBid = request.ListingType == ListingType.Auction ? request.StartingBid : null;
         listing.ReservePrice = request.ListingType == ListingType.Auction ? request.ReservePrice : null;
         listing.BuyItNowPrice = request.ListingType == ListingType.Auction ? request.BuyItNowPrice : null;
@@ -573,6 +588,7 @@ public class ListingService(
         listing.Description = request.Description.Trim();
         listing.ListingType = request.ListingType;
         listing.Price = request.ListingType == ListingType.Auction ? request.BuyItNowPrice ?? request.StartingBid!.Value : request.Price;
+        listing.DiscountAmount = request.DiscountAmount;
         listing.StartingBid = request.ListingType == ListingType.Auction ? request.StartingBid : null;
         listing.ReservePrice = request.ListingType == ListingType.Auction ? request.ReservePrice : null;
         listing.BuyItNowPrice = request.ListingType == ListingType.Auction ? request.BuyItNowPrice : null;
@@ -751,6 +767,8 @@ public class ListingService(
         l.Description,
         (int)l.ListingType,
         l.Price,
+        l.DiscountAmount,
+        GetFinalPrice(l),
         l.StartingBid,
         l.ReservePrice,
         l.BuyItNowPrice,
@@ -778,6 +796,9 @@ public class ListingService(
         l.CreatedAt,
         l.UpdatedAt
     );
+
+    private static decimal GetFinalPrice(Listing listing) =>
+        Math.Max(listing.Price - listing.DiscountAmount, 0);
 
     private static ListingAttributeValueResponse MapAttributeValueToResponse(ListingAttributeValue v) =>
         new(

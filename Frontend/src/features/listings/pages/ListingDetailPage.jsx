@@ -55,6 +55,8 @@ export default function ListingDetailPage() {
 
   const inWishlist = isInWishlist(listing.id)
   const isAvailable = listing.status === ListingStatus.ACTIVE && listing.quantity > 0
+  const finalPrice = listing.finalPrice ?? listing.price
+  const hasDiscount = Number(listing.discountAmount || 0) > 0 && finalPrice < listing.price
   const galleryImages = (listing.images?.length
     ? [...listing.images].sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
     : listing.primaryImageUrl
@@ -148,7 +150,17 @@ export default function ListingDetailPage() {
 
           {/* Price */}
           <div>
-            <p className="text-4xl font-extrabold text-gray-900">{formatCurrency(listing.price)}</p>
+            <div className="flex flex-wrap items-baseline gap-3">
+              <p className="text-4xl font-extrabold text-gray-900">{formatCurrency(finalPrice)}</p>
+              {hasDiscount && (
+                <p className="text-lg font-semibold text-gray-400 line-through">{formatCurrency(listing.price)}</p>
+              )}
+            </div>
+            {hasDiscount && (
+              <p className="text-sm font-semibold text-green-600 mt-1">
+                You save {formatCurrency(listing.discountAmount)}
+              </p>
+            )}
             {listing.listingType === ListingType.AUCTION && (
               <p className="text-sm text-gray-500 mt-1">
                 {ListingTypeLabel[listing.listingType]}

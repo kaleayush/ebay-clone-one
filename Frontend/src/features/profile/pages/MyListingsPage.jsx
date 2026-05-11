@@ -64,6 +64,8 @@ function ListingImage({ listing }) {
 
 function SellerListingCard({ listing, onDelete, onRestore }) {
   const isDeleted = listing.isDeleted
+  const finalPrice = listing.finalPrice ?? listing.price
+  const hasDiscount = Number(listing.discountAmount || 0) > 0 && finalPrice < listing.price
 
   return (
     <article className="card group flex flex-col overflow-hidden transition-all duration-200 hover:shadow-md">
@@ -88,7 +90,12 @@ function SellerListingCard({ listing, onDelete, onRestore }) {
 
         <div className="mt-3 flex items-end justify-between gap-2">
           <div>
-            <p className="text-lg font-bold text-gray-900">{formatCurrency(listing.price)}</p>
+            <div className="flex items-baseline gap-2">
+              <p className="text-lg font-bold leading-none text-gray-900">{formatCurrency(finalPrice)}</p>
+              {hasDiscount && (
+                <p className="text-xs leading-none text-gray-400 line-through">{formatCurrency(listing.price)}</p>
+              )}
+            </div>
             <p className="text-xs text-gray-500">{ListingTypeLabel[listing.listingType]}</p>
           </div>
         </div>

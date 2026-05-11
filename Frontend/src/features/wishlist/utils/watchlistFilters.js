@@ -52,7 +52,7 @@ export const filterAndSortWatchlistItems = ({
         .filter(Boolean)
         .join(' ')
         .toLowerCase()
-      const price = Number(listing.price ?? 0)
+      const price = Number(listing.finalPrice ?? listing.price ?? 0)
 
       if (normalizedQuery && !searchableText.includes(normalizedQuery)) return false
       if (category && listing.categoryName !== category) return false
@@ -63,8 +63,8 @@ export const filterAndSortWatchlistItems = ({
       return true
     })
     .sort((a, b) => {
-      const priceA = Number(a.listing.price ?? 0)
-      const priceB = Number(b.listing.price ?? 0)
+      const priceA = Number(a.listing.finalPrice ?? a.listing.price ?? 0)
+      const priceB = Number(b.listing.finalPrice ?? b.listing.price ?? 0)
       const titleA = a.listing.title ?? ''
       const titleB = b.listing.title ?? ''
       const savedA = getSavedTime(a.listing, a.index)

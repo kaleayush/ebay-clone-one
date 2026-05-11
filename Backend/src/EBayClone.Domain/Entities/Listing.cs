@@ -9,6 +9,7 @@ public class Listing : BaseEntity
     public string Description { get; set; } = string.Empty;
     public ListingType ListingType { get; set; } = ListingType.FixedPrice;
     public decimal Price { get; set; }
+    public decimal DiscountAmount { get; set; } = 0;
     public decimal? StartingBid { get; set; }
     public decimal? ReservePrice { get; set; }
     public decimal? BuyItNowPrice { get; set; }

@@ -59,7 +59,14 @@ export default function AdminListingsPage() {
                   <tr key={listing.id} className="hover:bg-gray-50">
                     <td className="px-4 py-3 font-medium text-gray-900 max-w-xs truncate">{listing.title}</td>
                     <td className="px-4 py-3 text-gray-500">{listing.sellerName}</td>
-                    <td className="px-4 py-3 font-semibold">{formatCurrency(listing.price)}</td>
+                    <td className="px-4 py-3 font-semibold">
+                      <div className="flex items-baseline gap-2">
+                        <span>{formatCurrency(listing.finalPrice ?? listing.price)}</span>
+                        {Number(listing.discountAmount || 0) > 0 && (
+                          <span className="text-xs font-normal text-gray-400 line-through">{formatCurrency(listing.price)}</span>
+                        )}
+                      </div>
+                    </td>
                     <td className="px-4 py-3">
                       <Badge variant={statusVariant[listing.status]}>{ListingStatusLabel[listing.status]}</Badge>
                     </td>

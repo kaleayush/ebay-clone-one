@@ -10,6 +10,7 @@ import Spinner from '@/components/common/Spinner'
 import { AttributeDataType, ListingStatus, ListingType } from '@/constants/enums'
 import { categoryService } from '@/features/categories/services/categoryService'
 import { assetUrl } from '@/utils/assets'
+import { formatCurrency } from '@/utils/formatters'
 import { listingService } from '../services/listingService'
 import DynamicAttributeFields from './DynamicAttributeFields'
 import { isAttributeVisible } from '../utils/attributeVisibility'
@@ -86,6 +87,14 @@ export default function ListingForm({ initialListing, onSubmit, isPending, submi
   const parentCategoryId = watch('parentCategoryId')
   const categoryId = watch('categoryId')
   const listingType = Number(watch('listingType'))
+  const priceValue = Number(watch('price') || 0)
+  const startingBidValue = Number(watch('startingBid') || 0)
+  const buyItNowValue = Number(watch('buyItNowPrice') || 0)
+  const discountAmount = Number(watch('discountAmount') || 0)
+  const basePrice = listingType === ListingType.AUCTION
+    ? (buyItNowValue || startingBidValue)
+    : priceValue
+  const finalPrice = Math.max(basePrice - discountAmount, 0)
 
   const parentCategoryOptions = useMemo(
     () => (treeData?.data || []).map((category) => ({ value: category.id, label: category.name })),
@@ -116,6 +125,7 @@ export default function ListingForm({ initialListing, onSubmit, isPending, submi
       description: initialListing.description,
       listingType: initialListing.listingType ?? ListingType.FIXED_PRICE,
       price: initialListing.price,
+      discountAmount: initialListing.discountAmount || '',
       startingBid: initialListing.startingBid || '',
       reservePrice: initialListing.reservePrice || '',
       buyItNowPrice: initialListing.buyItNowPrice || '',
@@ -181,6 +191,7 @@ export default function ListingForm({ initialListing, onSubmit, isPending, submi
       description: values.description,
       listingType: Number(values.listingType),
       price: Number(values.price || values.startingBid || 0),
+      discountAmount: Number(values.discountAmount || 0),
       startingBid: values.startingBid ? Number(values.startingBid) : null,
       reservePrice: values.reservePrice ? Number(values.reservePrice) : null,
       buyItNowPrice: values.buyItNowPrice ? Number(values.buyItNowPrice) : null,
@@ -274,6 +285,18 @@ export default function ListingForm({ initialListing, onSubmit, isPending, submi
             <Input label="Auction Ends" type="date" className="sm:col-span-1" {...register('auctionEndAt')} />
           </>
         )}
+        <Input
+          label="Discount Amount (INR)"
+          type="number"
+          step="0.01"
+          min="0"
+          error={errors.discountAmount?.message}
+          {...register('discountAmount', { min: { value: 0, message: 'Discount cannot be negative' } })}
+        />
+        <div className="rounded-md border border-gray-200 bg-gray-50 px-3 py-2">
+          <p className="text-xs font-medium text-gray-500">Final Amount</p>
+          <p className="text-base font-bold text-gray-900">{formatCurrency(finalPrice)}</p>
+        </div>
         <Input label="Quantity" type="number" required error={errors.quantity?.message} {...register('quantity', { required: 'Quantity is required', min: { value: 1, message: 'Quantity must be at least 1' } })} />
         <Select
           label="Status"

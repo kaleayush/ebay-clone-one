@@ -9,6 +9,8 @@ import toast from 'react-hot-toast'
 export default function ListingCard({ listing }) {
   const { toggleItem, isInWishlist } = useWishlistStore()
   const inWishlist = isInWishlist(listing.id)
+  const finalPrice = listing.finalPrice ?? listing.price
+  const hasDiscount = Number(listing.discountAmount || 0) > 0 && finalPrice < listing.price
 
   const handleWishlist = (e) => {
     e.preventDefault()
@@ -61,8 +63,11 @@ export default function ListingCard({ listing }) {
         <p className="text-sm text-gray-800 font-medium line-clamp-2 leading-snug mb-auto">
           {listing.title}
         </p>
-        <div className="mt-2">
-          <p className="text-lg font-bold text-gray-900">{formatCurrency(listing.price)}</p>
+        <div className="mt-2 flex items-baseline gap-2">
+          <p className="text-lg font-bold leading-none text-gray-900">{formatCurrency(finalPrice)}</p>
+          {hasDiscount && (
+            <p className="text-xs leading-none text-gray-400 line-through">{formatCurrency(listing.price)}</p>
+          )}
         </div>
       </div>
     </Link>

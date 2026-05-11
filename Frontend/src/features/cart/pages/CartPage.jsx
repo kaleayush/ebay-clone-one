@@ -9,6 +9,8 @@ import api from '@/services/api'
 import { API_ENDPOINTS } from '@/constants/api'
 import toast from 'react-hot-toast'
 
+const listingPrice = (listing) => Number(listing.finalPrice ?? listing.price ?? 0)
+
 export default function CartPage() {
   const { items, totalItems, totalPrice, removeItem, updateQuantity, clearCart } = useCartStore()
   const navigate = useNavigate()
@@ -60,7 +62,12 @@ export default function CartPage() {
 
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-gray-900 line-clamp-2">{item.listing.title}</p>
-                <p className="text-base font-bold text-gray-900 mt-1">{formatCurrency(item.listing.price)}</p>
+                <div className="mt-1 flex items-baseline gap-2">
+                  <p className="text-base font-bold text-gray-900">{formatCurrency(listingPrice(item.listing))}</p>
+                  {Number(item.listing.discountAmount || 0) > 0 && (
+                    <p className="text-xs text-gray-400 line-through">{formatCurrency(item.listing.price)}</p>
+                  )}
+                </div>
 
                 <div className="flex items-center gap-3 mt-2">
                   <div className="flex items-center border border-gray-300 rounded-md">
@@ -82,7 +89,7 @@ export default function CartPage() {
               </div>
 
               <div className="text-right flex-shrink-0">
-                <p className="font-bold text-gray-900">{formatCurrency(item.listing.price * item.quantity)}</p>
+                <p className="font-bold text-gray-900">{formatCurrency(listingPrice(item.listing) * item.quantity)}</p>
               </div>
             </div>
           ))}

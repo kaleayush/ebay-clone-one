@@ -82,7 +82,7 @@ public class OrderService(
                 ListingId = listing.Id,
                 ListingTitle = listing.Title,
                 Quantity = item.Quantity,
-                UnitPrice = listing.Price,
+                UnitPrice = GetFinalPrice(listing),
             });
 
             listing.Quantity -= item.Quantity;
@@ -122,6 +122,9 @@ public class OrderService(
 
     private static string GenerateOrderNumber() =>
         $"ORD-{DateTime.UtcNow:yyyyMMdd}-{Guid.NewGuid().ToString()[..6].ToUpper()}";
+
+    private static decimal GetFinalPrice(Listing listing) =>
+        Math.Max(listing.Price - listing.DiscountAmount, 0);
 
     private static OrderResponse MapToResponse(Order o) => new(
         o.Id, o.OrderNumber, o.TotalAmount, (int)o.Status, o.ShippingAddress,

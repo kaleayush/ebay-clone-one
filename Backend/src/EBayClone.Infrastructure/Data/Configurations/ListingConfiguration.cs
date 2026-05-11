@@ -13,6 +13,7 @@ public class ListingConfiguration : IEntityTypeConfiguration<Listing>
         builder.Property(l => l.Title).IsRequired().HasMaxLength(80);
         builder.Property(l => l.Description).IsRequired();
         builder.Property(l => l.Price).HasPrecision(18, 2);
+        builder.Property(l => l.DiscountAmount).HasPrecision(18, 2);
         builder.Property(l => l.StartingBid).HasPrecision(18, 2);
         builder.Property(l => l.ReservePrice).HasPrecision(18, 2);
         builder.Property(l => l.BuyItNowPrice).HasPrecision(18, 2);

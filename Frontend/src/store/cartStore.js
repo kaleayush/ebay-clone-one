@@ -1,6 +1,8 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
+const listingPrice = (listing) => Number(listing.finalPrice ?? listing.price ?? 0)
+
 export const useCartStore = create(
   persist(
     (set, get) => ({
@@ -26,7 +28,7 @@ export const useCartStore = create(
         set({
           items: newItems,
           totalItems: newItems.reduce((sum, i) => sum + i.quantity, 0),
-          totalPrice: newItems.reduce((sum, i) => sum + i.listing.price * i.quantity, 0),
+          totalPrice: newItems.reduce((sum, i) => sum + listingPrice(i.listing) * i.quantity, 0),
         })
       },
 
@@ -35,7 +37,7 @@ export const useCartStore = create(
         set({
           items: newItems,
           totalItems: newItems.reduce((sum, i) => sum + i.quantity, 0),
-          totalPrice: newItems.reduce((sum, i) => sum + i.listing.price * i.quantity, 0),
+          totalPrice: newItems.reduce((sum, i) => sum + listingPrice(i.listing) * i.quantity, 0),
         })
       },
 
@@ -50,7 +52,7 @@ export const useCartStore = create(
         set({
           items: newItems,
           totalItems: newItems.reduce((sum, i) => sum + i.quantity, 0),
-          totalPrice: newItems.reduce((sum, i) => sum + i.listing.price * i.quantity, 0),
+          totalPrice: newItems.reduce((sum, i) => sum + listingPrice(i.listing) * i.quantity, 0),
         })
       },
 

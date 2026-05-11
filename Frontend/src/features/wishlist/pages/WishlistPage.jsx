@@ -380,6 +380,9 @@ function WatchlistFilters({
 }
 
 function WatchlistCard({ listing, onMoveToCart, onRemove }) {
+  const finalPrice = listing.finalPrice ?? listing.price
+  const hasDiscount = Number(listing.discountAmount || 0) > 0 && finalPrice < listing.price
+
   return (
     <div className="card flex flex-col group overflow-hidden">
       <Link
@@ -423,7 +426,12 @@ function WatchlistCard({ listing, onMoveToCart, onRemove }) {
         >
           {listing.title}
         </Link>
-        <p className="text-xl font-bold text-gray-900 mb-4">{formatCurrency(listing.price)}</p>
+        <div className="mb-4 flex items-baseline gap-2">
+          <p className="text-xl font-bold leading-none text-gray-900">{formatCurrency(finalPrice)}</p>
+          {hasDiscount && (
+            <p className="text-sm leading-none text-gray-400 line-through">{formatCurrency(listing.price)}</p>
+          )}
+        </div>
 
         <div className="mt-auto flex gap-2">
           <button

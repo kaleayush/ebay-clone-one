@@ -25,6 +25,8 @@ public record ListingResponse(
     string Description,
     int ListingType,
     decimal Price,
+    decimal DiscountAmount,
+    decimal FinalPrice,
     decimal? StartingBid,
     decimal? ReservePrice,
     decimal? BuyItNowPrice,
