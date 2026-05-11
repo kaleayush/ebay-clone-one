@@ -32,6 +32,8 @@ export default function HomePage() {
     pageSize: 20,
     status: 1,
     excludeSellerId: isAuthenticated ? user?.id : undefined,
+    sortBy: 'updatedAt',
+    sortDirection: 'desc',
   })
 
   return (
@@ -140,7 +142,7 @@ export default function HomePage() {
           <p className="text-red-100 text-sm mt-1">Fresh listings added every hour</p>
         </div>
         <Link
-          to={`${ROUTES.LISTINGS}?sortBy=createdAt&sortDirection=desc`}
+          to={`${ROUTES.LISTINGS}?sortBy=updatedAt&sortDirection=desc`}
           className="shrink-0 bg-white text-secondary font-bold px-6 py-3 rounded-xl hover:bg-red-50 transition-colors shadow text-sm"
         >
           Shop Now →

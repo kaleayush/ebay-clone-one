@@ -4,7 +4,8 @@ import { formatCurrency } from '@/utils/formatters'
 import CategoryFilter from './CategoryFilter'
 
 const SORT_OPTIONS = [
-  { label: 'Newest First', value: 'createdAt_desc' },
+  { label: 'Recently Updated', value: 'updatedAt_desc' },
+  { label: 'Newest Listed', value: 'createdAt_desc' },
   { label: 'Price: Low to High', value: 'price_asc' },
   { label: 'Price: High to Low', value: 'price_desc' },
   { label: 'Title A–Z', value: 'title_asc' },

@@ -67,7 +67,7 @@ public record ListingQuery(
     Guid? SellerId = null,
     Guid? ExcludeSellerId = null,
     bool IncludeDeleted = false,
-    string SortBy = "createdAt",
+    string SortBy = "updatedAt",
     string SortDirection = "desc",
     Dictionary<string, string>? AttributeFilters = null
 );

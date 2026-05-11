@@ -75,7 +75,8 @@ public class ListingService(
             "price" => query.SortDirection == "asc" ? q.OrderBy(l => l.Price) : q.OrderByDescending(l => l.Price),
             "title" => query.SortDirection == "asc" ? q.OrderBy(l => l.Title) : q.OrderByDescending(l => l.Title),
             "createdat" => query.SortDirection == "asc" ? q.OrderBy(l => l.CreatedAt) : q.OrderByDescending(l => l.CreatedAt),
-            _ => query.SortDirection == "asc" ? q.OrderBy(l => l.CreatedAt) : q.OrderByDescending(l => l.CreatedAt),
+            "updatedat" => query.SortDirection == "asc" ? q.OrderBy(l => l.UpdatedAt) : q.OrderByDescending(l => l.UpdatedAt),
+            _ => query.SortDirection == "asc" ? q.OrderBy(l => l.UpdatedAt) : q.OrderByDescending(l => l.UpdatedAt),
         };
 
         var total = await q.CountAsync(ct);
@@ -151,6 +152,7 @@ public class ListingService(
         ApplyListingRequest(listing, request);
         await ReplaceAttributeValuesAsync(listing, request.AttributeValues, metadata, ct);
         await ReplaceImagesAsync(listing, request.Images, ct);
+        listing.UpdatedAt = DateTime.UtcNow;
 
         await listingRepository.SaveChangesAsync(ct);
 

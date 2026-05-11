@@ -29,7 +29,8 @@ const statusVariant = {
 }
 
 const sortOptions = [
-  { value: 'createdAt_desc', label: 'Newest first' },
+  { value: 'updatedAt_desc', label: 'Recently updated' },
+  { value: 'createdAt_desc', label: 'Newest listed' },
   { value: 'createdAt_asc', label: 'Oldest first' },
   { value: 'price_desc', label: 'Price: high to low' },
   { value: 'price_asc', label: 'Price: low to high' },
@@ -144,7 +145,7 @@ export default function MyListingsPage() {
   const [listingType, setListingType] = useState('')
   const [freeShipping, setFreeShipping] = useState('')
   const [includeDeleted, setIncludeDeleted] = useState(false)
-  const [sortKey, setSortKey] = useState('createdAt_desc')
+  const [sortKey, setSortKey] = useState('updatedAt_desc')
   const debouncedSearch = useDebounce(search, 350)
   const [sortBy, sortDirection] = sortKey.split('_')
 
@@ -178,7 +179,7 @@ export default function MyListingsPage() {
     setListingType('')
     setFreeShipping('')
     setIncludeDeleted(false)
-    setSortKey('createdAt_desc')
+    setSortKey('updatedAt_desc')
     setPageSize(12)
     setPage(1)
   }
@@ -189,7 +190,7 @@ export default function MyListingsPage() {
     listingType,
     freeShipping,
     includeDeleted,
-    sortKey !== 'createdAt_desc',
+    sortKey !== 'updatedAt_desc',
     pageSize !== 12,
   ].filter(Boolean).length
 

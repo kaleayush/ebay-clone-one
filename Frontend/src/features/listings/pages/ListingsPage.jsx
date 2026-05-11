@@ -47,7 +47,7 @@ export default function ListingsPage() {
   const [page, setPage] = useState(1)
   const [minPrice, setMinPrice] = useState('')
   const [maxPrice, setMaxPrice] = useState('')
-  const [sortKey, setSortKey] = useState('createdAt_desc')
+  const [sortKey, setSortKey] = useState('updatedAt_desc')
   const [freeShipping, setFreeShipping] = useState(false)
   const [listingType, setListingType] = useState('')
   const [attributeFilters, setAttributeFilters] = useState({})
@@ -121,7 +121,7 @@ export default function ListingsPage() {
   const handleReset = () => {
     setMinPrice('')
     setMaxPrice('')
-    setSortKey('createdAt_desc')
+    setSortKey('updatedAt_desc')
     setFreeShipping(false)
     setListingType('')
     setAttributeFilters({})
