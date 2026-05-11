@@ -65,6 +65,7 @@ public record ListingQuery(
     ListingStatus? Status = null,
     ListingType? ListingType = null,
     Guid? SellerId = null,
+    Guid? ExcludeSellerId = null,
     bool IncludeDeleted = false,
     string SortBy = "createdAt",
     string SortDirection = "desc",

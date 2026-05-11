@@ -10,6 +10,7 @@ import CategoryBrowserGrid from '../components/CategoryBrowserGrid'
 import Breadcrumbs from '@/components/common/Breadcrumbs'
 import { ROUTES } from '@/constants/routes'
 import { categoryService } from '@/features/categories/services/categoryService'
+import { useAuthStore } from '@/store/authStore'
 
 function findInTree(cats, id) {
   for (const cat of cats) {
@@ -36,6 +37,8 @@ function getCategoryPath(cats, id, path = []) {
 
 export default function ListingsPage() {
   const [searchParams, setSearchParams] = useSearchParams()
+  const user = useAuthStore((state) => state.user)
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
 
   const q = searchParams.get('q') || ''
   const categoryId = searchParams.get('categoryId') || ''
@@ -78,6 +81,7 @@ export default function ListingsPage() {
     maxPrice: maxPrice || undefined,
     freeShipping: freeShipping || undefined,
     listingType: listingType !== '' ? Number(listingType) : undefined,
+    excludeSellerId: isAuthenticated ? user?.id : undefined,
     sortBy,
     sortDirection: sortDir,
     attributeFilters: Object.keys(attributeFilters).length > 0 ? attributeFilters : undefined,

@@ -4,6 +4,7 @@ import { ChevronRight, Shield, Zap, RotateCcw } from 'lucide-react'
 import { useListings } from '../hooks/useListings'
 import ListingGrid from '../components/ListingGrid'
 import { ROUTES } from '@/constants/routes'
+import { useAuthStore } from '@/store/authStore'
 
 const CATEGORIES = [
   { label: 'Electronics', emoji: '📱', value: 'electronics', bg: 'bg-blue-50 hover:bg-blue-100 border-blue-100' },
@@ -24,7 +25,14 @@ const TRUST_BADGES = [
 
 export default function HomePage() {
   const [page, setPage] = useState(1)
-  const { data, isLoading } = useListings({ page, pageSize: 20, status: 1 })
+  const user = useAuthStore((state) => state.user)
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
+  const { data, isLoading } = useListings({
+    page,
+    pageSize: 20,
+    status: 1,
+    excludeSellerId: isAuthenticated ? user?.id : undefined,
+  })
 
   return (
     <div className="space-y-10">

@@ -56,6 +56,9 @@ public class ListingService(
         if (query.SellerId.HasValue)
             q = q.Where(l => l.SellerId == query.SellerId.Value);
 
+        if (query.ExcludeSellerId.HasValue)
+            q = q.Where(l => l.SellerId != query.ExcludeSellerId.Value);
+
         if (query.AttributeFilters?.Count > 0)
         {
             foreach (var (attrIdStr, value) in query.AttributeFilters)
