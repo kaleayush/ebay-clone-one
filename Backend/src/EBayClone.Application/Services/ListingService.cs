@@ -31,11 +31,16 @@ public class ListingService(
         if (!string.IsNullOrWhiteSpace(query.Search))
             q = q.Where(l => l.Title.Contains(query.Search) || l.Description.Contains(query.Search));
 
-        if (!string.IsNullOrWhiteSpace(query.Category))
-            q = q.Where(l => l.Category != null && l.Category.Name.Contains(query.Category));
-
         if (query.CategoryId.HasValue)
-            q = q.Where(l => l.CategoryId == query.CategoryId.Value);
+        {
+            var categoryIds = await GetCategoryAndDescendantIdsAsync(query.CategoryId.Value, ct);
+            q = FilterByCategoryScope(q, categoryIds);
+        }
+        else if (!string.IsNullOrWhiteSpace(query.Category))
+        {
+            var categoryIds = await GetCategoryAndDescendantIdsByNameAsync(query.Category, ct);
+            q = FilterByCategoryScope(q, categoryIds);
+        }
 
         if (query.MinPrice.HasValue)
             q = q.Where(l => l.Price >= query.MinPrice.Value);
@@ -64,7 +69,8 @@ public class ListingService(
         {
             "price" => query.SortDirection == "asc" ? q.OrderBy(l => l.Price) : q.OrderByDescending(l => l.Price),
             "title" => query.SortDirection == "asc" ? q.OrderBy(l => l.Title) : q.OrderByDescending(l => l.Title),
-            _ => q.OrderByDescending(l => l.CreatedAt),
+            "createdat" => query.SortDirection == "asc" ? q.OrderBy(l => l.CreatedAt) : q.OrderByDescending(l => l.CreatedAt),
+            _ => query.SortDirection == "asc" ? q.OrderBy(l => l.CreatedAt) : q.OrderByDescending(l => l.CreatedAt),
         };
 
         var total = await q.CountAsync(ct);
@@ -99,7 +105,7 @@ public class ListingService(
             ?? throw new KeyNotFoundException("Seller not found.");
 
         var metadata = request.CategoryId.HasValue
-            ? await GetCategoryAttributesAsync(request.CategoryId.Value, ct)
+            ? await GetCategoryAttributesAsync(request.CategoryId.Value, "created", ct)
             : [];
 
         ValidateListingRequest(request, metadata);
@@ -132,7 +138,7 @@ public class ListingService(
             throw new UnauthorizedAccessException("You can only edit your own listings.");
 
         var metadata = request.CategoryId.HasValue
-            ? await GetCategoryAttributesAsync(request.CategoryId.Value, ct)
+            ? await GetCategoryAttributesAsync(request.CategoryId.Value, "updated", ct)
             : [];
 
         ValidateListingRequest(request, metadata);
@@ -141,7 +147,6 @@ public class ListingService(
         ReplaceAttributeValues(listing, request.AttributeValues, metadata);
         ReplaceImages(listing, request.Images);
 
-        listingRepository.Update(listing);
         await listingRepository.SaveChangesAsync(ct);
 
         return await GetByIdAsync(listing.Id, ct);
@@ -202,8 +207,12 @@ public class ListingService(
         if (!string.IsNullOrWhiteSpace(search))
             q = q.Where(l => l.Title.Contains(search) || l.Description.Contains(search));
 
+        IReadOnlyCollection<Guid> categoryScopeIds = [];
         if (categoryId.HasValue)
-            q = q.Where(l => l.CategoryId == categoryId.Value);
+        {
+            categoryScopeIds = await GetCategoryAndDescendantIdsAsync(categoryId.Value, ct);
+            q = FilterByCategoryScope(q, categoryScopeIds);
+        }
 
         var priceStats = await q
             .GroupBy(_ => 1)
@@ -234,9 +243,13 @@ public class ListingService(
 
                 var filterableAttrIds = filterableAttrs.Select(a => a.Id).ToHashSet();
 
-                var allValueCounts = await listingRepository.Query()
+                var allValueCountsQuery = listingRepository.Query()
                     .AsNoTracking()
-                    .Where(l => l.Status == ListingStatus.Active && l.CategoryId == categoryId.Value)
+                    .Where(l => l.Status == ListingStatus.Active);
+
+                allValueCountsQuery = FilterByCategoryScope(allValueCountsQuery, categoryScopeIds);
+
+                var allValueCounts = await allValueCountsQuery
                     .SelectMany(l => l.AttributeValues
                         .Where(v => !v.IsDeleted && filterableAttrIds.Contains(v.CategoryAttributeId)))
                     .GroupBy(v => new { v.CategoryAttributeId, v.Value })
@@ -294,21 +307,89 @@ public class ListingService(
                     .ThenInclude(a => a.Options);
     }
 
-    private async Task<IReadOnlyCollection<CategoryAttribute>> GetCategoryAttributesAsync(Guid categoryId, CancellationToken ct)
+    private async Task<IReadOnlyCollection<Guid>> GetCategoryAndDescendantIdsAsync(Guid categoryId, CancellationToken ct)
     {
-        var categories = await categoryRepository.Query()
+        var categories = await GetCategoryLookupAsync(ct);
+        return ExpandCategoryScope(categories, [categoryId]);
+    }
+
+    private async Task<IReadOnlyCollection<Guid>> GetCategoryAndDescendantIdsByNameAsync(string categoryName, CancellationToken ct)
+    {
+        var trimmed = categoryName.Trim();
+        var categories = await GetCategoryLookupAsync(ct);
+        var matchingIds = categories
+            .Where(c => c.Name.Contains(trimmed, StringComparison.OrdinalIgnoreCase))
+            .Select(c => c.Id)
+            .ToList();
+
+        return ExpandCategoryScope(categories, matchingIds);
+    }
+
+    private async Task<List<CategoryLookupItem>> GetCategoryLookupAsync(CancellationToken ct)
+    {
+        return await categoryRepository.Query()
+            .AsNoTracking()
+            .Select(c => new CategoryLookupItem(c.Id, c.ParentCategoryId, c.Name))
+            .ToListAsync(ct);
+    }
+
+    private static IReadOnlyCollection<Guid> ExpandCategoryScope(
+        IReadOnlyCollection<CategoryLookupItem> categories,
+        IEnumerable<Guid> rootIds)
+    {
+        var result = new HashSet<Guid>();
+        var queue = new Queue<Guid>();
+
+        foreach (var rootId in rootIds)
+        {
+            if (categories.Any(c => c.Id == rootId) && result.Add(rootId))
+                queue.Enqueue(rootId);
+        }
+
+        while (queue.Count > 0)
+        {
+            var currentId = queue.Dequeue();
+            foreach (var child in categories.Where(c => c.ParentCategoryId == currentId))
+            {
+                if (result.Add(child.Id))
+                    queue.Enqueue(child.Id);
+            }
+        }
+
+        return result.ToList();
+    }
+
+    private static IQueryable<Listing> FilterByCategoryScope(IQueryable<Listing> query, IReadOnlyCollection<Guid> categoryIds)
+    {
+        return categoryIds.Count == 0
+            ? query.Where(_ => false)
+            : query.Where(l => l.CategoryId.HasValue && categoryIds.Contains(l.CategoryId.Value));
+    }
+
+    private sealed record CategoryLookupItem(Guid Id, Guid? ParentCategoryId, string Name);
+
+    private async Task<IReadOnlyCollection<CategoryAttribute>> GetCategoryAttributesAsync(
+        Guid categoryId,
+        string operation,
+        CancellationToken ct)
+    {
+        var category = await categoryRepository.Query()
             .Include(c => c.Attributes.OrderBy(a => a.SortOrder).ThenBy(a => a.DisplayName))
                 .ThenInclude(a => a.Options.OrderBy(o => o.SortOrder).ThenBy(o => o.Label))
             .AsNoTracking()
-            .ToListAsync(ct);
-
-        var category = categories.FirstOrDefault(c => c.Id == categoryId)
+            .FirstOrDefaultAsync(c => c.Id == categoryId, ct)
             ?? throw new KeyNotFoundException($"Category {categoryId} not found.");
 
-        if (!category.ParentCategoryId.HasValue || categories.Any(c => c.ParentCategoryId == category.Id))
-            throw new InvalidOperationException("Listings must be created in a child category that has its own form.");
+        var hasChildren = await categoryRepository.Query()
+            .AsNoTracking()
+            .AnyAsync(c => c.ParentCategoryId == category.Id, ct);
+
+        if (!category.ParentCategoryId.HasValue || hasChildren)
+            throw new InvalidOperationException(
+                $"Listings must be {operation} in a final child category that has its own form. Please select a subcategory, not a parent category.");
 
         return category.Attributes
+            .Where(a => !a.IsDeleted)
             .OrderBy(a => a.SortOrder)
             .ThenBy(a => a.DisplayName)
             .ToList();
@@ -504,14 +585,45 @@ public class ListingService(
         IReadOnlyCollection<ListingAttributeValueRequest>? requests,
         IReadOnlyCollection<CategoryAttribute> metadata)
     {
-        foreach (var value in listing.AttributeValues)
+        var validIds = metadata.Select(a => a.Id).ToHashSet();
+        var requestedValues = (requests ?? [])
+            .Where(r => validIds.Contains(r.CategoryAttributeId) && !string.IsNullOrWhiteSpace(r.Value))
+            .GroupBy(r => r.CategoryAttributeId)
+            .ToDictionary(g => g.Key, g => g.Last().Value!.Trim());
+
+        foreach (var value in listing.AttributeValues.Where(v => !v.IsDeleted))
         {
-            value.IsDeleted = true;
-            value.DeletedAt = DateTime.UtcNow;
+            if (requestedValues.TryGetValue(value.CategoryAttributeId, out var requestedValue))
+            {
+                value.Value = requestedValue;
+                value.DeletedAt = null;
+            }
+            else
+            {
+                value.IsDeleted = true;
+                value.DeletedAt = DateTime.UtcNow;
+            }
+
             value.UpdatedAt = DateTime.UtcNow;
         }
 
-        ApplyAttributeValues(listing, requests, metadata);
+        var existingIds = listing.AttributeValues
+            .Where(v => !v.IsDeleted)
+            .Select(v => v.CategoryAttributeId)
+            .ToHashSet();
+
+        foreach (var (attributeId, requestedValue) in requestedValues)
+        {
+            if (existingIds.Contains(attributeId))
+                continue;
+
+            listing.AttributeValues.Add(new ListingAttributeValue
+            {
+                ListingId = listing.Id,
+                CategoryAttributeId = attributeId,
+                Value = requestedValue,
+            });
+        }
     }
 
     private static void ApplyAttributeValues(
@@ -527,6 +639,7 @@ public class ListingService(
 
             listing.AttributeValues.Add(new ListingAttributeValue
             {
+                ListingId = listing.Id,
                 CategoryAttributeId = request.CategoryAttributeId,
                 Value = request.Value.Trim(),
             });
@@ -535,14 +648,63 @@ public class ListingService(
 
     private static void ReplaceImages(Listing listing, IReadOnlyCollection<ListingImageRequest>? requests)
     {
-        foreach (var image in listing.Images)
+        var requestedImages = (requests ?? [])
+            .Where(r => !string.IsNullOrWhiteSpace(r.Url))
+            .Select((request, index) => new
+            {
+                Url = request.Url.Trim(),
+                AltText = request.AltText?.Trim(),
+                SortOrder = request.SortOrder,
+                Index = index,
+            })
+            .GroupBy(r => r.Url)
+            .Select(g => g.Last())
+            .OrderBy(r => r.SortOrder)
+            .ThenBy(r => r.Index)
+            .ToList();
+
+        var existingByUrl = listing.Images
+            .Where(i => !i.IsDeleted)
+            .GroupBy(i => i.Url)
+            .ToDictionary(g => g.Key, g => g.First());
+
+        var requestedUrls = requestedImages.Select(i => i.Url).ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var image in listing.Images.Where(i => !i.IsDeleted))
         {
+            if (requestedUrls.Contains(image.Url))
+                continue;
+
             image.IsDeleted = true;
             image.DeletedAt = DateTime.UtcNow;
             image.UpdatedAt = DateTime.UtcNow;
         }
 
-        ApplyImages(listing, requests);
+        foreach (var request in requestedImages)
+        {
+            if (existingByUrl.TryGetValue(request.Url, out var existing))
+            {
+                existing.AltText = request.AltText;
+                existing.SortOrder = request.SortOrder;
+                existing.UpdatedAt = DateTime.UtcNow;
+            }
+            else
+            {
+                listing.Images.Add(new ListingImage
+                {
+                    ListingId = listing.Id,
+                    Url = request.Url,
+                    AltText = request.AltText,
+                    SortOrder = request.SortOrder,
+                });
+            }
+        }
+
+        listing.PrimaryImageUrl = listing.Images
+            .Where(i => !i.IsDeleted)
+            .OrderBy(i => i.SortOrder)
+            .Select(i => i.Url)
+            .FirstOrDefault();
     }
 
     private static void ApplyImages(Listing listing, IReadOnlyCollection<ListingImageRequest>? requests)
@@ -554,6 +716,7 @@ public class ListingService(
 
             listing.Images.Add(new ListingImage
             {
+                ListingId = listing.Id,
                 Url = request.Url.Trim(),
                 AltText = request.AltText?.Trim(),
                 SortOrder = request.SortOrder,
@@ -589,7 +752,7 @@ public class ListingService(
         l.Category?.Name,
         l.AttributeValues
             .Where(v => !v.IsDeleted)
-            .OrderBy(v => v.CategoryAttribute.SortOrder)
+            .OrderBy(v => v.CategoryAttribute?.SortOrder ?? int.MaxValue)
             .Select(MapAttributeValueToResponse)
             .ToList(),
         l.Images
@@ -604,14 +767,17 @@ public class ListingService(
     private static ListingAttributeValueResponse MapAttributeValueToResponse(ListingAttributeValue v) =>
         new(
             v.CategoryAttributeId,
-            v.CategoryAttribute.Name,
-            v.CategoryAttribute.DisplayName,
-            (int)v.CategoryAttribute.DataType,
+            v.CategoryAttribute?.Name ?? v.CategoryAttributeId.ToString(),
+            v.CategoryAttribute?.DisplayName ?? "Attribute",
+            v.CategoryAttribute is null ? (int)AttributeDataType.Text : (int)v.CategoryAttribute.DataType,
             v.Value,
             GetDisplayValue(v));
 
     private static string? GetDisplayValue(ListingAttributeValue v)
     {
+        if (v.CategoryAttribute is null)
+            return v.Value;
+
         if (v.CategoryAttribute.DataType == AttributeDataType.MultiSelect)
         {
             var selected = ParseMultiSelect(v.Value).ToHashSet(StringComparer.OrdinalIgnoreCase);

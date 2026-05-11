@@ -63,7 +63,7 @@ export default function ListingsPage() {
 
   const selectedNode = categoryId ? findInTree(categoryTree, categoryId) : null
   const subCategories = selectedNode?.children ?? []
-  const isBrowsingCategory = !!categoryId && subCategories.length > 0
+  const isBrowsingCategory = !!categoryId && !q && subCategories.length > 0
   const categoryPath = categoryId ? (getCategoryPath(categoryTree, categoryId) ?? []) : []
 
   // ── Listings hooks (always called — disabled when browsing categories) ─
@@ -143,9 +143,11 @@ export default function ListingsPage() {
       ? [{ label: 'All Listings', to: ROUTES.LISTINGS }, { label: `"${q}"` }]
       : [{ label: 'All Listings' }]
 
-  const pageTitle = selectedNode?.name
-    ?? (categoryName ? decodeURIComponent(categoryName) : null)
-    ?? (q ? `Results for "${q}"` : 'All Listings')
+  const pageTitle = q && selectedNode
+    ? `Results for "${q}" in ${selectedNode.name}`
+    : selectedNode?.name
+      ?? (categoryName ? decodeURIComponent(categoryName) : null)
+      ?? (q ? `Results for "${q}"` : 'All Listings')
 
   // ── Category browser mode ─────────────────────────────────────────────
   if (isBrowsingCategory) {

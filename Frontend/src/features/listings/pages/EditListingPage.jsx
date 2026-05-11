@@ -16,7 +16,10 @@ export default function EditListingPage() {
 
   const { mutate: update, isPending } = useMutation({
     mutationFn: (values) => listingService.update(id, values),
-    onSuccess: () => {
+    onSuccess: (response) => {
+      if (response?.data) {
+        qc.setQueryData(LISTING_KEYS.detail(id), response)
+      }
       qc.invalidateQueries({ queryKey: LISTING_KEYS.all })
       toast.success('Listing updated')
       navigate(ROUTES.MY_LISTINGS)

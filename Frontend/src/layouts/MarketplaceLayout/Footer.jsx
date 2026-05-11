@@ -78,11 +78,10 @@ export default function Footer() {
             <span className="text-ebay-red   font-extrabold text-xl">B</span>
             <span className="text-ebay-yellow font-extrabold text-xl">a</span>
             <span className="text-ebay-green  font-extrabold text-xl">y</span>
-            <span className="text-gray-600 font-semibold ml-1">Clone</span>
           </Link>
 
           <p className="text-xs text-gray-400 order-last md:order-none">
-            © {new Date().getFullYear()} eBay Clone. All rights reserved.
+            © {new Date().getFullYear()} eBay. All rights reserved.
           </p>
 
           {/* Social links */}

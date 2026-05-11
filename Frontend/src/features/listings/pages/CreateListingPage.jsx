@@ -19,7 +19,7 @@ export default function CreateListingPage() {
       <div className="mb-6 flex items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Create a Listing</h1>
-          <p className="text-sm text-gray-500 mt-1">Choose a child category to load the right listing form.</p>
+          <p className="text-sm text-gray-500 mt-1">Choose a parent category, then a child category to load the right listing form.</p>
         </div>
         <Button variant="ghost" onClick={() => navigate(ROUTES.MY_LISTINGS)}>Cancel</Button>
       </div>

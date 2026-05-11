@@ -22,6 +22,19 @@ const flattenLeafCategories = (items = [], parentLabel = '') =>
       : [{ value: item.id, label }]
   })
 
+const findCategoryPath = (items = [], categoryId, path = []) => {
+  for (const item of items) {
+    const nextPath = [...path, item]
+    if (item.id === categoryId) return nextPath
+    if (item.children?.length) {
+      const found = findCategoryPath(item.children, categoryId, nextPath)
+      if (found) return found
+    }
+  }
+
+  return null
+}
+
 const toDateInput = (value) => value ? String(value).slice(0, 10) : ''
 
 const buildAttributeDefaults = (listing) => {
@@ -51,12 +64,11 @@ export default function ListingForm({ initialListing, onSubmit, isPending, submi
     queryFn: categoryService.getTree,
   })
 
-  const categoryOptions = useMemo(() => flattenLeafCategories(treeData?.data || []), [treeData])
-
   const {
     register,
     handleSubmit,
     reset,
+    setValue,
     watch,
     formState: { errors },
   } = useForm({
@@ -65,12 +77,25 @@ export default function ListingForm({ initialListing, onSubmit, isPending, submi
       status: ListingStatus.ACTIVE,
       quantity: 1,
       freeShipping: false,
+      parentCategoryId: '',
+      categoryId: '',
       attributes: {},
     },
   })
 
+  const parentCategoryId = watch('parentCategoryId')
   const categoryId = watch('categoryId')
   const listingType = Number(watch('listingType'))
+
+  const parentCategoryOptions = useMemo(
+    () => (treeData?.data || []).map((category) => ({ value: category.id, label: category.name })),
+    [treeData],
+  )
+
+  const childCategoryOptions = useMemo(() => {
+    const parent = (treeData?.data || []).find((category) => category.id === parentCategoryId)
+    return flattenLeafCategories(parent?.children || [])
+  }, [parentCategoryId, treeData])
 
   const { data: metadataData, isLoading: loadingMetadata } = useQuery({
     queryKey: ['categories', 'metadata', categoryId],
@@ -83,6 +108,9 @@ export default function ListingForm({ initialListing, onSubmit, isPending, submi
   useEffect(() => {
     if (!initialListing) return
 
+    const categoryPath = findCategoryPath(treeData?.data || [], initialListing.categoryId)
+    const parentCategoryId = categoryPath?.[0]?.id || ''
+
     reset({
       title: initialListing.title,
       description: initialListing.description,
@@ -94,12 +122,24 @@ export default function ListingForm({ initialListing, onSubmit, isPending, submi
       auctionEndAt: toDateInput(initialListing.auctionEndAt),
       quantity: initialListing.quantity,
       freeShipping: initialListing.freeShipping,
+      parentCategoryId,
       categoryId: initialListing.categoryId || '',
       status: initialListing.status ?? ListingStatus.ACTIVE,
       attributes: buildAttributeDefaults(initialListing),
     })
     setImages(initialListing.images || [])
-  }, [initialListing, reset])
+  }, [initialListing, reset, treeData])
+
+  const handleParentCategoryChange = (event) => {
+    setValue('parentCategoryId', event.target.value, { shouldDirty: true, shouldValidate: true })
+    setValue('categoryId', '', { shouldDirty: true, shouldValidate: true })
+    setValue('attributes', {})
+  }
+
+  const handleChildCategoryChange = (event) => {
+    setValue('categoryId', event.target.value, { shouldDirty: true, shouldValidate: true })
+    setValue('attributes', {})
+  }
 
   const handleImages = async (event) => {
     const files = Array.from(event.target.files || [])
@@ -166,13 +206,27 @@ export default function ListingForm({ initialListing, onSubmit, isPending, submi
     <form onSubmit={handleSubmit(submit)} className="card p-6 space-y-5">
       <div className="grid sm:grid-cols-2 gap-4">
         <Select
-          label="Child Category"
-          placeholder="Choose a child category"
+          label="Parent Category"
+          placeholder="Choose a parent category"
           required
-          options={categoryOptions}
-          error={errors.categoryId?.message}
-          {...register('categoryId', { required: 'Category is required' })}
+          options={parentCategoryOptions}
+          error={errors.parentCategoryId?.message}
+          {...register('parentCategoryId', { required: 'Parent category is required' })}
+          onChange={handleParentCategoryChange}
         />
+        <Select
+          label="Child Category"
+          placeholder={parentCategoryId ? 'Choose a child category' : 'Select parent first'}
+          required
+          options={childCategoryOptions}
+          error={errors.categoryId?.message}
+          disabled={!parentCategoryId}
+          {...register('categoryId', { required: 'Category is required' })}
+          onChange={handleChildCategoryChange}
+        />
+      </div>
+
+      <div className="grid sm:grid-cols-2 gap-4">
         <Select
           label="Listing Type"
           options={[
@@ -205,7 +259,7 @@ export default function ListingForm({ initialListing, onSubmit, isPending, submi
       <div className="grid sm:grid-cols-3 gap-4">
         {listingType === ListingType.FIXED_PRICE ? (
           <Input
-            label="Price (USD)"
+            label="Price (INR)"
             type="number"
             step="0.01"
             required

@@ -46,14 +46,16 @@ export default function Navbar() {
   const navigate = useNavigate()
 
   const [searchQuery, setSearchQuery] = useState('')
-  const [selectedCategory, setSelectedCategory] = useState('')
+  const [selectedCategoryId, setSelectedCategoryId] = useState('')
   const [autocompleteOpen, setAutocompleteOpen] = useState(false)
   const [highlighted, setHighlighted] = useState(-1)
   const [shopByCatOpen, setShopByCatOpen] = useState(false)
+  const [hiUserOpen, setHiUserOpen] = useState(false)
   const [myEbayOpen, setMyEbayOpen] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
 
   const searchRef = useRef(null)
+  const hiUserRef = useRef(null)
   const shopByCatRef = useRef(null)
   const myEbayRef = useRef(null)
 
@@ -89,6 +91,7 @@ export default function Navbar() {
   useEffect(() => {
     const handler = (e) => {
       if (searchRef.current && !searchRef.current.contains(e.target)) setAutocompleteOpen(false)
+      if (hiUserRef.current && !hiUserRef.current.contains(e.target)) setHiUserOpen(false)
       if (shopByCatRef.current && !shopByCatRef.current.contains(e.target)) setShopByCatOpen(false)
       if (myEbayRef.current && !myEbayRef.current.contains(e.target)) setMyEbayOpen(false)
     }
@@ -103,7 +106,11 @@ export default function Navbar() {
     setAutocompleteOpen(false)
     const params = new URLSearchParams()
     if (trimmed) params.set('q', trimmed)
-    if (selectedCategory) params.set('category', selectedCategory)
+    if (selectedCategoryId) {
+      const selectedCategory = categoryTree.find((cat) => cat.id === selectedCategoryId)
+      params.set('categoryId', selectedCategoryId)
+      if (selectedCategory) params.set('category', selectedCategory.name)
+    }
     navigate(`${ROUTES.LISTINGS}${params.toString() ? '?' + params.toString() : ''}`)
     setMobileOpen(false)
   }
@@ -139,12 +146,12 @@ export default function Navbar() {
     logout()
     navigate(ROUTES.HOME)
     setMobileOpen(false)
+    setHiUserOpen(false)
     setMyEbayOpen(false)
   }
 
   const myEbayLinks = [
     ...(isAdmin ? [{ to: ROUTES.ADMIN_DASHBOARD, icon: LayoutDashboard, label: 'Admin Panel' }] : []),
-    { to: ROUTES.PROFILE, icon: User, label: 'My Profile' },
     { to: ROUTES.MY_LISTINGS, icon: Package, label: 'My Listings' },
     { to: ROUTES.ORDERS, icon: ShoppingBag, label: 'My Orders' },
     { to: ROUTES.WISHLIST, icon: Heart, label: 'Wishlist' },
@@ -160,7 +167,36 @@ export default function Navbar() {
           {/* Left */}
           <div className="flex items-center gap-1 text-xs text-gray-600">
             {isAuthenticated ? (
-              <span>Hi <span className="font-semibold text-primary">{user?.firstName}!</span></span>
+              <div className="relative" ref={hiUserRef}>
+                <button
+                  type="button"
+                  onClick={() => setHiUserOpen((v) => !v)}
+                  className="flex items-center gap-0.5 hover:text-primary hover:underline"
+                >
+                  <span>Hi <span className="font-semibold text-primary">{user?.firstName}!</span></span>
+                  <ChevronDown size={10} className={`transition-transform ${hiUserOpen ? 'rotate-180' : ''}`} />
+                </button>
+                {hiUserOpen && (
+                  <div className="absolute left-0 top-full mt-1 w-48 bg-white border border-gray-200 rounded-lg shadow-xl z-50 py-1 text-sm">
+                    <Link
+                      to={ROUTES.PROFILE}
+                      onClick={() => setHiUserOpen(false)}
+                      className="flex items-center gap-2.5 px-4 py-2.5 text-gray-700 hover:bg-gray-50 transition-colors"
+                    >
+                      <User size={14} className="text-gray-400" />
+                      My Profile
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={handleLogout}
+                      className="flex w-full items-center gap-2.5 px-4 py-2.5 text-red-600 hover:bg-red-50 transition-colors"
+                    >
+                      <LogOut size={14} />
+                      Sign Out
+                    </button>
+                  </div>
+                )}
+              </div>
             ) : (
               <span>
                 Hi!{' '}
@@ -215,14 +251,6 @@ export default function Navbar() {
                         {label}
                       </Link>
                     ))}
-                    <hr className="my-1 border-gray-100" />
-                    <button
-                      onClick={handleLogout}
-                      className="flex w-full items-center gap-2.5 px-4 py-2.5 text-red-600 hover:bg-red-50 transition-colors"
-                    >
-                      <LogOut size={14} />
-                      Sign Out
-                    </button>
                   </div>
                 )}
               </div>
@@ -308,8 +336,8 @@ export default function Navbar() {
                   />
                   <div className="hidden md:flex items-center border-l border-gray-300 bg-gray-50 pr-1">
                     <select
-                      value={selectedCategory}
-                      onChange={(e) => setSelectedCategory(e.target.value)}
+                      value={selectedCategoryId}
+                      onChange={(e) => setSelectedCategoryId(e.target.value)}
                       className="text-xs text-gray-700 bg-transparent border-none focus:outline-none pl-3 pr-7 py-2 cursor-pointer appearance-none"
                       style={{
                         backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
@@ -320,7 +348,7 @@ export default function Navbar() {
                     >
                       <option value="">All Categories</option>
                       {categoryTree.map((cat) => (
-                        <option key={cat.id} value={cat.name}>{cat.name}</option>
+                        <option key={cat.id} value={cat.id}>{cat.name}</option>
                       ))}
                     </select>
                   </div>

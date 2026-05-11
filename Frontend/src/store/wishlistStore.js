@@ -9,7 +9,7 @@ export const useWishlistStore = create(
       addItem: (listing) => {
         const { items } = get()
         if (!items.find((i) => i.id === listing.id)) {
-          set({ items: [...items, listing] })
+          set({ items: [...items, { ...listing, savedAt: listing.savedAt ?? new Date().toISOString() }] })
         }
       },
 
@@ -23,7 +23,7 @@ export const useWishlistStore = create(
         if (exists) {
           set({ items: items.filter((i) => i.id !== listing.id) })
         } else {
-          set({ items: [...items, listing] })
+          set({ items: [...items, { ...listing, savedAt: listing.savedAt ?? new Date().toISOString() }] })
         }
       },
 

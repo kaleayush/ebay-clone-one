@@ -220,7 +220,7 @@ export default function ListingDetailPage() {
           <div className="card p-4 space-y-3 text-sm text-gray-600">
             <div className="flex items-start gap-2.5">
               <Shield size={16} className="text-primary mt-0.5 shrink-0" />
-              <span>eBay Clone Buyer Protection — covered on eligible purchases.</span>
+              <span>eBay Buyer Protection - covered on eligible purchases.</span>
             </div>
             <div className="flex items-center gap-2.5">
               <Store size={16} className="text-primary shrink-0" />

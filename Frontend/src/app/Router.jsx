@@ -27,6 +27,7 @@ const ListingDetailPage = lazy(() => import('@/features/listings/pages/ListingDe
 const CreateListingPage = lazy(() => import('@/features/listings/pages/CreateListingPage'))
 const EditListingPage = lazy(() => import('@/features/listings/pages/EditListingPage'))
 const CartPage = lazy(() => import('@/features/cart/pages/CartPage'))
+const WishlistPage = lazy(() => import('@/features/wishlist/pages/WishlistPage'))
 const OrdersPage = lazy(() => import('@/features/orders/pages/OrdersPage'))
 const OrderDetailPage = lazy(() => import('@/features/orders/pages/OrderDetailPage'))
 const ProfilePage = lazy(() => import('@/features/profile/pages/ProfilePage'))
@@ -66,6 +67,7 @@ export const router = createBrowserRouter([
           { path: ROUTES.CREATE_LISTING, element: withSuspense(CreateListingPage) },
           { path: ROUTES.EDIT_LISTING, element: withSuspense(EditListingPage) },
           { path: ROUTES.CART, element: withSuspense(CartPage) },
+          { path: ROUTES.WISHLIST, element: withSuspense(WishlistPage) },
           { path: ROUTES.ORDERS, element: withSuspense(OrdersPage) },
           { path: ROUTES.ORDER_DETAIL, element: withSuspense(OrderDetailPage) },
           { path: ROUTES.PROFILE, element: withSuspense(ProfilePage) },
