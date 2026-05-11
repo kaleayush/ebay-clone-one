@@ -15,6 +15,8 @@ public class ListingService(
     IRepository<Listing> listingRepository,
     IRepository<User> userRepository,
     IRepository<Category> categoryRepository,
+    IRepository<ListingImage> listingImageRepository,
+    IRepository<ListingAttributeValue> listingAttributeValueRepository,
     ILogger<ListingService> logger) : IListingService
 {
     public async Task<PagedResult<ListingResponse>> GetListingsAsync(ListingQuery query, CancellationToken ct = default)
@@ -144,8 +146,8 @@ public class ListingService(
         ValidateListingRequest(request, metadata);
 
         ApplyListingRequest(listing, request);
-        ReplaceAttributeValues(listing, request.AttributeValues, metadata);
-        ReplaceImages(listing, request.Images);
+        await ReplaceAttributeValuesAsync(listing, request.AttributeValues, metadata, ct);
+        await ReplaceImagesAsync(listing, request.Images, ct);
 
         await listingRepository.SaveChangesAsync(ct);
 
@@ -580,10 +582,11 @@ public class ListingService(
             listing.Status = request.Status.Value;
     }
 
-    private static void ReplaceAttributeValues(
+    private async Task ReplaceAttributeValuesAsync(
         Listing listing,
         IReadOnlyCollection<ListingAttributeValueRequest>? requests,
-        IReadOnlyCollection<CategoryAttribute> metadata)
+        IReadOnlyCollection<CategoryAttribute> metadata,
+        CancellationToken ct)
     {
         var validIds = metadata.Select(a => a.Id).ToHashSet();
         var requestedValues = (requests ?? [])
@@ -617,12 +620,14 @@ public class ListingService(
             if (existingIds.Contains(attributeId))
                 continue;
 
-            listing.AttributeValues.Add(new ListingAttributeValue
+            var attributeValue = new ListingAttributeValue
             {
                 ListingId = listing.Id,
                 CategoryAttributeId = attributeId,
                 Value = requestedValue,
-            });
+            };
+
+            await listingAttributeValueRepository.AddAsync(attributeValue, ct);
         }
     }
 
@@ -646,7 +651,10 @@ public class ListingService(
         }
     }
 
-    private static void ReplaceImages(Listing listing, IReadOnlyCollection<ListingImageRequest>? requests)
+    private async Task ReplaceImagesAsync(
+        Listing listing,
+        IReadOnlyCollection<ListingImageRequest>? requests,
+        CancellationToken ct)
     {
         var requestedImages = (requests ?? [])
             .Where(r => !string.IsNullOrWhiteSpace(r.Url))
@@ -657,7 +665,7 @@ public class ListingService(
                 SortOrder = request.SortOrder,
                 Index = index,
             })
-            .GroupBy(r => r.Url)
+            .GroupBy(r => r.Url, StringComparer.OrdinalIgnoreCase)
             .Select(g => g.Last())
             .OrderBy(r => r.SortOrder)
             .ThenBy(r => r.Index)
@@ -665,8 +673,8 @@ public class ListingService(
 
         var existingByUrl = listing.Images
             .Where(i => !i.IsDeleted)
-            .GroupBy(i => i.Url)
-            .ToDictionary(g => g.Key, g => g.First());
+            .GroupBy(i => i.Url, StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(g => g.Key, g => g.First(), StringComparer.OrdinalIgnoreCase);
 
         var requestedUrls = requestedImages.Select(i => i.Url).ToHashSet(StringComparer.OrdinalIgnoreCase);
 
@@ -690,19 +698,21 @@ public class ListingService(
             }
             else
             {
-                listing.Images.Add(new ListingImage
+                var image = new ListingImage
                 {
                     ListingId = listing.Id,
                     Url = request.Url,
                     AltText = request.AltText,
                     SortOrder = request.SortOrder,
-                });
+                };
+
+                await listingImageRepository.AddAsync(image, ct);
             }
         }
 
-        listing.PrimaryImageUrl = listing.Images
-            .Where(i => !i.IsDeleted)
+        listing.PrimaryImageUrl = requestedImages
             .OrderBy(i => i.SortOrder)
+            .ThenBy(i => i.Index)
             .Select(i => i.Url)
             .FirstOrDefault();
     }

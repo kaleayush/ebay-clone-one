@@ -42,10 +42,14 @@ public class BusinessProfileController(IBusinessProfileService businessProfileSe
     [HttpPost("documents")]
     [RequestSizeLimit(10 * 1024 * 1024)] // 10 MB
     public async Task<ActionResult<ApiResponse<DocumentResponse>>> UploadDocument(
-        [FromForm] DocuementUploadRequest request, CancellationToken ct)
+        [FromForm] DocumentUploadRequest request, CancellationToken ct)
     {
-        var file = request.file;
-        var documentType = request.documentType;
+        var file = request.File;
+        var documentType = request.DocumentType;
+
+        if (file is null)
+            return BadRequest(ApiResponse.Fail("File is required"));
+
         if (file.Length == 0)
             return BadRequest(ApiResponse.Fail("File is empty"));
 
@@ -54,7 +58,7 @@ public class BusinessProfileController(IBusinessProfileService businessProfileSe
             return BadRequest(ApiResponse.Fail("Only PDF, JPEG, and PNG files are allowed"));
 
         var userId = GetUserId();
-        using var stream = request.file.OpenReadStream();
+        using var stream = file.OpenReadStream();
         var result = await businessProfileService.UploadDocumentAsync(
             userId, stream, file.FileName, file.ContentType, file.Length, documentType, ct);
 
@@ -71,4 +75,9 @@ public class BusinessProfileController(IBusinessProfileService businessProfileSe
 
     private Guid GetUserId() => Guid.Parse(User.FindFirstValue("sub")!);
 }
-public record DocuementUploadRequest(IFormFile file, DocumentType documentType);
+
+public class DocumentUploadRequest
+{
+    public IFormFile? File { get; set; }
+    public DocumentType DocumentType { get; set; }
+}

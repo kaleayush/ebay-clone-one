@@ -71,14 +71,14 @@ public class ListingsController(
     public async Task<ActionResult<ApiResponse<ListingImageUploadResponse>>> UploadImage(
         [FromForm] ImageUploadRequest request, CancellationToken ct)
     {
-        if (request.file is null || request.file.Length == 0)
+        if (request.File is null || request.File.Length == 0)
             return BadRequest(ApiResponse.Fail("Image is required"));
 
-        if (!request.file.ContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase))
+        if (!request.File.ContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase))
             return BadRequest(ApiResponse.Fail("Only image uploads are allowed"));
 
-        await using var stream =request.file.OpenReadStream();
-        var url = await fileStorageService.UploadAsync(stream, request.file.FileName, request.file.ContentType, ct, "listings");
+        await using var stream = request.File.OpenReadStream();
+        var url = await fileStorageService.UploadAsync(stream, request.File.FileName, request.File.ContentType, ct, "listings");
         return Ok(ApiResponse<ListingImageUploadResponse>.Ok(new ListingImageUploadResponse(url), "Image uploaded"));
     }
 
@@ -114,6 +114,7 @@ public class ListingsController(
         Guid.Parse(User.FindFirstValue("sub")!);
 }
 
-public record ImageUploadRequest(
-    IFormFile file
-    );
+public class ImageUploadRequest
+{
+    public IFormFile? File { get; set; }
+}
