@@ -11,7 +11,6 @@ public record CreateListingRequest(
     decimal DiscountAmount = 0,
     bool FreeShipping = false,
     Guid? CategoryId = null,
-    ListingStatus Status = ListingStatus.Draft,
     decimal? StartingBid = null,
     decimal? ReservePrice = null,
     decimal? BuyItNowPrice = null,

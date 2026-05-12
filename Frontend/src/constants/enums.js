@@ -14,6 +14,8 @@ export const ListingStatus = {
   SOLD: 2,
   ENDED: 3,
   REMOVED: 4,
+  PENDING_APPROVAL: 5,
+  REJECTED: 6,
 }
 
 export const ListingStatusLabel = {
@@ -22,6 +24,38 @@ export const ListingStatusLabel = {
   [ListingStatus.SOLD]: 'Sold',
   [ListingStatus.ENDED]: 'Ended',
   [ListingStatus.REMOVED]: 'Removed',
+  [ListingStatus.PENDING_APPROVAL]: 'Pending Approval',
+  [ListingStatus.REJECTED]: 'Rejected',
+}
+
+export const ListingVersionStatus = {
+  PENDING_APPROVAL: 0,
+  APPROVED: 1,
+  REJECTED: 2,
+}
+
+export const ListingVersionStatusLabel = {
+  [ListingVersionStatus.PENDING_APPROVAL]: 'Pending Approval',
+  [ListingVersionStatus.APPROVED]: 'Approved',
+  [ListingVersionStatus.REJECTED]: 'Rejected',
+}
+
+export const EmailTemplateType = {
+  EMAIL_VERIFICATION: 0,
+  FORGOT_PASSWORD: 1,
+  PASSWORD_CHANGED: 2,
+  LISTING_PENDING_APPROVAL: 3,
+  LISTING_APPROVED: 4,
+  LISTING_REJECTED: 5,
+}
+
+export const EmailTemplateTypeLabel = {
+  [EmailTemplateType.EMAIL_VERIFICATION]: 'Email Verification',
+  [EmailTemplateType.FORGOT_PASSWORD]: 'Forgot Password',
+  [EmailTemplateType.PASSWORD_CHANGED]: 'Password Changed',
+  [EmailTemplateType.LISTING_PENDING_APPROVAL]: 'Listing Pending Approval',
+  [EmailTemplateType.LISTING_APPROVED]: 'Listing Approved',
+  [EmailTemplateType.LISTING_REJECTED]: 'Listing Rejected',
 }
 
 export const ListingType = {

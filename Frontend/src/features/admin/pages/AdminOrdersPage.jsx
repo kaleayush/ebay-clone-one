@@ -7,6 +7,7 @@ import Spinner from '@/components/common/Spinner'
 import Pagination from '@/components/common/Pagination'
 import { formatCurrency, formatDate } from '@/utils/formatters'
 import { OrderStatus, OrderStatusLabel } from '@/constants/enums'
+import AdminDataTable from '../components/AdminDataTable'
 
 const statusVariant = {
   [OrderStatus.PENDING]: 'warning',
@@ -16,16 +17,6 @@ const statusVariant = {
   [OrderStatus.CANCELLED]: 'danger',
   [OrderStatus.REFUNDED]: 'default',
 }
-
-const sortOptions = [
-  { value: 'createdAt_desc', label: 'Newest orders' },
-  { value: 'createdAt_asc', label: 'Oldest orders' },
-  { value: 'totalAmount_desc', label: 'Total: high to low' },
-  { value: 'totalAmount_asc', label: 'Total: low to high' },
-  { value: 'buyer_asc', label: 'Buyer: A to Z' },
-  { value: 'orderNumber_desc', label: 'Order #: high to low' },
-  { value: 'itemCount_desc', label: 'Most items' },
-]
 
 const pageSizeOptions = [15, 30, 50, 100]
 
@@ -58,6 +49,55 @@ export default function AdminOrdersPage() {
   const orders = data?.items || data?.data?.items || []
   const totalPages = data?.totalPages || data?.data?.totalPages || 1
   const totalCount = data?.totalCount || data?.data?.totalCount || 0
+  const columns = [
+    {
+      key: 'orderNumber',
+      label: 'Order #',
+      sortKey: 'orderNumber',
+      defaultDirection: 'desc',
+      cellClassName: 'font-mono text-xs text-gray-600',
+      render: (order) => <span className="break-all">#{order.orderNumber}</span>,
+    },
+    {
+      key: 'buyer',
+      label: 'Buyer',
+      sortKey: 'buyer',
+      cellClassName: 'font-medium text-gray-900',
+      render: (order) => <span className="break-words">{order.buyerName}</span>,
+    },
+    {
+      key: 'items',
+      label: 'Items',
+      sortKey: 'itemCount',
+      defaultDirection: 'desc',
+      cellClassName: 'text-gray-500',
+      render: (order) => order.itemCount,
+    },
+    {
+      key: 'total',
+      label: 'Total',
+      sortKey: 'totalAmount',
+      defaultDirection: 'desc',
+      cellClassName: 'font-semibold',
+      render: (order) => formatCurrency(order.totalAmount),
+    },
+    {
+      key: 'status',
+      label: 'Status',
+      sortKey: 'status',
+      render: (order) => (
+        <Badge variant={statusVariant[order.status]}>{OrderStatusLabel[order.status]}</Badge>
+      ),
+    },
+    {
+      key: 'date',
+      label: 'Date',
+      sortKey: 'createdAt',
+      defaultDirection: 'desc',
+      cellClassName: 'text-gray-500',
+      render: (order) => formatDate(order.createdAt),
+    },
+  ]
 
   const resetFilters = () => {
     setSearch('')
@@ -74,26 +114,21 @@ export default function AdminOrdersPage() {
       </div>
 
       <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
-        <div className="grid gap-3 md:grid-cols-[minmax(220px,1fr)_160px_190px_110px_auto]">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-[minmax(220px,1fr)_160px_110px_auto]">
           <input
             type="search"
             placeholder="Search order, buyer, email"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="form-input h-10 text-sm"
+            className="form-input h-10 min-w-0 text-sm sm:col-span-2 xl:col-span-1"
           />
-          <select value={status} onChange={(e) => setStatus(e.target.value)} className="form-input h-10 bg-white text-sm">
+          <select value={status} onChange={(e) => setStatus(e.target.value)} className="form-input h-10 min-w-0 bg-white text-sm">
             <option value="">All statuses</option>
             {Object.values(OrderStatus).map((value) => (
               <option key={value} value={value}>{OrderStatusLabel[value]}</option>
             ))}
           </select>
-          <select value={sortKey} onChange={(e) => setSortKey(e.target.value)} className="form-input h-10 bg-white text-sm">
-            {sortOptions.map((option) => (
-              <option key={option.value} value={option.value}>{option.label}</option>
-            ))}
-          </select>
-          <select value={pageSize} onChange={(e) => setPageSize(Number(e.target.value))} className="form-input h-10 bg-white text-sm">
+          <select value={pageSize} onChange={(e) => setPageSize(Number(e.target.value))} className="form-input h-10 min-w-0 bg-white text-sm">
             {pageSizeOptions.map((size) => (
               <option key={size} value={size}>{size} / page</option>
             ))}
@@ -108,34 +143,14 @@ export default function AdminOrdersPage() {
         <div className="flex justify-center py-20"><Spinner size="lg" /></div>
       ) : (
         <>
-          <div className="card overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="bg-gray-50 border-b border-gray-200">
-                <tr>
-                  {['Order #', 'Buyer', 'Items', 'Total', 'Status', 'Date'].map((h) => (
-                    <th key={h} className="px-4 py-3 text-left font-medium text-gray-600">{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100">
-                {orders.map((order) => (
-                  <tr key={order.id} className="hover:bg-gray-50">
-                    <td className="px-4 py-3 font-mono text-xs text-gray-600">#{order.orderNumber}</td>
-                    <td className="px-4 py-3 font-medium text-gray-900">{order.buyerName}</td>
-                    <td className="px-4 py-3 text-gray-500">{order.itemCount}</td>
-                    <td className="px-4 py-3 font-semibold">{formatCurrency(order.totalAmount)}</td>
-                    <td className="px-4 py-3">
-                      <Badge variant={statusVariant[order.status]}>{OrderStatusLabel[order.status]}</Badge>
-                    </td>
-                    <td className="px-4 py-3 text-gray-500">{formatDate(order.createdAt)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            {!orders.length && (
-              <p className="px-4 py-8 text-center text-sm text-gray-500">No orders found</p>
-            )}
-          </div>
+          <AdminDataTable
+            columns={columns}
+            rows={orders}
+            getRowKey={(order) => order.id}
+            sortKey={sortKey}
+            onSortChange={setSortKey}
+            emptyMessage="No orders found"
+          />
           <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
         </>
       )}

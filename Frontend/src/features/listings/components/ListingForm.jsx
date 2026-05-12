@@ -75,7 +75,7 @@ export default function ListingForm({ initialListing, onSubmit, isPending, submi
   } = useForm({
     defaultValues: {
       listingType: ListingType.FIXED_PRICE,
-      status: ListingStatus.ACTIVE,
+      status: ListingStatus.PENDING_APPROVAL,
       quantity: 1,
       freeShipping: false,
       parentCategoryId: '',
@@ -134,7 +134,7 @@ export default function ListingForm({ initialListing, onSubmit, isPending, submi
       freeShipping: initialListing.freeShipping,
       parentCategoryId,
       categoryId: initialListing.categoryId || '',
-      status: initialListing.status ?? ListingStatus.ACTIVE,
+      status: ListingStatus.PENDING_APPROVAL,
       attributes: buildAttributeDefaults(initialListing),
     })
     setImages(initialListing.images || [])
@@ -301,8 +301,7 @@ export default function ListingForm({ initialListing, onSubmit, isPending, submi
         <Select
           label="Status"
           options={[
-            { value: ListingStatus.DRAFT, label: 'Save as Draft' },
-            { value: ListingStatus.ACTIVE, label: 'Publish Now' },
+            { value: ListingStatus.PENDING_APPROVAL, label: 'Submit for Approval' },
           ]}
           {...register('status')}
         />

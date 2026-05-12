@@ -6,5 +6,7 @@ public enum ListingStatus
     Active = 1,
     Sold = 2,
     Ended = 3,
-    Removed = 4
+    Removed = 4,
+    PendingApproval = 5,
+    Rejected = 6,
 }

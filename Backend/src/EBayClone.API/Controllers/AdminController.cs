@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using EBayClone.Application.Common;
 using EBayClone.Application.DTOs.BusinessProfile;
+using EBayClone.Application.DTOs.Listings;
 using EBayClone.Application.Interfaces;
 using EBayClone.Domain.Entities;
 using EBayClone.Domain.Enums;
@@ -18,7 +19,8 @@ public class AdminController(
     IRepository<User> userRepository,
     IRepository<Listing> listingRepository,
     IRepository<Order> orderRepository,
-    IBusinessProfileService businessProfileService) : ControllerBase
+    IBusinessProfileService businessProfileService,
+    IListingApprovalService listingApprovalService) : ControllerBase
 {
     [HttpGet("stats")]
     public async Task<ActionResult<ApiResponse<AdminStatsResponse>>> GetStats(CancellationToken ct)
@@ -74,6 +76,8 @@ public class AdminController(
             ("accounttype", _) => q.OrderByDescending(u => u.AccountType),
             ("role", "asc") => q.OrderBy(u => u.Role),
             ("role", _) => q.OrderByDescending(u => u.Role),
+            ("status", "asc") => q.OrderBy(u => u.IsDeleted).ThenBy(u => u.IsSuspended).ThenByDescending(u => u.IsEmailVerified),
+            ("status", _) => q.OrderByDescending(u => u.IsDeleted).ThenByDescending(u => u.IsSuspended).ThenBy(u => u.IsEmailVerified),
             ("createdat", "asc") => q.OrderBy(u => u.CreatedAt),
             _ => q.OrderByDescending(u => u.CreatedAt),
         };
@@ -138,7 +142,16 @@ public class AdminController(
                 l.Seller.FirstName.Contains(search) || l.Seller.LastName.Contains(search));
 
         if (status.HasValue && Enum.IsDefined(typeof(ListingStatus), status.Value))
-            q = q.Where(l => l.Status == (ListingStatus)status.Value);
+        {
+            var listingStatus = (ListingStatus)status.Value;
+            q = listingStatus == ListingStatus.PendingApproval
+                ? q.Where(l => l.Status == ListingStatus.PendingApproval || l.HasPendingVersion)
+                : q.Where(l => l.Status == listingStatus);
+        }
+        else
+        {
+            q = q.Where(l => l.Status != ListingStatus.PendingApproval && !l.HasPendingVersion);
+        }
 
         q = visibility?.ToLowerInvariant() switch
         {
@@ -175,6 +188,7 @@ public class AdminController(
                 l.DiscountAmount,
                 l.Price - l.DiscountAmount,
                 (int)l.Status,
+                l.HasPendingVersion,
                 l.IsDeleted,
                 l.CreatedAt))
             .ToListAsync(ct);
@@ -233,6 +247,71 @@ public class AdminController(
 
         return Ok(ApiResponse<PagedResult<AdminOrderResponse>>.Ok(
             PagedResult<AdminOrderResponse>.Create(items, total, page, pageSize)));
+    }
+
+    [HttpGet("listings/{id:guid}")]
+    public async Task<ActionResult<ApiResponse<AdminListingDetailResponse>>> GetListingDetail(Guid id, CancellationToken ct)
+    {
+        var listing = await listingRepository.Query()
+            .Include(l => l.Seller)
+            .IgnoreQueryFilters()
+            .AsNoTracking()
+            .FirstOrDefaultAsync(l => l.Id == id, ct)
+            ?? throw new KeyNotFoundException("Listing not found.");
+
+        var pendingVersion = await listingApprovalService.GetPendingVersionAsync(id, ct);
+
+        return Ok(ApiResponse<AdminListingDetailResponse>.Ok(new AdminListingDetailResponse(
+            listing.Id,
+            listing.Title,
+            listing.Description,
+            $"{listing.Seller.FirstName} {listing.Seller.LastName}",
+            listing.Seller.Email,
+            listing.Price,
+            listing.DiscountAmount,
+            listing.Price - listing.DiscountAmount,
+            (int)listing.Status,
+            listing.HasPendingVersion,
+            listing.IsDeleted,
+            listing.CreatedAt,
+            pendingVersion)));
+    }
+
+    [HttpPost("listings/{id:guid}/approve")]
+    public async Task<ActionResult<ApiResponse<ListingResponse>>> ApproveListing(
+        Guid id, [FromBody] ApproveListingRequest request, CancellationToken ct)
+    {
+        var adminId = Guid.Parse(User.FindFirstValue("sub")!);
+        var result = await listingApprovalService.ApproveAsync(id, adminId, request.Notes, ct);
+        return Ok(ApiResponse<ListingResponse>.Ok(result, "Listing approved"));
+    }
+
+    [HttpPost("listings/{id:guid}/reject")]
+    public async Task<ActionResult<ApiResponse<ListingResponse>>> RejectListing(
+        Guid id, [FromBody] RejectListingRequest request, CancellationToken ct)
+    {
+        var adminId = Guid.Parse(User.FindFirstValue("sub")!);
+        var result = await listingApprovalService.RejectAsync(id, adminId, request.Reason, request.Notes, ct);
+        return Ok(ApiResponse<ListingResponse>.Ok(result, "Listing rejected"));
+    }
+
+    [HttpGet("listings/{id:guid}/versions")]
+    public async Task<ActionResult<ApiResponse<IReadOnlyList<ListingVersionResponse>>>> GetListingVersions(Guid id, CancellationToken ct)
+    {
+        var result = await listingApprovalService.GetVersionsAsync(id, ct);
+        return Ok(ApiResponse<IReadOnlyList<ListingVersionResponse>>.Ok(result));
+    }
+
+    [HttpDelete("listings/{id:guid}")]
+    public async Task<ActionResult<ApiResponse>> DeleteListing(Guid id, CancellationToken ct)
+    {
+        var listing = await listingRepository.GetByIdAsync(id, ct)
+            ?? throw new KeyNotFoundException("Listing not found.");
+
+        listingRepository.SoftDelete(listing);
+        await listingRepository.SaveChangesAsync(ct);
+        
+        return Ok(ApiResponse.Ok("Listing deleted"));
     }
 
     [HttpGet("business-profiles")]
@@ -295,8 +374,25 @@ public record AdminListingResponse(
     decimal DiscountAmount,
     decimal FinalPrice,
     int Status,
+    bool HasPendingVersion,
     bool IsDeleted,
     DateTime CreatedAt
+);
+
+public record AdminListingDetailResponse(
+    Guid Id,
+    string Title,
+    string Description,
+    string SellerName,
+    string SellerEmail,
+    decimal Price,
+    decimal DiscountAmount,
+    decimal FinalPrice,
+    int Status,
+    bool HasPendingVersion,
+    bool IsDeleted,
+    DateTime CreatedAt,
+    ListingVersionResponse? PendingVersion
 );
 
 public record AdminOrderResponse(

@@ -5,12 +5,15 @@ using EBayClone.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
+// ReSharper disable RouteTemplates.ActionRoutePrefixCanBeExtractedToControllerRoute
+
 namespace EBayClone.API.Controllers;
 
 [ApiController]
 [Route("api/v1/[controller]")]
 public class ListingsController(
     IListingService listingService,
+    IListingApprovalService approvalService,
     IFileStorageService fileStorageService) : ControllerBase
 {
     [HttpGet]
@@ -125,6 +128,33 @@ public class ListingsController(
         var sellerId = GetUserId();
         var result = await listingService.RestoreAsync(id, sellerId, ct);
         return Ok(ApiResponse<ListingResponse>.Ok(result, "Listing restored"));
+    }
+
+    /// <summary>Submit a Draft or Rejected listing for approval (no content change).</summary>
+    [HttpPost("{id:guid}/submit")]
+    [Authorize]
+    public async Task<ActionResult<ApiResponse<ListingResponse>>> Submit(Guid id, CancellationToken ct)
+    {
+        var result = await approvalService.SubmitForApprovalAsync(id, GetUserId(), ct);
+        return Ok(ApiResponse<ListingResponse>.Ok(result, "Listing submitted for approval"));
+    }
+
+    /// <summary>Submit proposed changes to an Active listing for review (listing stays live).</summary>
+    [HttpPost("{id:guid}/submit-update")]
+    [Authorize]
+    public async Task<ActionResult<ApiResponse>> SubmitUpdate(
+        Guid id, [FromBody] SubmitListingUpdateRequest request, CancellationToken ct)
+    {
+        await approvalService.SubmitUpdateForApprovalAsync(id, GetUserId(), request, ct);
+        return Ok(ApiResponse.Ok("Update submitted for review. Your listing remains live while it is being reviewed."));
+    }
+
+    [HttpGet("{id:guid}/versions")]
+    [Authorize]
+    public async Task<ActionResult<ApiResponse<IReadOnlyList<ListingVersionResponse>>>> GetVersions(Guid id, CancellationToken ct)
+    {
+        var result = await approvalService.GetVersionsAsync(id, ct);
+        return Ok(ApiResponse<IReadOnlyList<ListingVersionResponse>>.Ok(result));
     }
 
     private Guid GetUserId() =>

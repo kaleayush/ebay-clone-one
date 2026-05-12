@@ -21,6 +21,9 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
     public DbSet<BusinessProfile> BusinessProfiles => Set<BusinessProfile>();
     public DbSet<UserDocument> UserDocuments => Set<UserDocument>();
+    public DbSet<EmailTemplate> EmailTemplates => Set<EmailTemplate>();
+    public DbSet<ListingVersion> ListingVersions => Set<ListingVersion>();
+    public DbSet<ListingApprovalLog> ListingApprovalLogs => Set<ListingApprovalLog>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

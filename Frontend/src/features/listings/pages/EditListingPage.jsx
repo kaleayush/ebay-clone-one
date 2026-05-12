@@ -7,6 +7,7 @@ import ListingForm from '../components/ListingForm'
 import { useListing, LISTING_KEYS } from '../hooks/useListings'
 import { listingService } from '../services/listingService'
 import { ROUTES } from '@/constants/routes'
+import { ListingStatus } from '@/constants/enums'
 
 export default function EditListingPage() {
   const { id } = useParams()
@@ -21,7 +22,11 @@ export default function EditListingPage() {
         qc.setQueryData(LISTING_KEYS.detail(id), response)
       }
       qc.invalidateQueries({ queryKey: LISTING_KEYS.all })
-      toast.success('Listing updated')
+      toast.success(
+        data?.data?.status === ListingStatus.ACTIVE
+          ? 'Changes submitted for approval'
+          : 'Listing submitted for approval'
+      )
       navigate(ROUTES.MY_LISTINGS)
     },
     onError: (err) => toast.error(err?.response?.data?.message || 'Update failed'),

@@ -173,7 +173,23 @@ public class BusinessProfileService(
                 p.GstNumber.Contains(query.Search) ||
                 p.User.Email.Contains(query.Search));
 
-        q = q.OrderByDescending(p => p.CreatedAt);
+        q = (query.SortBy?.ToLowerInvariant(), query.SortDirection?.ToLowerInvariant()) switch
+        {
+            ("company", "asc") => q.OrderBy(p => p.CompanyName),
+            ("company", _) => q.OrderByDescending(p => p.CompanyName),
+            ("owner", "asc") => q.OrderBy(p => p.User.FirstName).ThenBy(p => p.User.LastName),
+            ("owner", _) => q.OrderByDescending(p => p.User.FirstName).ThenByDescending(p => p.User.LastName),
+            ("gst", "asc") => q.OrderBy(p => p.GstNumber).ThenBy(p => p.PanNumber),
+            ("gst", _) => q.OrderByDescending(p => p.GstNumber).ThenByDescending(p => p.PanNumber),
+            ("documents", "asc") => q.OrderBy(p => p.Documents.Count(d => !d.IsDeleted)),
+            ("documents", _) => q.OrderByDescending(p => p.Documents.Count(d => !d.IsDeleted)),
+            ("status", "asc") => q.OrderBy(p => p.VerificationStatus),
+            ("status", _) => q.OrderByDescending(p => p.VerificationStatus),
+            ("updatedat", "asc") => q.OrderBy(p => p.UpdatedAt),
+            ("updatedat", _) => q.OrderByDescending(p => p.UpdatedAt),
+            ("createdat", "asc") => q.OrderBy(p => p.CreatedAt),
+            _ => q.OrderByDescending(p => p.CreatedAt),
+        };
 
         var total = await q.CountAsync(ct);
         var items = await q

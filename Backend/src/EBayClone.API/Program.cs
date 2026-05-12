@@ -46,6 +46,7 @@ using (var scope = app.Services.CreateScope())
         await db.Database.MigrateAsync();
         await CategoryFormSeeder.SeedAsync(db);
         await ListingAndUserSeeder.SeedAsync(db);
+        await EmailTemplateSeeder.SeedAsync(db);
         Log.Information("Database migration applied successfully");
     }
     catch (Exception ex)
@@ -56,7 +57,7 @@ using (var scope = app.Services.CreateScope())
 
 app.UseMiddleware<GlobalExceptionMiddleware>();
 
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 {
     app.UseSwagger();
     app.UseSwaggerUI(c =>
@@ -74,6 +75,16 @@ app.UseAuthorization();
 app.MapControllers();
 app.MapHealthChecks("/health");
 
-Log.Information("eBay Clone API starting on {Environment}", app.Environment.EnvironmentName);
+var urls = Environment.GetEnvironmentVariable("ASPNETCORE_URLS")
+    ?? app.Urls.FirstOrDefault()
+ ?? "http://localhost:5005";
+var baseUrl = urls.Split(';')[0].TrimEnd('/');
+
+Log.Information("===========================================");
+Log.Information("  eBay Clone API");
+Log.Information("  Environment : {Environment}", app.Environment.EnvironmentName);
+Log.Information("  Listening   : {Url}", urls);
+Log.Information("  Swagger     : {Swagger}", app.Environment.IsDevelopment() ? $"{baseUrl}/swagger" : "disabled (production)");
+Log.Information("===========================================");
 
 app.Run();

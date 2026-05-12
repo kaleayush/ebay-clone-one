@@ -1,4 +1,4 @@
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5005'
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'
 
 export const API_ENDPOINTS = {
   // Auth
@@ -70,8 +70,23 @@ export const API_ENDPOINTS = {
     USER_SUSPEND: (id) => `/api/v1/admin/users/${id}/suspend`,
     USER_ACTIVATE: (id) => `/api/v1/admin/users/${id}/activate`,
     LISTINGS: '/api/v1/admin/listings',
+    LISTING_DETAIL: (id) => `/api/v1/admin/listings/${id}`,
+    LISTING_APPROVE: (id) => `/api/v1/admin/listings/${id}/approve`,
+    LISTING_REJECT: (id) => `/api/v1/admin/listings/${id}/reject`,
+    LISTING_DELETE: (id) => `/api/v1/admin/listings/${id}`,
+    LISTING_VERSIONS: (id) => `/api/v1/admin/listings/${id}/versions`,
     ORDERS: '/api/v1/admin/orders',
     BUSINESS_PROFILES: '/api/v1/admin/business-profiles',
     BUSINESS_PROFILE_REVIEW: (id) => `/api/v1/admin/business-profiles/${id}/review`,
+    EMAIL_TEMPLATES: '/api/v1/admin/email-templates',
+    EMAIL_TEMPLATE_BY_ID: (id) => `/api/v1/admin/email-templates/${id}`,
+    EMAIL_TEMPLATE_ACTIVATE: (id) => `/api/v1/admin/email-templates/${id}/activate`,
+    EMAIL_TEMPLATE_DEACTIVATE: (id) => `/api/v1/admin/email-templates/${id}/deactivate`,
+  },
+  // Listing approval (seller-side)
+  LISTING_APPROVAL: {
+    SUBMIT: (id) => `/api/v1/listings/${id}/submit`,
+    SUBMIT_UPDATE: (id) => `/api/v1/listings/${id}/submit-update`,
+    VERSIONS: (id) => `/api/v1/listings/${id}/versions`,
   },
 }

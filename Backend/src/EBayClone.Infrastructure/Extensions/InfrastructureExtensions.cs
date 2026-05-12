@@ -22,7 +22,7 @@ public static class InfrastructureExtensions
         services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
         services.AddScoped<IJwtService, JwtService>();
         services.AddSingleton<IPasswordHasher, BcryptPasswordHasher>();
-        services.AddScoped<IEmailService, ConsoleEmailService>();
+        services.AddScoped<IEmailService, SmtpEmailService>();
         services.AddScoped<IFileStorageService, LocalFileStorageService>();
 
         return services;

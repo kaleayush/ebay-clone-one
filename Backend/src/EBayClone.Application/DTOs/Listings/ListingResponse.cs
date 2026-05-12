@@ -44,7 +44,8 @@ public record ListingResponse(
     IReadOnlyCollection<ListingAttributeValueResponse> AttributeValues,
     IReadOnlyCollection<ListingImageResponse> Images,
     DateTime CreatedAt,
-    DateTime UpdatedAt
+    DateTime UpdatedAt,
+    bool HasPendingVersion = false
 );
 
 public record ListingAttributeValueResponse(

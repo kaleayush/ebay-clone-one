@@ -26,9 +26,13 @@ public class Listing : BaseEntity
     public Guid? CategoryId { get; set; }
     public Category? Category { get; set; }
 
+    public bool HasPendingVersion { get; set; } = false;
+
     public ICollection<ListingImage> Images { get; set; } = new List<ListingImage>();
     public ICollection<ListingAttributeValue> AttributeValues { get; set; } = new List<ListingAttributeValue>();
     public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
     public ICollection<CartItem> CartItems { get; set; } = new List<CartItem>();
     public ICollection<ListingView> Views { get; set; } = new List<ListingView>();
+    public ICollection<ListingVersion> Versions { get; set; } = new List<ListingVersion>();
+    public ICollection<ListingApprovalLog> ApprovalLogs { get; set; } = new List<ListingApprovalLog>();
 }

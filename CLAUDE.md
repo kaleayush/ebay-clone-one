@@ -70,12 +70,16 @@ EBayClone.Domain       → entities, enums, IRepository<T>
 - **IQueryable**: `IRepository<T>.Query()` returns `IQueryable<T>` for building filterable/pageable queries in services; materialize with `ToListAsync()` at the service layer.
 - **Logging**: Serilog is configured in `Program.cs` with Console + rolling file sinks. Inject `ILogger<T>` where needed; do not use `Console.Write*`.
 - **Stub services**: `ConsoleEmailService` (implements `IEmailService`) writes to console — not production-ready. `LocalFileStorageService` (implements `IFileStorageService`) writes to local disk. Both are registered in `AddInfrastructure`.
+- **Auth token flows**: email verification and password reset use `GenerateSecureToken()` (32-byte random, base64url). Tokens stored on `User` with an expiry field. `ForgotPassword` always returns 200 to prevent email enumeration.
+- **Startup seeders**: after `MigrateAsync()`, `CategoryFormSeeder.SeedAsync()` and `ListingAndUserSeeder.SeedAsync()` run. Both are idempotent. `CategoryFormSeeder` uses MD5-deterministic GUIDs (`CreateGuid($"category:{key}")`, `CreateGuid($"attribute:{key}:{name}")`) so re-runs never create duplicates.
+- **Dynamic category attributes**: `CategoryAttribute` defines per-category form fields (`DataType`, `IsRequired`, `IsFilterable`, validation constraints, `Placeholder`, `Unit`). `AttributeOption` holds dropdown/multi-select choices. `ListingAttributeValue` stores chosen values per listing. Attributes support conditional visibility via `ConditionAttributeId` + `ConditionOperator` + `ConditionValue`.
+- **API versioning**: all routes are prefixed `/api/v1/`. Health check at `/health`.
 
 ### Domain entities & enums
 
-Entities (all extend `BaseEntity`): `User`, `BusinessProfile`, `Listing`, `ListingImage`, `Category`, `Cart`, `CartItem`, `Order`, `OrderItem`, `RefreshToken`, `UserDocument`.
+Entities (all extend `BaseEntity`): `User`, `BusinessProfile`, `Listing`, `ListingImage`, `Category`, `CategoryAttribute`, `AttributeOption`, `ListingAttributeValue`, `ListingView`, `Cart`, `CartItem`, `Order`, `OrderItem`, `RefreshToken`, `UserDocument`.
 
-Enums: `AccountType` (Personal/Business), `UserRole` (Buyer/Seller/Admin), `ListingStatus`, `OrderStatus`, `DocumentType`, `VerificationStatus`.
+Enums: `AccountType` (Personal/Business), `UserRole` (User/Admin — no Buyer/Seller; role is orthogonal to AccountType), `ListingStatus` (Draft/Active/Sold/Ended/Removed), `ListingType` (FixedPrice/Auction), `OrderStatus`, `AttributeDataType` (Text/Number/Decimal/Boolean/Date/Dropdown/MultiSelect), `ConditionalOperator` (Equals/NotEquals/Contains/GreaterThan/LessThan), `DocumentType`, `VerificationStatus`.
 
 ### Frontend: Feature-Based
 
@@ -88,6 +92,8 @@ src/
   services/api.js         — Axios instance (see below)
   store/authStore.js      — Zustand + localStorage persist
   store/cartStore.js      — Zustand cart state
+  store/wishlistStore.js  — Zustand + localStorage persist (client-only, not synced to backend)
+  utils/assets.js         — `assetUrl(url)`: converts relative backend paths to full URLs using API_BASE_URL
   features/[feature]/     — components, hooks, pages, services per feature
   layouts/                — MarketplaceLayout, AdminLayout
   components/common/      — Button, Input, Select, Modal, Badge, Pagination, Spinner, PrivateRoute, AdminRoute
@@ -105,6 +111,8 @@ src/
 - **React Query**: use `useQuery` / `useMutation` for all server state. No `useEffect` + fetch.
 - **Forms**: React Hook Form (`useForm`) + Zod (`zodResolver`) for schema validation. Define a Zod schema, pass it to `zodResolver`, wire fields with `register`. Do not write manual validation logic.
 - **Route guards**: `PrivateRoute` redirects unauthenticated users; `AdminRoute` redirects non-admins to `/forbidden`.
+- **Dynamic attributes on forms**: use `DynamicAttributeFields` component (passes `register`, `errors`, `watch` from RHF). Attribute conditional visibility is computed by `isAttributeVisible(attribute, values)` in `features/listings/utils/attributeVisibility.js` — `ConditionalOperator` int values map to Equals=0, NotEquals=1, Contains=2, GreaterThan=3, LessThan=4.
+- **Image URLs**: backend serves uploaded files as static assets. Use `assetUrl(url)` from `utils/assets.js` for any image path that may be a relative backend path — it handles both relative and absolute URLs.
 
 ---
 

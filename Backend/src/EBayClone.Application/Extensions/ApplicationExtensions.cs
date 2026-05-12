@@ -11,10 +11,12 @@ public static class ApplicationExtensions
     {
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IListingService, ListingService>();
+        services.AddScoped<IListingApprovalService, ListingApprovalService>();
         services.AddScoped<IOrderService, OrderService>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<ICategoryService, CategoryService>();
         services.AddScoped<IBusinessProfileService, BusinessProfileService>();
+        services.AddScoped<IEmailTemplateService, EmailTemplateService>();
 
         services.AddValidatorsFromAssembly(typeof(ApplicationExtensions).Assembly);
 

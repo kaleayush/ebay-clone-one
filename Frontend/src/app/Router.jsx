@@ -40,6 +40,8 @@ const AdminListingsPage = lazy(() => import('@/features/admin/pages/AdminListing
 const AdminUsersPage = lazy(() => import('@/features/admin/pages/AdminUsersPage'))
 const AdminOrdersPage = lazy(() => import('@/features/admin/pages/AdminOrdersPage'))
 const AdminCategoriesPage = lazy(() => import('@/features/admin/pages/AdminCategoriesPage'))
+const AdminBusinessProfilesPage = lazy(() => import('@/features/admin/pages/AdminBusinessProfilesPage'))
+const AdminEmailTemplatesPage = lazy(() => import('@/features/admin/pages/AdminEmailTemplatesPage'))
 
 // Error pages
 const NotFoundPage = lazy(() => import('@/features/errors/NotFoundPage'))
@@ -93,6 +95,8 @@ export const router = createBrowserRouter([
       { path: 'users', element: withSuspense(AdminUsersPage) },
       { path: 'orders', element: withSuspense(AdminOrdersPage) },
       { path: 'categories', element: withSuspense(AdminCategoriesPage) },
+      { path: 'business-profiles', element: withSuspense(AdminBusinessProfilesPage) },
+      { path: 'email-templates', element: withSuspense(AdminEmailTemplatesPage) },
     ],
   },
 

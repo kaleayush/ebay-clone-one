@@ -18,8 +18,13 @@ public class ListingService(
     IRepository<ListingImage> listingImageRepository,
     IRepository<ListingAttributeValue> listingAttributeValueRepository,
     IRepository<ListingView> listingViewRepository,
+    IRepository<ListingVersion> listingVersionRepository,
+    IRepository<ListingApprovalLog> listingApprovalLogRepository,
     ILogger<ListingService> logger) : IListingService
 {
+    private static readonly JsonSerializerOptions JsonOpts =
+        new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+
     public async Task<PagedResult<ListingResponse>> GetListingsAsync(ListingQuery query, CancellationToken ct = default)
     {
         var q = ListingQueryBase(query.IncludeDeleted)
@@ -132,6 +137,20 @@ public class ListingService(
         await listingRepository.AddAsync(listing, ct);
         await listingRepository.SaveChangesAsync(ct);
 
+        var version = new ListingVersion
+        {
+            ListingId = listing.Id,
+            VersionNumber = 1,
+            SnapshotJson = JsonSerializer.Serialize(BuildSnapshot(listing), JsonOpts),
+            IsPendingUpdate = false,
+            Status = ListingVersionStatus.PendingApproval,
+            SubmittedAt = DateTime.UtcNow,
+        };
+
+        await listingVersionRepository.AddAsync(version, ct);
+        await AddSubmissionLogAsync(listing.Id, version.Id, sellerId, "Listing submitted for approval.", ct);
+        await listingVersionRepository.SaveChangesAsync(ct);
+
         logger.LogInformation("Listing created: {Id} by seller {SellerId}", listing.Id, sellerId);
 
         return await GetByIdAsync(listing.Id, ct);
@@ -152,12 +171,75 @@ public class ListingService(
 
         ValidateListingRequest(request, metadata);
 
+        if (listing.Status == ListingStatus.Active)
+        {
+            if (listing.HasPendingVersion)
+                throw new InvalidOperationException("This listing already has a pending update under review.");
+
+            var version = new ListingVersion
+            {
+                ListingId = listing.Id,
+                VersionNumber = await NextVersionNumberAsync(listing.Id, ct),
+                SnapshotJson = JsonSerializer.Serialize(BuildSnapshot(request, listing), JsonOpts),
+                IsPendingUpdate = true,
+                Status = ListingVersionStatus.PendingApproval,
+                SubmittedAt = DateTime.UtcNow,
+            };
+
+            await listingVersionRepository.AddAsync(version, ct);
+            await AddSubmissionLogAsync(listing.Id, version.Id, sellerId, "Listing update submitted for approval.", ct);
+
+            listing.HasPendingVersion = true;
+            listing.UpdatedAt = DateTime.UtcNow;
+            await listingRepository.SaveChangesAsync(ct);
+
+            logger.LogInformation("Listing update submitted for approval: {Id} by seller {SellerId}", listing.Id, sellerId);
+
+            return await GetByIdAsync(listing.Id, ct);
+        }
+
         ApplyListingRequest(listing, request);
+        listing.Status = ListingStatus.PendingApproval;
+        listing.HasPendingVersion = false;
         await ReplaceAttributeValuesAsync(listing, request.AttributeValues, metadata, ct);
         await ReplaceImagesAsync(listing, request.Images, ct);
         listing.UpdatedAt = DateTime.UtcNow;
 
         await listingRepository.SaveChangesAsync(ct);
+
+        var pendingVersion = await listingVersionRepository.Query()
+            .FirstOrDefaultAsync(v =>
+                v.ListingId == listing.Id &&
+                v.Status == ListingVersionStatus.PendingApproval &&
+                !v.IsPendingUpdate,
+                ct);
+
+        if (pendingVersion is null)
+        {
+            pendingVersion = new ListingVersion
+            {
+                ListingId = listing.Id,
+                VersionNumber = await NextVersionNumberAsync(listing.Id, ct),
+                SnapshotJson = JsonSerializer.Serialize(BuildSnapshot(listing), JsonOpts),
+                IsPendingUpdate = false,
+                Status = ListingVersionStatus.PendingApproval,
+                SubmittedAt = DateTime.UtcNow,
+            };
+
+            await listingVersionRepository.AddAsync(pendingVersion, ct);
+        }
+        else
+        {
+            pendingVersion.SnapshotJson = JsonSerializer.Serialize(BuildSnapshot(listing), JsonOpts);
+            pendingVersion.SubmittedAt = DateTime.UtcNow;
+            pendingVersion.RejectionReason = null;
+            pendingVersion.ReviewedAt = null;
+            pendingVersion.ReviewedByAdminId = null;
+            listingVersionRepository.Update(pendingVersion);
+        }
+
+        await AddSubmissionLogAsync(listing.Id, pendingVersion.Id, sellerId, "Listing submitted for approval.", ct);
+        await listingVersionRepository.SaveChangesAsync(ct);
 
         return await GetByIdAsync(listing.Id, ct);
     }
@@ -648,7 +730,7 @@ public class ListingService(
         listing.AuctionEndAt = request.ListingType == ListingType.Auction ? request.AuctionEndAt : null;
         listing.Quantity = request.Quantity;
         listing.FreeShipping = request.FreeShipping;
-        listing.Status = request.Status;
+        listing.Status = ListingStatus.PendingApproval;
         listing.CategoryId = request.CategoryId;
         listing.UpdatedAt = DateTime.UtcNow;
     }
@@ -832,6 +914,78 @@ public class ListingService(
             .FirstOrDefault();
     }
 
+    private async Task<int> NextVersionNumberAsync(Guid listingId, CancellationToken ct)
+    {
+        var max = await listingVersionRepository.Query()
+            .IgnoreQueryFilters()
+            .Where(v => v.ListingId == listingId)
+            .Select(v => (int?)v.VersionNumber)
+            .MaxAsync(ct);
+
+        return (max ?? 0) + 1;
+    }
+
+    private async Task AddSubmissionLogAsync(Guid listingId, Guid versionId, Guid actorId, string notes, CancellationToken ct)
+    {
+        await listingApprovalLogRepository.AddAsync(new ListingApprovalLog
+        {
+            ListingId = listingId,
+            VersionId = versionId,
+            AdminId = actorId,
+            Action = ApprovalAction.Submitted,
+            Notes = notes,
+        }, ct);
+    }
+
+    private static ListingSnapshotData BuildSnapshot(Listing listing) => new(
+        listing.Title,
+        listing.Description,
+        (int)listing.ListingType,
+        listing.Price,
+        listing.DiscountAmount,
+        listing.StartingBid,
+        listing.ReservePrice,
+        listing.BuyItNowPrice,
+        listing.AuctionStartAt,
+        listing.AuctionEndAt,
+        listing.Quantity,
+        listing.FreeShipping,
+        listing.CategoryId,
+        listing.AttributeValues
+            .Where(v => !v.IsDeleted)
+            .Select(v => new AttributeEntry(v.CategoryAttributeId, v.Value))
+            .ToList(),
+        listing.Images
+            .Where(i => !i.IsDeleted)
+            .OrderBy(i => i.SortOrder)
+            .Select(i => new ImageEntry(i.Url, i.AltText, i.SortOrder))
+            .ToList()
+    );
+
+    private static ListingSnapshotData BuildSnapshot(UpdateListingRequest request, Listing currentListing) => new(
+        request.Title.Trim(),
+        request.Description.Trim(),
+        (int)request.ListingType,
+        request.ListingType == ListingType.Auction ? request.BuyItNowPrice ?? request.StartingBid!.Value : request.Price,
+        request.DiscountAmount,
+        request.ListingType == ListingType.Auction ? request.StartingBid : null,
+        request.ListingType == ListingType.Auction ? request.ReservePrice : null,
+        request.ListingType == ListingType.Auction ? request.BuyItNowPrice : null,
+        request.ListingType == ListingType.Auction ? request.AuctionStartAt ?? currentListing.AuctionStartAt ?? DateTime.UtcNow : null,
+        request.ListingType == ListingType.Auction ? request.AuctionEndAt : null,
+        request.Quantity,
+        request.FreeShipping,
+        request.CategoryId,
+        (request.AttributeValues ?? [])
+            .Where(v => v.CategoryAttributeId != Guid.Empty && !string.IsNullOrWhiteSpace(v.Value))
+            .Select(v => new AttributeEntry(v.CategoryAttributeId, v.Value!.Trim()))
+            .ToList(),
+        (request.Images ?? [])
+            .Where(i => !string.IsNullOrWhiteSpace(i.Url))
+            .Select(i => new ImageEntry(i.Url.Trim(), i.AltText?.Trim(), i.SortOrder))
+            .ToList()
+    );
+
     private static ListingResponse MapToResponse(Listing l) => new(
         l.Id,
         l.Title,
@@ -865,7 +1019,8 @@ public class ListingService(
             .Select(i => new ListingImageResponse(i.Id, i.Url, i.AltText, i.SortOrder))
             .ToList(),
         l.CreatedAt,
-        l.UpdatedAt
+        l.UpdatedAt,
+        l.HasPendingVersion
     );
 
     private static decimal GetFinalPrice(Listing listing) =>

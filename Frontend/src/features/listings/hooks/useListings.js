@@ -54,7 +54,7 @@ export const useCreateListing = () => {
     mutationFn: listingService.create,
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: LISTING_KEYS.all })
-      toast.success('Listing created successfully!')
+      toast.success('Listing submitted for approval')
     },
     onError: (err) => toast.error(err?.response?.data?.message || 'Failed to create listing'),
   })

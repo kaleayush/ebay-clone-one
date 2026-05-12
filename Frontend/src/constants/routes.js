@@ -22,6 +22,7 @@ export const ROUTES = {
   ADMIN_ORDERS: '/admin/orders',
   ADMIN_CATEGORIES: '/admin/categories',
   ADMIN_BUSINESS_PROFILES: '/admin/business-profiles',
+  ADMIN_EMAIL_TEMPLATES: '/admin/email-templates',
 }
 
 export const buildRoute = (route, params = {}) => {

@@ -56,4 +56,22 @@ public class ConsoleEmailService(
             email, firstName, isApproved, rejectionReason ?? "N/A");
         return Task.CompletedTask;
     }
+
+    public Task SendListingApprovedAsync(string email, string firstName, string listingTitle, string listingUrl, CancellationToken ct = default)
+    {
+        logger.LogInformation("[EMAIL] Listing Approved | To: {Email} | Name: {Name} | Title: {Title}", email, firstName, listingTitle);
+        return Task.CompletedTask;
+    }
+
+    public Task SendListingRejectedAsync(string email, string firstName, string listingTitle, string rejectionReason, CancellationToken ct = default)
+    {
+        logger.LogInformation("[EMAIL] Listing Rejected | To: {Email} | Name: {Name} | Title: {Title} | Reason: {Reason}", email, firstName, listingTitle, rejectionReason);
+        return Task.CompletedTask;
+    }
+
+    public Task SendListingPendingApprovalAsync(string email, string firstName, string listingTitle, CancellationToken ct = default)
+    {
+        logger.LogInformation("[EMAIL] Listing Pending Approval | To: {Email} | Name: {Name} | Title: {Title}", email, firstName, listingTitle);
+        return Task.CompletedTask;
+    }
 }
