@@ -77,11 +77,42 @@ ApiResponse<PagedResult<T>>.Success(pagedResult)  // paginated
 - `CategoryFormSeeder` uses MD5-deterministic GUIDs: `CreateGuid($"category:{key}")`, `CreateGuid($"attribute:{key}:{name}")`
 - Default admin: `00000000-0000-0000-0000-000000000001`
 
-### Stub Services
-| Service | Implementation | Note |
-|---------|---------------|-------|
-| `IEmailService` | `ConsoleEmailService` (dev) / `SmtpEmailService` (prod) | Writes to console in dev |
+### Infrastructure Services
+| Interface | Implementation | Note |
+|-----------|---------------|-------|
+| `IEmailService` | `SmtpEmailService` (always) | Console-fallback when `Host` is empty |
 | `IFileStorageService` | `LocalFileStorageService` | Saves to `wwwroot/uploads` |
+
+### SMTP Email Service (`SmtpEmailService`)
+- Registered as `IEmailService` in `AddInfrastructure` for all environments
+- **Never throws to caller** — all SMTP exceptions caught + logged; API never fails due to email
+- `SmtpSettings:Host` empty → logs `[EMAIL-CONSOLE]` to Serilog and returns (dev fallback)
+- `SmtpSettings:Host` set → connects via MailKit, `StartTls` if `EnableSsl=true`
+- Template rendering via `IEmailTemplateService.GetActiveTemplateAsync()` — no active template → logs warning, skips send
+- Placeholder syntax: `{{Key}}` replaced from `Dictionary<string,string>` context
+
+Config per environment:
+| Setting | Base (`appsettings.json`) | Development | Production |
+|---------|--------------------------|-------------|------------|
+| Host | `""` (console fallback) | `sandbox.smtp.mailtrap.io` | set via env var |
+| Port | `587` | `587` | `587` |
+| Username | `""` | Mailtrap key | set via env var |
+| Password | `""` | Mailtrap key | set via env var |
+| FromEmail | `noreply@ebay-clone.com` | `ayushkale85.33@gmail.com` | set via env var |
+| FromName | `"eBay Clone"` | `"eBay Clone (Dev)"` | `"eBay Clone"` |
+| EnableSsl | `true` | `true` | `true` |
+
+Production env vars (Docker / hosting):
+```
+SmtpSettings__Host=smtp.sendgrid.net
+SmtpSettings__Username=apikey
+SmtpSettings__Password=<api-key>
+SmtpSettings__FromEmail=noreply@yourdomain.com
+SmtpSettings__FromName=eBay Clone
+```
+
+> `FromName` must not be empty string — use `IsNullOrWhiteSpace` guard (already applied in service).  
+> Empty string bypasses `?? fallback`; only null triggers it.
 
 ---
 

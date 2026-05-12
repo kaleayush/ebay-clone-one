@@ -144,7 +144,9 @@ public class SmtpEmailService(
             var username = configuration["SmtpSettings:Username"] ?? string.Empty;
             var password = configuration["SmtpSettings:Password"] ?? string.Empty;
             var fromEmail = configuration["SmtpSettings:FromEmail"] ?? "noreply@ebay-clone.com";
-            var fromName = configuration["SmtpSettings:FromName"] ?? "eBay Clone";
+            var fromName = string.IsNullOrWhiteSpace(configuration["SmtpSettings:FromName"])
+                ? "eBay Clone"
+                : configuration["SmtpSettings:FromName"]!;
             var enableSsl = !string.Equals(configuration["SmtpSettings:EnableSsl"], "false", StringComparison.OrdinalIgnoreCase);
 
             var message = new MimeMessage();
