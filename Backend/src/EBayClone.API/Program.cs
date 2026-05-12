@@ -57,15 +57,12 @@ using (var scope = app.Services.CreateScope())
 
 app.UseMiddleware<GlobalExceptionMiddleware>();
 
-if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "eBay Clone API v1");
-        c.RoutePrefix = "swagger";
-    });
-}
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "eBay Clone API v1");
+    c.RoutePrefix = "swagger";
+});
 
 app.UseStaticFiles();
 app.UseSerilogRequestLogging();
@@ -84,7 +81,7 @@ Log.Information("===========================================");
 Log.Information("  eBay Clone API");
 Log.Information("  Environment : {Environment}", app.Environment.EnvironmentName);
 Log.Information("  Listening   : {Url}", urls);
-Log.Information("  Swagger     : {Swagger}", app.Environment.IsDevelopment() ? $"{baseUrl}/swagger" : "disabled (production)");
+Log.Information("  Swagger     : {Swagger}", $"{baseUrl}/swagger");
 Log.Information("===========================================");
 
 app.Run();
