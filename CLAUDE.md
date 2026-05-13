@@ -2,6 +2,21 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Docs
+
+Reference files in [`docs/`](docs/):
+
+| File | Purpose |
+|------|---------|
+| [docs/requirements.md](docs/requirements.md) | System requirements, feature list, user stories |
+| [docs/architecture.md](docs/architecture.md) | Layer structure, backend/frontend architecture overview |
+| [docs/api-contract.md](docs/api-contract.md) | API base URL, response envelope, endpoint contracts |
+| [docs/database.md](docs/database.md) | DB engine, EF Core setup, migration strategy, schema notes |
+| [docs/design.md](docs/design.md) | Tailwind design system, color tokens, component conventions |
+| [docs/coding-rules.md](docs/coding-rules.md) | Naming conventions, patterns, do/don't rules for this codebase |
+
+---
+
 ## Commands
 
 ### Frontend (`cd Frontend`)

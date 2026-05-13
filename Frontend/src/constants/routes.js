@@ -23,6 +23,7 @@ export const ROUTES = {
   ADMIN_CATEGORIES: '/admin/categories',
   ADMIN_BUSINESS_PROFILES: '/admin/business-profiles',
   ADMIN_EMAIL_TEMPLATES: '/admin/email-templates',
+  ADMIN_REVIEW: '/admin/review',
 }
 
 export const buildRoute = (route, params = {}) => {

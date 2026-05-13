@@ -23,6 +23,7 @@ public static class InfrastructureExtensions
         services.AddScoped<IJwtService, JwtService>();
         services.AddSingleton<IPasswordHasher, BcryptPasswordHasher>();
         services.AddScoped<IEmailService, SmtpEmailService>();
+        services.AddSingleton<IBackgroundEmailService, BackgroundEmailService>();
         services.AddScoped<IFileStorageService, LocalFileStorageService>();
 
         return services;

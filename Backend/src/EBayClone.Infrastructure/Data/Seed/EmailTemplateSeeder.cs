@@ -57,7 +57,7 @@ public static class EmailTemplateSeeder
         yield return (
             "Forgot Password",
             "Reset your eBay Clone password",
-            WrapInLayout("Reset Your Password", """
+            WrapInLayout("&#128065; Reset Your Password", """
                 <p style="font-size:15px;color:#444;margin:0 0 20px">Hi <strong>{{UserName}}</strong>,</p>
                 <p style="font-size:15px;color:#444;margin:0 0 24px">We received a request to reset your password. Click the button below to choose a new one.</p>
                 <div style="text-align:center;margin:32px 0">

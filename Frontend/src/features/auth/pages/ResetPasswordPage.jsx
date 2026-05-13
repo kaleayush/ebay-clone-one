@@ -49,12 +49,12 @@ export default function ResetPasswordPage() {
     <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
       <div className="card w-full max-w-sm p-8">
         <div className="text-center mb-8">
-          <div className="flex justify-center items-center gap-0.5 mb-4">
+          <Link to={ROUTES.HOME} className="flex justify-center items-center gap-0.5 mb-4 hover:opacity-80 transition-opacity">
             <span className="text-ebay-blue font-bold text-4xl">e</span>
             <span className="text-ebay-red font-bold text-4xl">B</span>
             <span className="text-ebay-yellow font-bold text-4xl">a</span>
             <span className="text-ebay-green font-bold text-4xl">y</span>
-          </div>
+          </Link>
           <h1 className="text-xl font-semibold text-gray-900">Set a new password</h1>
           <p className="mt-1 text-sm text-gray-500">
             Choose a strong password for your account
@@ -67,6 +67,7 @@ export default function ResetPasswordPage() {
             type="password"
             placeholder="Min 8 chars, 1 uppercase, 1 number"
             required
+            showPasswordToggle
             error={errors.newPassword?.message}
             {...register('newPassword')}
           />
@@ -75,6 +76,7 @@ export default function ResetPasswordPage() {
             type="password"
             placeholder="Re-enter your new password"
             required
+            showPasswordToggle
             error={errors.confirmPassword?.message}
             {...register('confirmPassword')}
           />

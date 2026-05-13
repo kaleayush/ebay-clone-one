@@ -32,12 +32,12 @@ export default function ForgotPasswordPage() {
     <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
       <div className="card w-full max-w-sm p-8">
         <div className="text-center mb-8">
-          <div className="flex justify-center items-center gap-0.5 mb-4">
+          <Link to={ROUTES.HOME} className="flex justify-center items-center gap-0.5 mb-4 hover:opacity-80 transition-opacity">
             <span className="text-ebay-blue font-bold text-4xl">e</span>
             <span className="text-ebay-red font-bold text-4xl">B</span>
             <span className="text-ebay-yellow font-bold text-4xl">a</span>
             <span className="text-ebay-green font-bold text-4xl">y</span>
-          </div>
+          </Link>
           <h1 className="text-xl font-semibold text-gray-900">Reset your password</h1>
           <p className="mt-1 text-sm text-gray-500">
             Enter your email and we'll send you a reset link

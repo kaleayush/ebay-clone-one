@@ -19,6 +19,7 @@ public class ListingApprovalService(
     IRepository<User> userRepository,
     IListingService listingService,
     IEmailService emailService,
+    IBackgroundEmailService backgroundEmailService,
     IConfiguration configuration,
     ILogger<ListingApprovalService> logger) : IListingApprovalService
 {
@@ -69,7 +70,15 @@ public class ListingApprovalService(
 
         var seller = await userRepository.GetByIdAsync(sellerId, ct);
         if (seller is not null)
-            await emailService.SendListingPendingApprovalAsync(seller.Email, seller.FirstName, listing.Title, ct);
+        {
+            var sellerEmail = seller.Email;
+            var sellerName = seller.FirstName;
+            var title = listing.Title;
+
+            // Send email in background using scoped service
+            backgroundEmailService.EnqueueEmail(s => 
+                s.SendListingPendingApprovalAsync(sellerEmail, sellerName, title, CancellationToken.None));
+        }
 
         logger.LogInformation("Listing {Id} submitted for approval by seller {SellerId}", listingId, sellerId);
 
@@ -134,7 +143,15 @@ public class ListingApprovalService(
 
         var seller = await userRepository.GetByIdAsync(sellerId, ct);
         if (seller is not null)
-            await emailService.SendListingPendingApprovalAsync(seller.Email, seller.FirstName, listing.Title, ct);
+        {
+            var sellerEmail = seller.Email;
+            var sellerName = seller.FirstName;
+            var title = listing.Title;
+
+            // Send email in background using scoped service
+            backgroundEmailService.EnqueueEmail(s => 
+                s.SendListingPendingApprovalAsync(sellerEmail, sellerName, title, CancellationToken.None));
+        }
 
         logger.LogInformation("Listing update {Id} submitted for approval by seller {SellerId}", listingId, sellerId);
     }
@@ -183,7 +200,13 @@ public class ListingApprovalService(
         if (seller is not null)
         {
             var listingUrl = $"{_frontendUrl}/listings/{listingId}";
-            await emailService.SendListingApprovedAsync(seller.Email, seller.FirstName, listing.Title, listingUrl, ct);
+            var sellerEmail = seller.Email;
+            var sellerName = seller.FirstName;
+            var title = listing.Title;
+
+            // Send email in background using scoped service
+            backgroundEmailService.EnqueueEmail(s => 
+                s.SendListingApprovedAsync(sellerEmail, sellerName, title, listingUrl, CancellationToken.None));
         }
 
         logger.LogInformation("Listing {Id} approved by admin {AdminId}", listingId, adminId);
@@ -232,7 +255,15 @@ public class ListingApprovalService(
 
         var seller = await userRepository.GetByIdAsync(listing.SellerId, ct);
         if (seller is not null)
-            await emailService.SendListingRejectedAsync(seller.Email, seller.FirstName, listing.Title, reason, ct);
+        {
+            var sellerEmail = seller.Email;
+            var sellerName = seller.FirstName;
+            var title = listing.Title;
+
+            // Send email in background using scoped service
+            backgroundEmailService.EnqueueEmail(s => 
+                s.SendListingRejectedAsync(sellerEmail, sellerName, title, reason, CancellationToken.None));
+        }
 
         logger.LogInformation("Listing {Id} rejected by admin {AdminId}", listingId, adminId);
 

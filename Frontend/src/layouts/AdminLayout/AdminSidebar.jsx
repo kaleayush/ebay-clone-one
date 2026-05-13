@@ -1,12 +1,13 @@
 import { NavLink } from 'react-router-dom'
 import {
-  LayoutDashboard, Package, Users, ShoppingBag, Tag, X, ShieldCheck, Briefcase, Mail,
+  LayoutDashboard, Package, Users, ShoppingBag, Tag, X, ShieldCheck, Briefcase, Mail, ClipboardList,
 } from 'lucide-react'
 import { ROUTES } from '@/constants/routes'
 
 const navItems = [
   { to: ROUTES.ADMIN_DASHBOARD, icon: LayoutDashboard, label: 'Dashboard' },
   { to: ROUTES.ADMIN_LISTINGS, icon: Package, label: 'Listings' },
+  { to: ROUTES.ADMIN_REVIEW, icon: ClipboardList, label: 'Review Queue' },
   { to: ROUTES.ADMIN_USERS, icon: Users, label: 'Users' },
   { to: ROUTES.ADMIN_ORDERS, icon: ShoppingBag, label: 'Orders' },
   { to: ROUTES.ADMIN_CATEGORIES, icon: Tag, label: 'Categories' },

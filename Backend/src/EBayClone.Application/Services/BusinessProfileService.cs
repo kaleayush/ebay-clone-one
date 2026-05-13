@@ -15,6 +15,7 @@ public class BusinessProfileService(
     IRepository<User> userRepository,
     IFileStorageService fileStorageService,
     IEmailService emailService,
+    IBackgroundEmailService backgroundEmailService,
     ILogger<BusinessProfileService> logger) : IBusinessProfileService
 {
     public async Task<BusinessProfileResponse?> GetByUserIdAsync(Guid userId, CancellationToken ct = default)
@@ -58,7 +59,14 @@ public class BusinessProfileService(
 
         var user = await userRepository.GetByIdAsync(userId, ct);
         if (user is not null)
-            await emailService.SendBusinessProfileSubmittedAsync(user.Email, user.FirstName, ct);
+        {
+            var userEmail = user.Email;
+            var userName = user.FirstName;
+
+            // Send email in background using scoped service
+            backgroundEmailService.EnqueueEmail(s => 
+                s.SendBusinessProfileSubmittedAsync(userEmail, userName, CancellationToken.None));
+        }
 
         logger.LogInformation("Business profile submitted for user {UserId}", userId);
 
@@ -220,8 +228,13 @@ public class BusinessProfileService(
         profileRepository.Update(profile);
         await profileRepository.SaveChangesAsync(ct);
 
-        await emailService.SendBusinessProfileReviewedAsync(
-            profile.User.Email, profile.User.FirstName, isApproved, rejectionReason, ct);
+        var userEmail = profile.User.Email;
+        var userName = profile.User.FirstName;
+
+        // Send email in background using scoped service
+        backgroundEmailService.EnqueueEmail(s => 
+            s.SendBusinessProfileReviewedAsync(
+                userEmail, userName, isApproved, rejectionReason, CancellationToken.None));
 
         logger.LogInformation("Business profile {ProfileId} {Action} by admin {AdminId}",
             profileId, isApproved ? "approved" : "rejected", adminId);

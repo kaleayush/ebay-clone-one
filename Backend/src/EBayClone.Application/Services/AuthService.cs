@@ -15,6 +15,7 @@ public class AuthService(
     IJwtService jwtService,
     IPasswordHasher passwordHasher,
     IEmailService emailService,
+    IBackgroundEmailService backgroundEmailService,
     ILogger<AuthService> logger) : IAuthService
 {
     public async Task<AuthResponse> RegisterAsync(RegisterRequest request, CancellationToken ct = default)
@@ -42,7 +43,9 @@ public class AuthService(
 
         logger.LogInformation("New user registered: {Email}", user.Email);
 
-        await emailService.SendEmailVerificationAsync(user.Email, user.FirstName, verificationToken, ct);
+        // Send email in the background using the new scoped background service
+        backgroundEmailService.EnqueueEmail(s => 
+            s.SendEmailVerificationAsync(user.Email, user.FirstName, verificationToken, CancellationToken.None));
 
         return await IssueTokensAsync(user, ct);
     }
@@ -149,7 +152,9 @@ public class AuthService(
         userRepository.Update(user);
         await userRepository.SaveChangesAsync(ct);
 
-        await emailService.SendEmailVerificationAsync(user.Email, user.FirstName, token, ct);
+        // Send email in the background using the new scoped background service
+        backgroundEmailService.EnqueueEmail(s => 
+            s.SendEmailVerificationAsync(user.Email, user.FirstName, token, CancellationToken.None));
 
         logger.LogInformation("Verification email resent to: {Email}", user.Email);
     }
@@ -169,7 +174,9 @@ public class AuthService(
         userRepository.Update(user);
         await userRepository.SaveChangesAsync(ct);
 
-        await emailService.SendPasswordResetAsync(user.Email, user.FirstName, token, ct);
+        // Send email in the background using the new scoped background service
+        backgroundEmailService.EnqueueEmail(s => 
+            s.SendPasswordResetAsync(user.Email, user.FirstName, token, CancellationToken.None));
 
         logger.LogInformation("Password reset requested for: {Email}", user.Email);
     }
@@ -189,10 +196,11 @@ public class AuthService(
         user.PasswordResetToken = null;
         user.PasswordResetTokenExpiry = null;
         user.UpdatedAt = DateTime.UtcNow;
-        userRepository.Update(user);
         await userRepository.SaveChangesAsync(ct);
 
-        await emailService.SendPasswordChangedNotificationAsync(user.Email, user.FirstName, ct);
+        // Send email in the background using the new scoped background service
+        backgroundEmailService.EnqueueEmail(s => 
+            s.SendPasswordChangedNotificationAsync(user.Email, user.FirstName, CancellationToken.None));
 
         logger.LogInformation("Password reset completed for: {Email}", user.Email);
     }

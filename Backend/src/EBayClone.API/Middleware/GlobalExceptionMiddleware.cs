@@ -39,12 +39,16 @@ public class GlobalExceptionMiddleware(RequestDelegate next, ILogger<GlobalExcep
                 HttpStatusCode.Conflict,
                 ApiResponse.Fail(exception.Message)),
 
+            OperationCanceledException => (
+                (HttpStatusCode)499, // Client Closed Request
+                ApiResponse.Fail("The request was canceled.")),
+
             _ => (
                 HttpStatusCode.InternalServerError,
                 ApiResponse.Fail("An unexpected error occurred. Please try again later.")),
         };
 
-        if (exception is not (KeyNotFoundException or UnauthorizedAccessException or InvalidOperationException or ValidationException))
+        if (exception is not (KeyNotFoundException or UnauthorizedAccessException or InvalidOperationException or ValidationException or OperationCanceledException))
         {
             logger.LogError(exception, "Unhandled exception: {Message}", exception.Message);
         }

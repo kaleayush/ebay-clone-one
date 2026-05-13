@@ -40,19 +40,19 @@ Directory.CreateDirectory(uploadsDir);
 // Auto-migrate database on startup
 using (var scope = app.Services.CreateScope())
 {
-    try
-    {
-        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        await db.Database.MigrateAsync();
-        await CategoryFormSeeder.SeedAsync(db);
-        await ListingAndUserSeeder.SeedAsync(db);
-        await EmailTemplateSeeder.SeedAsync(db);
-        Log.Information("Database migration applied successfully");
-    }
-    catch (Exception ex)
-    {
-        Log.Error(ex, "Failed to apply database migrations");
-    }
+   try
+   {
+       var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+       await db.Database.MigrateAsync();
+       await CategoryFormSeeder.SeedAsync(db);
+       await ListingAndUserSeeder.SeedAsync(db);
+       await EmailTemplateSeeder.SeedAsync(db);
+       Log.Information("Database migration applied successfully");
+   }
+   catch (Exception ex)
+   {
+       Log.Error(ex, "Failed to apply database migrations");
+   }
 }
 
 app.UseMiddleware<GlobalExceptionMiddleware>();

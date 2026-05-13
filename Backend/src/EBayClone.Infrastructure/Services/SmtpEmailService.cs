@@ -134,9 +134,17 @@ public class SmtpEmailService(
         var host = configuration["SmtpSettings:Host"];
         if (string.IsNullOrWhiteSpace(host))
         {
+            logger.LogWarning("[EMAIL] SMTP Host is not configured. Email to {Email} will only be logged to console.", toEmail);
             logger.LogInformation("[EMAIL-CONSOLE] To: {Email} | Subject: {Subject}", toEmail, subject);
             return;
         }
+
+        // Use a dedicated timeout for email sending (30 seconds)
+        // We don't link it to 'ct' here because we want the email to finish sending 
+        // even if the HTTP request is cancelled (e.g. user closes the browser),
+        // as the action (like password reset) has already been committed to the database.
+        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+        var timeoutToken = cts.Token;
 
         try
         {
@@ -156,24 +164,38 @@ public class SmtpEmailService(
             message.Body = new BodyBuilder { HtmlBody = htmlBody }.ToMessageBody();
 
             using var client = new SmtpClient();
+            
+            // Set a client-side timeout as well
+            client.Timeout = 30000; 
+
+            logger.LogDebug("[EMAIL] Connecting to SMTP host {Host}:{Port} (SSL: {EnableSsl})...", host, port, enableSsl);
             await client.ConnectAsync(host, port,
-                enableSsl ? SecureSocketOptions.StartTls : SecureSocketOptions.None, ct);
+                enableSsl ? SecureSocketOptions.StartTls : SecureSocketOptions.None, timeoutToken);
 
             if (!string.IsNullOrEmpty(username))
-                await client.AuthenticateAsync(username, password, ct);
+            {
+                logger.LogDebug("[EMAIL] Authenticating as {Username}...", username);
+                await client.AuthenticateAsync(username, password, timeoutToken);
+            }
 
-            await client.SendAsync(message, ct);
-            await client.DisconnectAsync(quit: true, ct);
+            logger.LogDebug("[EMAIL] Sending message to {Email}...", toEmail);
+            await client.SendAsync(message, timeoutToken);
+            
+            await client.DisconnectAsync(quit: true, timeoutToken);
 
-            logger.LogInformation("[EMAIL] Sent {Subject} to {Email}", subject, toEmail);
+            logger.LogInformation("[EMAIL] Successfully sent '{Subject}' to {Email}", subject, toEmail);
+        }
+        catch (OperationCanceledException ex) when (timeoutToken.IsCancellationRequested)
+        {
+            logger.LogError(ex, "[EMAIL] SMTP operation timed out (30s) while sending to {Email}: {Subject}", toEmail, subject);
         }
         catch (OperationCanceledException ex)
         {
-            logger.LogWarning(ex, "[EMAIL] Send canceled to {Email}: {Subject}", toEmail, subject);
+            logger.LogWarning(ex, "[EMAIL] SMTP operation was cancelled by external token for {Email}: {Subject}", toEmail, subject);
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "[EMAIL] Failed to send to {Email}: {Subject}", toEmail, subject);
+            logger.LogError(ex, "[EMAIL] Failed to send email to {Email}: {Subject}. Error: {Message}", toEmail, subject, ex.Message);
         }
     }
 
