@@ -18,6 +18,9 @@
 - Always return `ApiResponse<T>` envelope
 - Use `User.FindFirstValue("sub")` for userId (never `ClaimTypes.NameIdentifier`)
 - Paginated: return `ApiResponse<PagedResult<T>>`
+- **Never inject `IRepository<T>` into controllers.** Controllers inject Application service interfaces only.
+- **Never define `public record` or `public class` DTOs inside controller files.** All request/response types live in `Application/DTOs/` (or `API/Models/` for `IFormFile` wrappers — ASP.NET Core types must not enter the Application layer).
+- Controllers must only contain: route attributes, constructor injection of services, action methods, return logic.
 
 ### Service Rules
 - All public methods async, `CancellationToken ct` last param
@@ -51,6 +54,7 @@
 - Application layer never references `BCrypt`, `EF Core`, `Jwt` libraries directly
 - `IPasswordHasher` interface in Application; `BcryptPasswordHasher` in Infrastructure
 - `IEmailService`, `IFileStorageService` interfaces in Application
+- Application layer must not reference `Microsoft.AspNetCore.Http` (e.g. `IFormFile`). File upload wrappers go in `API/Models/`.
 
 ### Comments
 - No comments unless WHY is non-obvious (hidden constraint, workaround, invariant)
@@ -113,6 +117,13 @@
 - All routes in `app/Router.jsx` with `React.lazy` + `<Suspense>`
 - Admin routes under `AdminLayout`, authenticated routes under `MarketplaceLayout`
 - Protected with `PrivateRoute` / `AdminRoute` wrappers
+
+### Checklist Before PR (Architecture)
+- [ ] No `IRepository<T>` injected directly into any controller
+- [ ] No DTO/record/class defined inside a controller file
+- [ ] Business logic in Application service, not controller action
+- [ ] `IFormFile` types in `API/Models/`, not `Application/DTOs/`
+- [ ] DbContext referenced only in Infrastructure repositories
 
 ### Checklist Before PR
 - [ ] New API endpoint added to `constants/api.js`

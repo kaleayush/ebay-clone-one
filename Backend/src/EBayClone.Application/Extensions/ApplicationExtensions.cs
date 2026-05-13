@@ -17,6 +17,7 @@ public static class ApplicationExtensions
         services.AddScoped<ICategoryService, CategoryService>();
         services.AddScoped<IBusinessProfileService, BusinessProfileService>();
         services.AddScoped<IEmailTemplateService, EmailTemplateService>();
+        services.AddScoped<IAdminService, AdminService>();
 
         services.AddValidatorsFromAssembly(typeof(ApplicationExtensions).Assembly);
 

@@ -4,6 +4,8 @@ Engine: SQL Server 2022
 ORM: Entity Framework Core 8 (code-first)  
 Auto-migrate on startup: `db.Database.MigrateAsync()` in `Program.cs`
 
+**DbContext access rule:** `DbContext` must only be used inside Infrastructure layer repositories (`GenericRepository<T>`). Application services access data exclusively via `IRepository<T>` interfaces. Controllers must never reference `DbContext` or inject any repository directly.
+
 ## BaseEntity (all entities extend this)
 | Field | Type | Notes |
 |-------|------|-------|

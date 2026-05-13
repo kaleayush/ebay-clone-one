@@ -2,13 +2,37 @@
 
 ## Layer Structure (Onion)
 ```
-EBayClone.API           → controllers, middleware, DI composition, Program.cs
+EBayClone.API           → controllers, middleware, DI composition, Program.cs, API-layer models
 EBayClone.Application   → services, DTOs, validators, interfaces (no infra deps)
 EBayClone.Infrastructure → EF Core, GenericRepository, JwtService, BcryptPasswordHasher
 EBayClone.Domain        → entities, enums, IRepository<T> (no deps)
 ```
+
+### Correct dependency flow
+```
+HTTP Request
+    ↓
+Controller (API)
+    ↓
+Application Service Interface (Application)
+    ↓
+Application Service Implementation (Application)
+    ↓
+IRepository<T> Interface (Domain)
+    ↓
+GenericRepository<T> Implementation (Infrastructure)
+    ↓
+DbContext (Infrastructure)
+```
+
 Dependency direction: API → Application → Domain ← Infrastructure → Domain.  
 Application never references Infrastructure directly.
+
+### Architecture rules (enforced)
+- **Controllers must not inject or call `IRepository<T>` directly.** All data access must go through an Application service.
+- **Controllers must not contain DTO/request/response record or class definitions.** All DTOs live in `Application/DTOs/` or, for HTTP-specific types like `IFormFile` wrappers, in `API/Models/`.
+- **Business logic must not be written inside controllers.** Controllers are HTTP adapters only: route attribute, constructor injection, one-line action that calls a service, return result.
+- **DbContext must only be used inside Infrastructure repositories.** Application services never reference `DbContext` or EF Core namespaces directly.
 
 ## Backend Patterns
 
@@ -22,6 +46,7 @@ Application never references Infrastructure directly.
 - Registered via `AddApplication()` in `ApplicationExtensions.cs`
 - One interface per service in Application layer
 - Services never reference EF Core directly — only `IRepository<T>`
+- Admin-specific query logic lives in `IAdminService` / `AdminService`
 
 ### DI Registration
 | Extension | Registers |

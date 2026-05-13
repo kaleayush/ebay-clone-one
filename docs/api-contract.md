@@ -91,7 +91,12 @@ ListingVersionResponse:  Id, ListingId, VersionNumber, IsPendingUpdate, Status,
                          ReviewedAt?, SubmittedAt, Snapshot?
 
 AutocompleteResponse:    Suggestions(IReadOnlyCollection<string>)
+
+ImageUploadRequest:      File (IFormFile, multipart) — defined in API/Models/FileUploadModels.cs
+ListingImageUploadResponse: Url
 ```
+
+> `ImageUploadRequest` was previously defined inline in `ListingsController.cs`. Moved to `API/Models/FileUploadModels.cs`. Request shape and route unchanged.
 
 ---
 
@@ -120,13 +125,23 @@ AutocompleteResponse:    Suggestions(IReadOnlyCollection<string>)
 | PATCH | `/email-templates/{id}/deactivate` | Admin | — | `ApiResponse<EmailTemplateResponse>` |
 | DELETE | `/email-templates/{id}` | Admin | — | `ApiResponse` |
 
-**DTOs:**
+**DTOs** (all moved to `Application/DTOs/Admin/AdminDtos.cs` — API contract unchanged):
 ```
+AdminStatsResponse:             TotalUsers, ActiveListings, TotalOrders, TotalRevenue
+AdminUserResponse:              Id, FirstName, LastName, Email, AccountType, Role,
+                                 IsEmailVerified, IsSuspended, IsDeleted, CreatedAt
+AdminListingResponse:           Id, Title, SellerName, Price, DiscountAmount, FinalPrice,
+                                 Status, HasPendingVersion, IsDeleted, CreatedAt
+AdminListingDetailResponse:     Id, Title, Description, SellerName, SellerEmail, Price,
+                                 DiscountAmount, FinalPrice, Status, HasPendingVersion,
+                                 IsDeleted, CreatedAt, PendingVersion?
+AdminOrderResponse:             Id, OrderNumber, BuyerName, ItemCount, TotalAmount,
+                                 Status, CreatedAt
 ApproveListingRequest:          Notes?
 RejectListingRequest:           Reason, Notes?
 CreateEmailTemplateRequest:     Name, Subject, HtmlBody, TemplateType
 UpdateEmailTemplateRequest:     Name, Subject, HtmlBody
-ReviewBusinessProfileRequest:   VerificationStatus, RejectionReason?
+ReviewBusinessProfileRequest:   IsApproved, RejectionReason?
 
 AdminBusinessProfileResponse:   Id, UserId, UserEmail, UserFullName, CompanyName,
                                  GstNumber, PanNumber, VerificationStatus,
@@ -134,6 +149,8 @@ AdminBusinessProfileResponse:   Id, UserId, UserEmail, UserFullName, CompanyName
 EmailTemplateResponse:          Id, Name, Subject, HtmlBody, TemplateType,
                                  TemplateTypeName, IsActive, Version, CreatedAt, UpdatedAt
 ```
+
+> DTOs were previously defined inline in `AdminController.cs`. They are now in `Application/DTOs/Admin/AdminDtos.cs`. All routes, request shapes, response shapes, and status codes are unchanged.
 
 ---
 
@@ -214,7 +231,11 @@ BusinessProfileResponse: Id, UserId, CompanyName, GstNumber, PanNumber,
                          VerifiedAt?, Documents([]DocumentResponse), CreatedAt, UpdatedAt
 DocumentResponse:        Id, FileName, FileUrl, DocumentType, FileSizeBytes,
                          ContentType, CreatedAt
+
+DocumentUploadRequest:   File (IFormFile, multipart), DocumentType — defined in API/Models/FileUploadModels.cs
 ```
+
+> `DocumentUploadRequest` was previously defined inline in `BusinessProfileController.cs`. Moved to `API/Models/FileUploadModels.cs`. Request shape and route unchanged.
 
 ---
 

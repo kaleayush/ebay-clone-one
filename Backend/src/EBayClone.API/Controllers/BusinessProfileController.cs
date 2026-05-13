@@ -1,8 +1,8 @@
 using System.Security.Claims;
+using EBayClone.API.Models;
 using EBayClone.Application.Common;
 using EBayClone.Application.DTOs.BusinessProfile;
 using EBayClone.Application.Interfaces;
-using EBayClone.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -74,10 +74,4 @@ public class BusinessProfileController(IBusinessProfileService businessProfileSe
     }
 
     private Guid GetUserId() => Guid.Parse(User.FindFirstValue("sub")!);
-}
-
-public class DocumentUploadRequest
-{
-    public IFormFile? File { get; set; }
-    public DocumentType DocumentType { get; set; }
 }

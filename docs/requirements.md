@@ -3,6 +3,13 @@
 ## System Purpose
 Marketplace platform. Users buy + sell via unified account. No buyer/seller split — single `User` entity with `AccountType` (Personal|Business).
 
+## Architecture Requirement
+All features (existing and future) must follow Onion Architecture:
+- Controller → Application Service → Repository Interface → Repository Implementation → DbContext
+- No direct repository injection into controllers
+- No DTO definitions inside controller files
+- Business logic lives in Application services only
+
 ## User Roles
 | Role | Capabilities |
 |------|-------------|

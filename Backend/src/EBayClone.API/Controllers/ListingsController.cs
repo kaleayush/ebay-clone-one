@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using EBayClone.API.Models;
 using EBayClone.Application.Common;
 using EBayClone.Application.DTOs.Listings;
 using EBayClone.Application.Interfaces;
@@ -159,9 +160,4 @@ public class ListingsController(
 
     private Guid GetUserId() =>
         Guid.Parse(User.FindFirstValue("sub")!);
-}
-
-public class ImageUploadRequest
-{
-    public IFormFile? File { get; set; }
 }

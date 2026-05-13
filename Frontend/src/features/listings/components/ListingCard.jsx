@@ -39,11 +39,10 @@ export default function ListingCard({ listing }) {
 
         <button
           onClick={handleWishlist}
-          className={`absolute top-2 right-2 p-1.5 bg-white/90 backdrop-blur-sm rounded-full shadow-sm transition-all ${
-            inWishlist
-              ? 'text-secondary opacity-100'
-              : 'text-gray-400 hover:text-secondary opacity-100'
-          }`}
+          className={`absolute top-2 right-2 p-1.5 bg-white/90 backdrop-blur-sm rounded-full shadow-sm transition-all ${inWishlist
+            ? 'text-secondary opacity-100'
+            : 'text-gray-400 hover:text-secondary opacity-100'
+            }`}
           title={inWishlist ? 'Remove from wishlist' : 'Save to wishlist'}
         >
           <Heart size={15} fill={inWishlist ? 'currentColor' : 'none'} />
