@@ -18,6 +18,24 @@ Backend/**/obj/
 *.env.local
 .env.production
 
+# ===== MCP Servers / Local Tooling =====
+.mcp/
+.mcp.json
+mcp.json
+mcp-servers/
+MCP/node_modules/
+MCP/dist/
+MCP/.env
+MCP/.env.local
+mcp/node_modules/
+mcp/dist/
+mcp/.env
+mcp/.env.local
+**/mcp-server/node_modules/
+**/mcp-server/dist/
+**/mcp-server/.env
+**/mcp-server/.env.local
+
 # ===== OS =====
 .DS_Store
 Thumbs.db
@@ -34,3 +52,8 @@ desktop.ini
 # ===== Logs =====
 logs/
 *.log
+
+
+/node_modules/
+/dist/
+.env
