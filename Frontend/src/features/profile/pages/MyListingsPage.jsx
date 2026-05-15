@@ -38,9 +38,25 @@ const sortOptions = [
   { value: 'title_desc', label: 'Title: Z to A' },
 ]
 
+const getDiscountPercentage = (listing) => {
+  const price = Number(listing.price || 0)
+  const discount = Number(listing.discountAmount || 0)
+  if (!price || discount <= 0) return 0
+  return Math.round((discount / price) * 100)
+}
+
 function ListingImage({ listing }) {
+  const finalPrice = listing.finalPrice ?? listing.price
+  const hasDiscount = Number(listing.discountAmount || 0) > 0 && finalPrice < listing.price
+  const discountPercentage = getDiscountPercentage(listing)
+
   return (
     <div className="relative aspect-square overflow-hidden bg-gray-100">
+      {hasDiscount && discountPercentage > 0 && (
+        <span className="absolute left-2 top-2 z-10 rounded bg-secondary px-2 py-1 text-xs font-bold leading-none text-white shadow-sm">
+          {discountPercentage}% off
+        </span>
+      )}
       {listing.primaryImageUrl ? (
         <img
           src={assetUrl(listing.primaryImageUrl)}
@@ -66,6 +82,7 @@ function SellerListingCard({ listing, onDelete, onRestore }) {
   const isDeleted = listing.isDeleted
   const finalPrice = listing.finalPrice ?? listing.price
   const hasDiscount = Number(listing.discountAmount || 0) > 0 && finalPrice < listing.price
+  const discountPercentage = getDiscountPercentage(listing)
 
   return (
     <article className="card group flex flex-col overflow-hidden transition-all duration-200 hover:shadow-md">
@@ -96,6 +113,9 @@ function SellerListingCard({ listing, onDelete, onRestore }) {
                 <p className="text-xs leading-none text-gray-400 line-through">{formatCurrency(listing.price)}</p>
               )}
             </div>
+            {hasDiscount && discountPercentage > 0 && (
+              <p className="mt-1 text-xs font-semibold text-green-700">{discountPercentage}% discount</p>
+            )}
             <p className="text-xs text-gray-500">{ListingTypeLabel[listing.listingType]}</p>
           </div>
         </div>

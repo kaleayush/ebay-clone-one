@@ -37,8 +37,10 @@ public static class ServiceExtensions
 
     public static IServiceCollection AddCorsPolicy(this IServiceCollection services, IConfiguration configuration)
     {
-        var allowedOrigins = configuration.GetSection("CorsSettings:AllowedOrigins")
-            .Get<string[]>() ?? ["http://localhost:5173"];
+        var originsSection = configuration.GetSection("CorsSettings:AllowedOrigins");
+        var allowedOrigins = originsSection.Get<string[]>()
+            ?? originsSection.Value?.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            ?? ["http://localhost:5173"];
 
         services.AddCors(options =>
         {

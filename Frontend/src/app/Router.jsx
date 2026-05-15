@@ -22,6 +22,7 @@ const VerifyEmailPage = lazy(() => import('@/features/auth/pages/VerifyEmailPage
 
 // Marketplace pages
 const HomePage = lazy(() => import('@/features/listings/pages/HomePage'))
+const DealsPage = lazy(() => import('@/features/listings/pages/DealsPage'))
 const ListingsPage = lazy(() => import('@/features/listings/pages/ListingsPage'))
 const ListingDetailPage = lazy(() => import('@/features/listings/pages/ListingDetailPage'))
 const CreateListingPage = lazy(() => import('@/features/listings/pages/CreateListingPage'))
@@ -62,6 +63,7 @@ export const router = createBrowserRouter([
     element: <MarketplaceLayout />,
     children: [
       { index: true, element: withSuspense(HomePage) },
+      { path: ROUTES.DEALS, element: withSuspense(DealsPage) },
       { path: ROUTES.LISTINGS, element: withSuspense(ListingsPage) },
       { path: ROUTES.LISTING_DETAIL, element: withSuspense(ListingDetailPage) },
       {

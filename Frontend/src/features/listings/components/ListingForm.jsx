@@ -38,6 +38,21 @@ const findCategoryPath = (items = [], categoryId, path = []) => {
 
 const toDateInput = (value) => value ? String(value).slice(0, 10) : ''
 
+const roundMoney = (value) => Math.round(value * 100) / 100
+
+const getListingBasePrice = (listing) => {
+  if (!listing) return 0
+  return listing.listingType === ListingType.AUCTION
+    ? Number(listing.buyItNowPrice || listing.startingBid || listing.price || 0)
+    : Number(listing.price || 0)
+}
+
+const getDiscountPercentage = (listing) => {
+  const basePrice = getListingBasePrice(listing)
+  if (!basePrice || !listing?.discountAmount) return ''
+  return roundMoney((Number(listing.discountAmount) / basePrice) * 100)
+}
+
 const buildAttributeDefaults = (listing) => {
   const defaults = {}
   listing?.attributeValues?.forEach((value) => {
@@ -90,10 +105,11 @@ export default function ListingForm({ initialListing, onSubmit, isPending, submi
   const priceValue = Number(watch('price') || 0)
   const startingBidValue = Number(watch('startingBid') || 0)
   const buyItNowValue = Number(watch('buyItNowPrice') || 0)
-  const discountAmount = Number(watch('discountAmount') || 0)
+  const discountPercentage = Number(watch('discountPercentage') || 0)
   const basePrice = listingType === ListingType.AUCTION
     ? (buyItNowValue || startingBidValue)
     : priceValue
+  const discountAmount = roundMoney(basePrice * (discountPercentage / 100))
   const finalPrice = Math.max(basePrice - discountAmount, 0)
 
   const parentCategoryOptions = useMemo(
@@ -125,7 +141,7 @@ export default function ListingForm({ initialListing, onSubmit, isPending, submi
       description: initialListing.description,
       listingType: initialListing.listingType ?? ListingType.FIXED_PRICE,
       price: initialListing.price,
-      discountAmount: initialListing.discountAmount || '',
+      discountPercentage: getDiscountPercentage(initialListing),
       startingBid: initialListing.startingBid || '',
       reservePrice: initialListing.reservePrice || '',
       buyItNowPrice: initialListing.buyItNowPrice || '',
@@ -191,7 +207,7 @@ export default function ListingForm({ initialListing, onSubmit, isPending, submi
       description: values.description,
       listingType: Number(values.listingType),
       price: Number(values.price || values.startingBid || 0),
-      discountAmount: Number(values.discountAmount || 0),
+      discountAmount: roundMoney(basePrice * (Number(values.discountPercentage || 0) / 100)),
       startingBid: values.startingBid ? Number(values.startingBid) : null,
       reservePrice: values.reservePrice ? Number(values.reservePrice) : null,
       buyItNowPrice: values.buyItNowPrice ? Number(values.buyItNowPrice) : null,
@@ -286,12 +302,16 @@ export default function ListingForm({ initialListing, onSubmit, isPending, submi
           </>
         )}
         <Input
-          label="Discount Amount (INR)"
+          label="Discount (%)"
           type="number"
           step="0.01"
           min="0"
-          error={errors.discountAmount?.message}
-          {...register('discountAmount', { min: { value: 0, message: 'Discount cannot be negative' } })}
+          max="99.99"
+          error={errors.discountPercentage?.message}
+          {...register('discountPercentage', {
+            min: { value: 0, message: 'Discount cannot be negative' },
+            max: { value: 99.99, message: 'Discount must be less than 100%' },
+          })}
         />
         <div className="rounded-md border border-gray-200 bg-gray-50 px-3 py-2">
           <p className="text-xs font-medium text-gray-500">Final Amount</p>

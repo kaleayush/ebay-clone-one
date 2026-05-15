@@ -206,10 +206,7 @@ export default function Navbar() {
               </span>
             )}
             <div className="hidden md:flex items-center gap-3 ml-3 pl-3 border-l border-gray-300">
-              <Link to={ROUTES.LISTINGS} className="hover:text-primary hover:underline">Deals</Link>
-              <Link to={ROUTES.LISTINGS} className="hover:text-primary hover:underline">Brand Outlet</Link>
-              <Link to={ROUTES.LISTINGS} className="hover:text-primary hover:underline">Gift Cards</Link>
-              <span className="hover:text-primary hover:underline cursor-pointer">Help & Contact</span>
+              <Link to={ROUTES.DEALS} className="hover:text-primary hover:underline">Deals</Link>
             </div>
           </div>
 
@@ -219,8 +216,6 @@ export default function Navbar() {
               🇺🇸 Ship to
             </span>
             <span className="hidden lg:block text-gray-300">|</span>
-            <Link to={ROUTES.CREATE_LISTING} className="hover:text-primary hover:underline">Sell</Link>
-            <span className="text-gray-300">|</span>
             <Link to={ROUTES.WISHLIST} className="flex items-center gap-0.5 hover:text-primary hover:underline">
               Watchlist <ChevronDown size={10} />
             </Link>

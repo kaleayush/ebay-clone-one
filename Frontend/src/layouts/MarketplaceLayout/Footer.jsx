@@ -1,21 +1,22 @@
 import { Link } from 'react-router-dom'
 import { Facebook, Twitter, Instagram, Youtube } from 'lucide-react'
+import { ROUTES } from '@/constants/routes'
 
 const footerLinks = [
   {
     title: 'Buy',
     links: [
-      { label: 'Browse Categories', to: '/listings' },
-      { label: 'Daily Deals', to: '/listings?sort=deals' },
-      { label: 'Track My Orders', to: '/orders' },
+      { label: 'Browse Categories', to: ROUTES.LISTINGS },
+      { label: 'Daily Deals', to: ROUTES.DEALS },
+      { label: 'Track My Orders', to: ROUTES.ORDERS },
     ],
   },
   {
     title: 'Sell',
     links: [
-      { label: 'Start Selling', to: '/listings/new' },
-      { label: 'My Listings', to: '/profile/listings' },
-      { label: 'Business Profile', to: '/profile/business' },
+      { label: 'Start Selling', to: ROUTES.CREATE_LISTING },
+      { label: 'My Listings', to: ROUTES.MY_LISTINGS },
+      { label: 'Business Profile', to: ROUTES.BUSINESS_PROFILE },
     ],
   },
   {

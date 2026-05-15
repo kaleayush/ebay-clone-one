@@ -72,7 +72,7 @@ export default function ListingsPage() {
   // ── Listings hooks (always called — disabled when browsing categories) ─
   const listingParams = {
     page,
-    pageSize: 24,
+    pageSize: 25,
     status: 1,
     search: debouncedQ || undefined,
     categoryId: categoryId || undefined,

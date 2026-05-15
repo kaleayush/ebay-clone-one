@@ -5,6 +5,7 @@ export const ROUTES = {
   FORGOT_PASSWORD: '/forgot-password',
   RESET_PASSWORD: '/reset-password',
   VERIFY_EMAIL: '/verify-email',
+  DEALS: '/deals',
   LISTINGS: '/listings',
   LISTING_DETAIL: '/listings/:id',
   CREATE_LISTING: '/listings/new',
