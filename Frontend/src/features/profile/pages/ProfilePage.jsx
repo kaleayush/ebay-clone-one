@@ -50,6 +50,13 @@ const QUICK_LINKS = [
     color: 'bg-green-50 text-green-700',
   },
   {
+    to: ROUTES.SELLER_ORDERS,
+    icon: ShoppingBag,
+    label: 'Seller Orders',
+    desc: 'Ship and track sold items',
+    color: 'bg-orange-50 text-orange-700',
+  },
+  {
     to: ROUTES.BUSINESS_PROFILE,
     icon: Store,
     label: 'Business Profile',

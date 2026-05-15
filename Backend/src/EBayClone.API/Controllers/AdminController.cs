@@ -3,6 +3,7 @@ using EBayClone.Application.Common;
 using EBayClone.Application.DTOs.Admin;
 using EBayClone.Application.DTOs.BusinessProfile;
 using EBayClone.Application.DTOs.Listings;
+using EBayClone.Application.DTOs.Orders;
 using EBayClone.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,7 +17,8 @@ public class AdminController(
     IAdminService adminService,
     IUserService userService,
     IBusinessProfileService businessProfileService,
-    IListingApprovalService listingApprovalService) : ControllerBase
+    IListingApprovalService listingApprovalService,
+    IOrderService orderService) : ControllerBase
 {
     [HttpGet("stats")]
     public async Task<ActionResult<ApiResponse<AdminStatsResponse>>> GetStats(CancellationToken ct)
@@ -72,6 +74,14 @@ public class AdminController(
         var query = new AdminOrdersQuery(page, pageSize, search, status,
             sortBy ?? "createdAt", sortDirection ?? "desc");
         return Ok(ApiResponse<PagedResult<AdminOrderResponse>>.Ok(await adminService.GetOrdersAsync(query, ct)));
+    }
+
+    [HttpPut("orders/{id:guid}/status")]
+    public async Task<ActionResult<ApiResponse<OrderResponse>>> UpdateOrderStatus(
+        Guid id, [FromBody] UpdateOrderStatusRequest request, CancellationToken ct)
+    {
+        var result = await orderService.UpdateStatusAsync(id, request, ct);
+        return Ok(ApiResponse<OrderResponse>.Ok(result, "Order status updated"));
     }
 
     [HttpGet("listings/{id:guid}")]

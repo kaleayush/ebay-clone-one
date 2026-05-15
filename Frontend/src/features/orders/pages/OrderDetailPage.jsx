@@ -19,7 +19,7 @@ import Breadcrumbs from '@/components/common/Breadcrumbs'
 import Button from '@/components/common/Button'
 import Spinner from '@/components/common/Spinner'
 import { formatCurrency, formatDate } from '@/utils/formatters'
-import { OrderStatus, OrderStatusLabel } from '@/constants/enums'
+import { OrderStatus, OrderStatusLabel, PaymentStatusLabel } from '@/constants/enums'
 import { ROUTES } from '@/constants/routes'
 
 const statusVariant = {
@@ -42,6 +42,23 @@ const getStepState = (orderStatus, stepStatus) => {
   if (orderStatus === OrderStatus.CANCELLED || orderStatus === OrderStatus.REFUNDED) return 'muted'
   if (orderStatus >= stepStatus) return 'active'
   return 'pending'
+}
+
+const parsePaymentNotes = (notes) => {
+  if (!notes) return null
+  const entries = Object.fromEntries(
+    notes
+      .split('\n')
+      .map((line) => line.split(':').map((part) => part.trim()))
+      .filter(([key, value]) => key && value)
+  )
+  if (!entries['Payment Method']) return null
+  return {
+    method: entries['Payment Method'],
+    upiId: entries['UPI ID'],
+    reference: entries['Payment Reference'],
+    status: entries['Payment Status'],
+  }
 }
 
 export default function OrderDetailPage() {
@@ -109,8 +126,16 @@ export default function OrderDetailPage() {
     )
   }
 
-  const canCancel = order.status === OrderStatus.PENDING
+  const canCancel = order.status === OrderStatus.PENDING || order.status === OrderStatus.CONFIRMED
   const itemsTotal = order.items?.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0) ?? order.totalAmount
+  const payment = order.paymentMethod
+    ? {
+        method: order.paymentMethod,
+        upiId: order.upiId,
+        reference: order.paymentReference,
+        status: PaymentStatusLabel[order.paymentStatus],
+      }
+    : parsePaymentNotes(order.notes)
 
   return (
     <div className="max-w-6xl mx-auto space-y-6">
@@ -213,6 +238,12 @@ export default function OrderDetailPage() {
             <p className="mt-3 text-sm text-gray-600 whitespace-pre-wrap">
               {order.shippingAddress || 'No shipping address provided'}
             </p>
+            {order.trackingNumber && (
+              <div className="mt-4 rounded-lg bg-gray-50 p-3 text-sm">
+                <p className="font-semibold text-gray-900">{order.carrier || 'Carrier'}</p>
+                <p className="mt-1 text-gray-600">Tracking: {order.trackingNumber}</p>
+              </div>
+            )}
           </section>
 
           <section className="card p-5">
@@ -221,6 +252,26 @@ export default function OrderDetailPage() {
               <h2 className="text-base font-bold text-gray-900">Payment summary</h2>
             </div>
             <dl className="mt-4 space-y-3 text-sm">
+              {payment && (
+                <>
+                  <div className="flex justify-between gap-4">
+                    <dt className="text-gray-500">Method</dt>
+                    <dd className="font-medium text-gray-900">{payment.method}</dd>
+                  </div>
+                  <div className="flex justify-between gap-4">
+                    <dt className="text-gray-500">UPI ID</dt>
+                    <dd className="font-medium text-gray-900">{payment.upiId}</dd>
+                  </div>
+                  <div className="flex justify-between gap-4">
+                    <dt className="text-gray-500">Status</dt>
+                    <dd className="font-medium text-green-700">{payment.status}</dd>
+                  </div>
+                  <div className="flex justify-between gap-4">
+                    <dt className="text-gray-500">Reference</dt>
+                    <dd className="font-medium text-gray-900 break-all text-right">{payment.reference}</dd>
+                  </div>
+                </>
+              )}
               <div className="flex justify-between gap-4">
                 <dt className="text-gray-500">Items total</dt>
                 <dd className="font-medium text-gray-900">{formatCurrency(itemsTotal)}</dd>

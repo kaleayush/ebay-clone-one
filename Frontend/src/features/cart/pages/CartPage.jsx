@@ -1,32 +1,14 @@
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { Trash2, Plus, Minus, ShoppingBag } from 'lucide-react'
 import { useCartStore } from '@/store/cartStore'
 import Button from '@/components/common/Button'
 import { formatCurrency } from '@/utils/formatters'
 import { ROUTES } from '@/constants/routes'
-import { useMutation } from '@tanstack/react-query'
-import api from '@/services/api'
-import { API_ENDPOINTS } from '@/constants/api'
-import toast from 'react-hot-toast'
 
 const listingPrice = (listing) => Number(listing.finalPrice ?? listing.price ?? 0)
 
 export default function CartPage() {
   const { items, totalItems, totalPrice, removeItem, updateQuantity, clearCart } = useCartStore()
-  const navigate = useNavigate()
-
-  const { mutate: checkout, isPending } = useMutation({
-    mutationFn: () =>
-      api.post(API_ENDPOINTS.CART.CHECKOUT, {
-        items: items.map((i) => ({ listingId: i.listingId, quantity: i.quantity })),
-      }),
-    onSuccess: (data) => {
-      clearCart()
-      toast.success('Order placed successfully!')
-      navigate(`${ROUTES.ORDERS}/${data.data.id}`)
-    },
-    onError: (err) => toast.error(err?.response?.data?.message || 'Checkout failed'),
-  })
 
   if (!items.length) {
     return (
@@ -112,9 +94,9 @@ export default function CartPage() {
             <span>Total</span>
             <span>{formatCurrency(totalPrice)}</span>
           </div>
-          <Button onClick={() => checkout()} loading={isPending} className="w-full" size="lg">
-            Proceed to Checkout
-          </Button>
+          <Link to={ROUTES.CHECKOUT} className="block">
+            <Button className="w-full" size="lg">Proceed to Checkout</Button>
+          </Link>
           <button onClick={clearCart} className="w-full text-xs text-gray-400 hover:text-red-500 mt-1">
             Clear cart
           </button>

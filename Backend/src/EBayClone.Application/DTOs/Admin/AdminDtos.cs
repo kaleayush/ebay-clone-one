@@ -58,6 +58,10 @@ public record AdminOrderResponse(
     int ItemCount,
     decimal TotalAmount,
     int Status,
+    string PaymentMethod,
+    int PaymentStatus,
+    string? Carrier,
+    string? TrackingNumber,
     DateTime CreatedAt
 );
 

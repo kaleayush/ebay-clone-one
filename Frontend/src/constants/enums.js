@@ -96,6 +96,20 @@ export const OrderStatusLabel = {
   [OrderStatus.REFUNDED]: 'Refunded',
 }
 
+export const PaymentStatus = {
+  PENDING: 0,
+  PAID: 1,
+  FAILED: 2,
+  REFUNDED: 3,
+}
+
+export const PaymentStatusLabel = {
+  [PaymentStatus.PENDING]: 'Payment Pending',
+  [PaymentStatus.PAID]: 'Paid',
+  [PaymentStatus.FAILED]: 'Failed',
+  [PaymentStatus.REFUNDED]: 'Refunded',
+}
+
 export const UserRole = {
   USER: 'User',
   ADMIN: 'Admin',

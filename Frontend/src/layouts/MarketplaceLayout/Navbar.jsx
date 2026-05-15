@@ -153,6 +153,7 @@ export default function Navbar() {
   const myEbayLinks = [
     ...(isAdmin ? [{ to: ROUTES.ADMIN_DASHBOARD, icon: LayoutDashboard, label: 'Admin Panel' }] : []),
     { to: ROUTES.MY_LISTINGS, icon: Package, label: 'My Listings' },
+    { to: ROUTES.SELLER_ORDERS, icon: Store, label: 'Seller Orders' },
     { to: ROUTES.ORDERS, icon: ShoppingBag, label: 'My Orders' },
     { to: ROUTES.WISHLIST, icon: Heart, label: 'Wishlist' },
   ]
@@ -488,6 +489,7 @@ export default function Navbar() {
                       ...(isAdmin ? [{ to: ROUTES.ADMIN_DASHBOARD, icon: LayoutDashboard, label: 'Admin Panel' }] : []),
                       { to: ROUTES.PROFILE, icon: User, label: 'My Profile' },
                       { to: ROUTES.MY_LISTINGS, icon: Package, label: 'My Listings' },
+                      { to: ROUTES.SELLER_ORDERS, icon: Store, label: 'Seller Orders' },
                       { to: ROUTES.ORDERS, icon: ShoppingBag, label: 'My Orders' },
                       { to: ROUTES.WISHLIST, icon: Heart, label: `Wishlist${wishlistCount ? ` (${wishlistCount})` : ''}` },
                       { to: ROUTES.CART, icon: ShoppingCart, label: `Cart${totalItems ? ` (${totalItems})` : ''}` },

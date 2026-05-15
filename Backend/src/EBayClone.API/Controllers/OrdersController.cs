@@ -29,6 +29,23 @@ public class OrdersController(IOrderService orderService) : ControllerBase
         return Ok(ApiResponse<OrderResponse>.Ok(result));
     }
 
+    [HttpGet("seller")]
+    public async Task<ActionResult<ApiResponse<PagedResult<OrderResponse>>>> GetSellerOrders(
+        [FromQuery] PagedQuery query, CancellationToken ct)
+    {
+        var sellerId = GetUserId();
+        var result = await orderService.GetSellerOrdersAsync(sellerId, query, ct);
+        return Ok(ApiResponse<PagedResult<OrderResponse>>.Ok(result));
+    }
+
+    [HttpGet("seller/{id:guid}")]
+    public async Task<ActionResult<ApiResponse<OrderResponse>>> GetSellerOrderById(Guid id, CancellationToken ct)
+    {
+        var sellerId = GetUserId();
+        var result = await orderService.GetSellerOrderByIdAsync(id, sellerId, ct);
+        return Ok(ApiResponse<OrderResponse>.Ok(result));
+    }
+
     [HttpPost("checkout")]
     public async Task<ActionResult<ApiResponse<OrderResponse>>> Checkout(
         [FromBody] CheckoutRequest request, CancellationToken ct)
@@ -45,6 +62,15 @@ public class OrdersController(IOrderService orderService) : ControllerBase
         var buyerId = GetUserId();
         await orderService.CancelAsync(id, buyerId, ct);
         return Ok(ApiResponse.Ok("Order cancelled"));
+    }
+
+    [HttpPut("seller/{id:guid}/status")]
+    public async Task<ActionResult<ApiResponse<OrderResponse>>> SellerUpdateStatus(
+        Guid id, [FromBody] UpdateOrderStatusRequest request, CancellationToken ct)
+    {
+        var sellerId = GetUserId();
+        var result = await orderService.SellerShipAsync(id, sellerId, request, ct);
+        return Ok(ApiResponse<OrderResponse>.Ok(result, "Order updated"));
     }
 
     private Guid GetUserId() =>

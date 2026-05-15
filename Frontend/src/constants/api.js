@@ -47,7 +47,11 @@ export const API_ENDPOINTS = {
   ORDERS: {
     BASE: '/api/v1/orders',
     BY_ID: (id) => `/api/v1/orders/${id}`,
+    CHECKOUT: '/api/v1/orders/checkout',
     CANCEL: (id) => `/api/v1/orders/${id}/cancel`,
+    SELLER: '/api/v1/orders/seller',
+    SELLER_BY_ID: (id) => `/api/v1/orders/seller/${id}`,
+    SELLER_STATUS: (id) => `/api/v1/orders/seller/${id}/status`,
   },
   // Users
   USERS: {
@@ -76,6 +80,7 @@ export const API_ENDPOINTS = {
     LISTING_DELETE: (id) => `/api/v1/admin/listings/${id}`,
     LISTING_VERSIONS: (id) => `/api/v1/admin/listings/${id}/versions`,
     ORDERS: '/api/v1/admin/orders',
+    ORDER_STATUS: (id) => `/api/v1/admin/orders/${id}/status`,
     BUSINESS_PROFILES: '/api/v1/admin/business-profiles',
     BUSINESS_PROFILE_REVIEW: (id) => `/api/v1/admin/business-profiles/${id}/review`,
     EMAIL_TEMPLATES: '/api/v1/admin/email-templates',

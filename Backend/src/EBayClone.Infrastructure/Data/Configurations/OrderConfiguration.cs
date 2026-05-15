@@ -11,7 +11,12 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
         builder.HasKey(o => o.Id);
         builder.Property(o => o.OrderNumber).IsRequired().HasMaxLength(50);
         builder.Property(o => o.TotalAmount).HasPrecision(18, 2);
+        builder.Property(o => o.PaymentMethod).IsRequired().HasMaxLength(50);
+        builder.Property(o => o.PaymentReference).HasMaxLength(100);
+        builder.Property(o => o.UpiId).HasMaxLength(100);
         builder.Property(o => o.ShippingAddress).HasMaxLength(500);
+        builder.Property(o => o.Carrier).HasMaxLength(100);
+        builder.Property(o => o.TrackingNumber).HasMaxLength(100);
         builder.Property(o => o.Notes).HasMaxLength(1000);
 
         builder.HasIndex(o => o.OrderNumber).IsUnique().HasDatabaseName("UQ_Orders_OrderNumber");

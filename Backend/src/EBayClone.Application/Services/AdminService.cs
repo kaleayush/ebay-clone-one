@@ -205,6 +205,10 @@ public class AdminService(
                 o.Items.Count,
                 o.TotalAmount,
                 (int)o.Status,
+                o.PaymentMethod,
+                (int)o.PaymentStatus,
+                o.Carrier,
+                o.TrackingNumber,
                 o.CreatedAt))
             .ToListAsync(ct);
 
