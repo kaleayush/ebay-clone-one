@@ -25,6 +25,15 @@ public class ListingService(
     private static readonly JsonSerializerOptions JsonOpts =
         new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
 
+    private static void ValidateSellerCanSell(User seller)
+    {
+        if (!seller.IsEmailVerified)
+            throw new InvalidOperationException("Please verify your email before selling items.");
+
+        if (seller.AccountType == AccountType.Business && seller.BusinessProfile is null)
+            throw new InvalidOperationException("Please submit your business details before selling items.");
+    }
+
     public async Task<PagedResult<ListingResponse>> GetListingsAsync(ListingQuery query, CancellationToken ct = default)
     {
         var q = ListingQueryBase(query.IncludeDeleted)
@@ -115,8 +124,12 @@ public class ListingService(
 
     public async Task<ListingResponse> CreateAsync(Guid sellerId, CreateListingRequest request, CancellationToken ct = default)
     {
-        var seller = await userRepository.GetByIdAsync(sellerId, ct)
+        var seller = await userRepository.Query()
+            .Include(u => u.BusinessProfile)
+            .FirstOrDefaultAsync(u => u.Id == sellerId, ct)
             ?? throw new KeyNotFoundException("Seller not found.");
+
+        ValidateSellerCanSell(seller);
 
         var metadata = request.CategoryId.HasValue
             ? await GetCategoryAttributesAsync(request.CategoryId.Value, "created", ct)
@@ -164,6 +177,13 @@ public class ListingService(
 
         if (listing.SellerId != sellerId)
             throw new UnauthorizedAccessException("You can only edit your own listings.");
+
+        var seller = await userRepository.Query()
+            .Include(u => u.BusinessProfile)
+            .FirstOrDefaultAsync(u => u.Id == sellerId, ct)
+            ?? throw new KeyNotFoundException("Seller not found.");
+
+        ValidateSellerCanSell(seller);
 
         var metadata = request.CategoryId.HasValue
             ? await GetCategoryAttributesAsync(request.CategoryId.Value, "updated", ct)

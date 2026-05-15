@@ -25,7 +25,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { useAuthStore } from '@/store/authStore'
 import api from '@/services/api'
 import { API_ENDPOINTS } from '@/constants/api'
-import { AccountTypeLabel, VerificationStatus, VerificationStatusLabel } from '@/constants/enums'
+import { AccountType, AccountTypeLabel, VerificationStatus, VerificationStatusLabel } from '@/constants/enums'
 import { ROUTES } from '@/constants/routes'
 
 const schema = z.object({
@@ -68,6 +68,10 @@ const getAccountTypeLabel = (accountType) => {
   return AccountTypeLabel[accountType] ?? accountType
 }
 
+const isBusinessAccountType = (accountType) =>
+  accountType === AccountType.BUSINESS ||
+  String(accountType).toLowerCase() === AccountTypeLabel[AccountType.BUSINESS].toLowerCase()
+
 const getVerificationLabel = (status) => {
   if (!status) return 'Not submitted'
   return VerificationStatusLabel[status] ?? status
@@ -108,9 +112,11 @@ export default function ProfilePage() {
   })
 
   const initials = `${user?.firstName?.[0] ?? ''}${user?.lastName?.[0] ?? ''}`.toUpperCase() || 'U'
+  const isBusinessAccount = isBusinessAccountType(user?.accountType)
   const accountType = getAccountTypeLabel(user?.accountType)
   const verificationLabel = getVerificationLabel(user?.businessVerificationStatus)
   const verificationVariant = getVerificationVariant(user?.businessVerificationStatus)
+  const quickLinks = QUICK_LINKS.filter((link) => link.to !== ROUTES.BUSINESS_PROFILE || isBusinessAccount)
 
   return (
     <div className="max-w-6xl mx-auto space-y-6">
@@ -142,10 +148,12 @@ export default function ProfilePage() {
                   <BadgeCheck size={13} />
                   {user?.isEmailVerified ? 'Email verified' : 'Email pending'}
                 </Badge>
-                <Badge variant={verificationVariant} className="gap-1.5">
-                  <Store size={13} />
-                  {verificationLabel}
-                </Badge>
+                {isBusinessAccount && (
+                  <Badge variant={verificationVariant} className="gap-1.5">
+                    <Store size={13} />
+                    {verificationLabel}
+                  </Badge>
+                )}
               </div>
             </div>
           </div>
@@ -163,7 +171,7 @@ export default function ProfilePage() {
       </div>
 
       <div className="grid sm:grid-cols-3 gap-3">
-        {QUICK_LINKS.map(({ to, icon: Icon, label, desc, color }) => (
+        {quickLinks.map(({ to, icon: Icon, label, desc, color }) => (
           <Link
             key={to}
             to={to}
@@ -248,10 +256,12 @@ export default function ProfilePage() {
                       {user?.isEmailVerified ? 'Verified' : 'Pending verification'}
                     </dd>
                   </div>
-                  <div>
-                    <dt className="text-xs uppercase tracking-wide text-gray-400">Business</dt>
-                    <dd className="font-medium text-gray-900">{verificationLabel}</dd>
-                  </div>
+                  {isBusinessAccount && (
+                    <div>
+                      <dt className="text-xs uppercase tracking-wide text-gray-400">Business</dt>
+                      <dd className="font-medium text-gray-900">{verificationLabel}</dd>
+                    </div>
+                  )}
                 </dl>
               </div>
             </div>

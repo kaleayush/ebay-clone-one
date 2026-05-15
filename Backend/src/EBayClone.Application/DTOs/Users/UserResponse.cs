@@ -12,5 +12,6 @@ public record UserResponse(
     bool IsEmailVerified,
     bool IsSuspended,
     bool IsDeleted,
-    DateTime CreatedAt
+    DateTime CreatedAt,
+    string? BusinessVerificationStatus = null
 );

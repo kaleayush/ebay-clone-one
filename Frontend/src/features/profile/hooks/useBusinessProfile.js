@@ -4,12 +4,13 @@ import { businessProfileService } from '../services/businessProfileService'
 
 const QUERY_KEY = ['business-profile']
 
-export const useBusinessProfile = () => {
+export const useBusinessProfile = (options = {}) => {
   return useQuery({
     queryKey: QUERY_KEY,
     queryFn: () => businessProfileService.get(),
     select: (data) => data?.data ?? null,
     retry: false,
+    ...options,
   })
 }
 

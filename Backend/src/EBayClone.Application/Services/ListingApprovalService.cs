@@ -29,6 +29,15 @@ public class ListingApprovalService(
     private static readonly JsonSerializerOptions JsonOpts =
         new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
 
+    private static void ValidateSellerCanSell(User seller)
+    {
+        if (!seller.IsEmailVerified)
+            throw new InvalidOperationException("Please verify your email before selling items.");
+
+        if (seller.AccountType == AccountType.Business && seller.BusinessProfile is null)
+            throw new InvalidOperationException("Please submit your business details before selling items.");
+    }
+
     // ── Submit Draft/Rejected for approval ──────────────────────────────
 
     public async Task<ListingResponse> SubmitForApprovalAsync(Guid listingId, Guid sellerId, CancellationToken ct = default)
@@ -38,6 +47,13 @@ public class ListingApprovalService(
 
         if (listing.SellerId != sellerId)
             throw new UnauthorizedAccessException("You can only submit your own listings.");
+
+        var seller = await userRepository.Query()
+            .Include(u => u.BusinessProfile)
+            .FirstOrDefaultAsync(u => u.Id == sellerId, ct)
+            ?? throw new KeyNotFoundException("Seller not found.");
+
+        ValidateSellerCanSell(seller);
 
         if (listing.Status is not (ListingStatus.Draft or ListingStatus.Rejected))
             throw new InvalidOperationException($"Only Draft or Rejected listings can be submitted. Current status: {listing.Status}.");
@@ -68,17 +84,13 @@ public class ListingApprovalService(
 
         await LogActionAsync(listingId, version.Id, sellerId, ApprovalAction.Submitted, null, ct);
 
-        var seller = await userRepository.GetByIdAsync(sellerId, ct);
-        if (seller is not null)
-        {
-            var sellerEmail = seller.Email;
-            var sellerName = seller.FirstName;
-            var title = listing.Title;
+        var sellerEmail = seller.Email;
+        var sellerName = seller.FirstName;
+        var title = listing.Title;
 
-            // Send email in background using scoped service
-            backgroundEmailService.EnqueueEmail(s => 
-                s.SendListingPendingApprovalAsync(sellerEmail, sellerName, title, CancellationToken.None));
-        }
+        // Send email in background using scoped service
+        backgroundEmailService.EnqueueEmail(s => 
+            s.SendListingPendingApprovalAsync(sellerEmail, sellerName, title, CancellationToken.None));
 
         logger.LogInformation("Listing {Id} submitted for approval by seller {SellerId}", listingId, sellerId);
 
@@ -95,6 +107,13 @@ public class ListingApprovalService(
 
         if (listing.SellerId != sellerId)
             throw new UnauthorizedAccessException("You can only submit your own listings.");
+
+        var seller = await userRepository.Query()
+            .Include(u => u.BusinessProfile)
+            .FirstOrDefaultAsync(u => u.Id == sellerId, ct)
+            ?? throw new KeyNotFoundException("Seller not found.");
+
+        ValidateSellerCanSell(seller);
 
         if (listing.Status != ListingStatus.Active)
             throw new InvalidOperationException("Only Active listings support pending updates. Use 'submit' for Draft/Rejected listings.");
@@ -141,17 +160,13 @@ public class ListingApprovalService(
 
         await LogActionAsync(listingId, version.Id, sellerId, ApprovalAction.Submitted, null, ct);
 
-        var seller = await userRepository.GetByIdAsync(sellerId, ct);
-        if (seller is not null)
-        {
-            var sellerEmail = seller.Email;
-            var sellerName = seller.FirstName;
-            var title = listing.Title;
+        var sellerEmail = seller.Email;
+        var sellerName = seller.FirstName;
+        var title = listing.Title;
 
-            // Send email in background using scoped service
-            backgroundEmailService.EnqueueEmail(s => 
-                s.SendListingPendingApprovalAsync(sellerEmail, sellerName, title, CancellationToken.None));
-        }
+        // Send email in background using scoped service
+        backgroundEmailService.EnqueueEmail(s => 
+            s.SendListingPendingApprovalAsync(sellerEmail, sellerName, title, CancellationToken.None));
 
         logger.LogInformation("Listing update {Id} submitted for approval by seller {SellerId}", listingId, sellerId);
     }

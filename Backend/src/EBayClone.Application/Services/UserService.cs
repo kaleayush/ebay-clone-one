@@ -34,14 +34,18 @@ public class UserService(IRepository<User> userRepository) : IUserService
 
     public async Task<UserResponse> GetByIdAsync(Guid id, CancellationToken ct = default)
     {
-        var user = await userRepository.GetByIdAsync(id, ct)
+        var user = await userRepository.Query()
+            .Include(u => u.BusinessProfile)
+            .FirstOrDefaultAsync(u => u.Id == id, ct)
             ?? throw new KeyNotFoundException("User not found.");
         return MapToResponse(user);
     }
 
     public async Task<UserResponse> UpdateProfileAsync(Guid id, UpdateProfileRequest request, CancellationToken ct = default)
     {
-        var user = await userRepository.GetByIdAsync(id, ct)
+        var user = await userRepository.Query()
+            .Include(u => u.BusinessProfile)
+            .FirstOrDefaultAsync(u => u.Id == id, ct)
             ?? throw new KeyNotFoundException("User not found.");
 
         var emailTaken = await userRepository.ExistsAsync(
@@ -92,6 +96,7 @@ public class UserService(IRepository<User> userRepository) : IUserService
 
     private static UserResponse MapToResponse(User u) => new(
         u.Id, u.FirstName, u.LastName, u.Email, u.PhoneNumber, u.AvatarUrl,
-        (int)u.AccountType, u.Role.ToString(), u.IsEmailVerified, u.IsSuspended, u.IsDeleted, u.CreatedAt
+        (int)u.AccountType, u.Role.ToString(), u.IsEmailVerified, u.IsSuspended, u.IsDeleted, u.CreatedAt,
+        u.BusinessProfile?.VerificationStatus.ToString()
     );
 }
