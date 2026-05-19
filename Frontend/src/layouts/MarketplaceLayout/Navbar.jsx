@@ -12,6 +12,7 @@ import { ROUTES } from '@/constants/routes'
 import { useDebounce } from '@/hooks/useDebounce'
 import { useListingAutocomplete } from '@/features/listings/hooks/useListings'
 import { categoryService } from '@/features/categories/services/categoryService'
+import EbayLogo from '@/components/common/EbayLogo'
 
 const EMOJI_MAP = {
   'Electronics': '📱',
@@ -281,12 +282,7 @@ export default function Navbar() {
             </button>
 
             {/* Logo */}
-            <Link to={ROUTES.HOME} className="shrink-0 flex items-center select-none">
-              <span className="text-[#e53238] font-extrabold text-[2rem] sm:text-[2.2rem] leading-none italic">e</span>
-              <span className="text-[#0064d2] font-extrabold text-[2rem] sm:text-[2.2rem] leading-none italic">b</span>
-              <span className="text-[#f5af02] font-extrabold text-[2rem] sm:text-[2.2rem] leading-none italic">a</span>
-              <span className="text-[#86b817] font-extrabold text-[2rem] sm:text-[2.2rem] leading-none italic">y</span>
-            </Link>
+            <EbayLogo className="shrink-0 text-[2rem] sm:text-[2.2rem]" />
 
             {/* Shop by category (desktop only) */}
             <div className="hidden lg:block relative shrink-0" ref={shopByCatRef}>
@@ -460,12 +456,7 @@ export default function Navbar() {
           <div className="fixed inset-0 bg-black/50 z-50" onClick={() => setMobileOpen(false)} />
           <div className="fixed inset-y-0 left-0 w-72 bg-white z-50 shadow-2xl flex flex-col overflow-hidden">
             <div className="flex items-center justify-between h-14 px-4 border-b border-gray-200 shrink-0">
-              <Link to={ROUTES.HOME} onClick={() => setMobileOpen(false)} className="flex items-center select-none">
-                <span className="text-[#e53238] font-extrabold text-xl italic">e</span>
-                <span className="text-[#0064d2] font-extrabold text-xl italic">b</span>
-                <span className="text-[#f5af02] font-extrabold text-xl italic">a</span>
-                <span className="text-[#86b817] font-extrabold text-xl italic">y</span>
-              </Link>
+              <EbayLogo className="text-xl" onClick={() => setMobileOpen(false)} />
               <button onClick={() => setMobileOpen(false)} className="p-2 text-gray-500 hover:text-gray-800 rounded-md">
                 <X size={20} />
               </button>

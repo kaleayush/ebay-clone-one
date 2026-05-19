@@ -3,6 +3,7 @@ import {
   LayoutDashboard, Package, Users, ShoppingBag, Tag, X, ShieldCheck, Briefcase, Mail, ClipboardList,
 } from 'lucide-react'
 import { ROUTES } from '@/constants/routes'
+import EbayLogo from '@/components/common/EbayLogo'
 
 const navItems = [
   { to: ROUTES.ADMIN_DASHBOARD, icon: LayoutDashboard, label: 'Dashboard' },
@@ -35,10 +36,7 @@ export default function AdminSidebar({ isOpen, onClose }) {
         <div className="h-16 px-5 border-b border-white/10 flex items-center justify-between">
           <div>
             <div className="flex items-center gap-0.5 leading-none">
-              <span className="text-ebay-blue font-extrabold text-2xl">e</span>
-              <span className="text-ebay-red font-extrabold text-2xl">B</span>
-              <span className="text-ebay-yellow font-extrabold text-2xl">a</span>
-              <span className="text-ebay-green font-extrabold text-2xl">y</span>
+              <EbayLogo asLink={false} className="text-2xl" />
               <span className="ml-2 text-sm font-bold text-white">Admin</span>
             </div>
             <p className="mt-1 text-[11px] font-medium uppercase tracking-wider text-blue-100/70">Seller Operations</p>

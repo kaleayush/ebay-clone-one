@@ -7,6 +7,7 @@ import Button from '@/components/common/Button'
 import { useLoginMutation } from '../hooks/useAuthMutations'
 import { authService } from '../services/authService'
 import { ROUTES } from '@/constants/routes'
+import EbayLogo from '@/components/common/EbayLogo'
 
 const emailSchema = z.object({
   email: z.string().email('Enter a valid email'),
@@ -74,7 +75,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-white text-gray-950 flex flex-col">
       <header className="flex items-start justify-between px-4 sm:px-8 pt-5">
-        <AuthLogo />
+        <EbayLogo className="text-[2.8rem]" />
         <a href="mailto:feedback@example.com" className="text-xs sm:text-sm text-gray-900 underline">
           Tell us what you think
         </a>
@@ -197,16 +198,7 @@ export default function LoginPage() {
   )
 }
 
-function AuthLogo() {
-  return (
-    <Link to={ROUTES.HOME} aria-label="Go to home page" className="inline-flex items-center select-none">
-      <span className="text-[#e53238] font-normal text-[2.8rem] leading-none">e</span>
-      <span className="text-[#0064d2] font-normal text-[2.8rem] leading-none">b</span>
-      <span className="text-[#f5af02] font-normal text-[2.8rem] leading-none">a</span>
-      <span className="text-[#86b817] font-normal text-[2.8rem] leading-none">y</span>
-    </Link>
-  )
-}
+
 
 function SocialButton({ provider, mark }) {
   return (
