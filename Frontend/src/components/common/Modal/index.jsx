@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { X } from 'lucide-react'
 import Button from '../Button'
 
-export default function Modal({ isOpen, onClose, title, children, footer, size = 'md' }) {
+export default function Modal({ isOpen, onClose, title, children, footer, size = 'md', closeOnOutsideClick = true }) {
   useEffect(() => {
     if (isOpen) document.body.style.overflow = 'hidden'
     else document.body.style.overflow = ''
@@ -21,7 +21,7 @@ export default function Modal({ isOpen, onClose, title, children, footer, size =
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
-      onClick={onClose}
+      onClick={() => closeOnOutsideClick && onClose()}
     >
       <div
         className={`card w-full ${sizeClass} max-h-[90vh] flex flex-col`}

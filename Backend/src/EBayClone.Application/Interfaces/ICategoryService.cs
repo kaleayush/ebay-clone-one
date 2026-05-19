@@ -22,7 +22,8 @@ public record CategoryRequest(
     Guid? ParentCategoryId = null,
     string? ImageUrl = null,
     int SortOrder = 0,
-    IReadOnlyCollection<CategoryAttributeRequest>? Attributes = null
+    IReadOnlyCollection<CategoryAttributeRequest>? Attributes = null,
+    IReadOnlyCollection<CategoryRequest>? SubCategories = null
 );
 
 public record CategoryResponse(

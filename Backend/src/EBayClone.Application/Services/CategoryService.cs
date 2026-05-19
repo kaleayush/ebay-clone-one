@@ -66,17 +66,20 @@ public class CategoryService(
 
     public async Task<CategoryResponse> CreateAsync(CategoryRequest request, CancellationToken ct = default)
     {
-        ValidateCategoryFormScope(request);
+        ValidateCategoryRequestHierarchy(request, !request.ParentCategoryId.HasValue, isCreate: true);
         await ValidateParentAsync(null, request.ParentCategoryId, ct);
 
         var category = new Category();
         ApplyCategoryRequest(category, request);
 
-        await categoryRepository.AddAsync(category, ct);
+        AddSubCategories(category, request.SubCategories);
         AddAttributes(category, request.Attributes);
+
+        await categoryRepository.AddAsync(category, ct);
         await categoryRepository.SaveChangesAsync(ct);
 
-        return MapToResponse(category, [category]);
+        var allCreated = FlattenCategoryTree(category);
+        return MapToResponse(category, allCreated);
     }
 
     public async Task<CategoryResponse> UpdateAsync(Guid id, CategoryRequest request, CancellationToken ct = default)
@@ -85,7 +88,7 @@ public class CategoryService(
             .FirstOrDefaultAsync(c => c.Id == id, ct)
             ?? throw new KeyNotFoundException($"Category {id} not found.");
 
-        ValidateCategoryFormScope(request);
+        ValidateCategoryRequestHierarchy(request, !request.ParentCategoryId.HasValue && !category.ParentCategoryId.HasValue, isCreate: false);
         await ValidateParentAsync(id, request.ParentCategoryId, ct);
         ApplyCategoryRequest(category, request);
 
@@ -192,10 +195,46 @@ public class CategoryService(
         }
     }
 
-    private static void ValidateCategoryFormScope(CategoryRequest request)
+    private static void ValidateCategoryRequestHierarchy(CategoryRequest request, bool isLevel0, bool isCreate)
     {
-        if (!request.ParentCategoryId.HasValue && request.Attributes?.Any() == true)
+        if (isLevel0 && request.Attributes?.Any() == true)
             throw new InvalidOperationException("Parent categories cannot have listing form attributes. Add attributes to a child category.");
+
+        if (isCreate && isLevel0 && (request.SubCategories is null || !request.SubCategories.Any()))
+            throw new InvalidOperationException("A level 0 category must have at least one subcategory.");
+
+        if (request.SubCategories is not null)
+        {
+            foreach (var sub in request.SubCategories)
+            {
+                ValidateCategoryRequestHierarchy(sub, false, isCreate);
+            }
+        }
+    }
+
+    private static void AddSubCategories(Category parent, IReadOnlyCollection<CategoryRequest>? requests)
+    {
+        if (requests is null || !requests.Any())
+            return;
+
+        foreach (var req in requests)
+        {
+            var sub = new Category();
+            ApplyCategoryRequest(sub, req);
+            AddSubCategories(sub, req.SubCategories);
+            AddAttributes(sub, req.Attributes);
+            parent.SubCategories.Add(sub);
+        }
+    }
+
+    private static IReadOnlyCollection<Category> FlattenCategoryTree(Category root)
+    {
+        var list = new List<Category> { root };
+        foreach (var sub in root.SubCategories)
+        {
+            list.AddRange(FlattenCategoryTree(sub));
+        }
+        return list;
     }
 
     private static void AddAttributes(Category category, IReadOnlyCollection<CategoryAttributeRequest>? requests)

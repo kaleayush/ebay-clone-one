@@ -265,6 +265,7 @@ export default function AdminCategoriesPage() {
         onClose={() => setModalOpen(false)}
         title={editing ? 'Edit Category' : 'New Category'}
         size="lg"
+        closeOnOutsideClick={false}
         footer={
           <>
             <Button variant="ghost" onClick={() => setModalOpen(false)}>Cancel</Button>
