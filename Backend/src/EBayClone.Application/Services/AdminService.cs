@@ -31,7 +31,8 @@ public class AdminService(
     {
         var (page, pageSize) = NormalizePaging(query.Page, query.PageSize);
 
-        var q = userRepository.Query().IgnoreQueryFilters().AsNoTracking();
+        var q = userRepository.Query().IgnoreQueryFilters().AsNoTracking()
+            .Where(u => u.Role != UserRole.Admin);
 
         if (!string.IsNullOrWhiteSpace(query.Search))
             q = q.Where(u => u.Email.Contains(query.Search) ||
