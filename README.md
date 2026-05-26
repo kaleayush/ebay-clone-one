@@ -326,6 +326,26 @@ ebay-clone-one/
 
 ---
 
+## Documentation
+
+| File | Purpose |
+|------|---------|
+| [docs/setup.md](docs/setup.md) | Local, Docker, and Azure setup in detail |
+| [docs/architecture.md](docs/architecture.md) | Layer structure, sequence diagrams, ER summary, data flow |
+| [docs/api-contract.md](docs/api-contract.md) | All endpoints, DTOs, request/response shapes |
+| [docs/database.md](docs/database.md) | Entity schemas, enum values, EF configuration |
+| [docs/design.md](docs/design.md) | Tailwind tokens, component library, layout patterns |
+| [docs/requirements.md](docs/requirements.md) | Feature list, business rules, user roles |
+| [docs/coding-rules.md](docs/coding-rules.md) | Naming conventions, do/don't rules |
+
+### Postman Collection
+
+Import `postman/ebay-clone.postman_collection.json` into Postman or Insomnia.
+
+Collection variables (`baseUrl`, `accessToken`, `refreshToken`, `userId`, `listingId`, `orderId`, `categoryId`) auto-populate from login/register responses via test scripts.
+
+---
+
 ## Troubleshooting
 
 ### Backend won't start — "Cannot open database"

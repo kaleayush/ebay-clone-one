@@ -1,5 +1,20 @@
 # Architecture
 
+## Quick Reference
+
+| Concept | Decision |
+|---------|---------|
+| Backend pattern | Onion Architecture — Domain → Application → Infrastructure → API |
+| Data access | Generic Repository (`IRepository<T>`), no Unit of Work |
+| Soft deletes | All entities; EF query filters exclude `IsDeleted=true` globally |
+| Auth | JWT access (15 min) + refresh (7 days); claims: `sub`=userId |
+| Response envelope | `ApiResponse<T>` always; paginated = `ApiResponse<PagedResult<T>>` |
+| Frontend state | React Query (server) + Zustand (client) |
+| Forms | React Hook Form + Zod |
+| Routing | React Router v6, all routes lazy-loaded |
+
+---
+
 ## Layer Structure (Onion)
 ```
 EBayClone.API           → controllers, middleware, DI composition, Program.cs, API-layer models
@@ -192,3 +207,232 @@ src/
 
 ### `@` Alias
 Resolves to `./src` via `vite.config.js`.
+
+---
+
+## Sequence Diagrams
+
+### Auth: Register → Login → Token Refresh
+
+```
+Browser          API (AuthController)      AuthService         DB (Users / RefreshTokens)
+  │                       │                     │                         │
+  │──POST /register──────►│                     │                         │
+  │                       │──RegisterAsync──────►│                         │
+  │                       │                     │──check email unique─────►│
+  │                       │                     │◄────────────────────────│
+  │                       │                     │──BCrypt.Hash(password)  │
+  │                       │                     │──AddAsync(user)─────────►│
+  │                       │                     │──SaveChangesAsync───────►│
+  │                       │                     │──GenerateJwt + refresh  │
+  │                       │                     │──AddAsync(refreshToken)─►│
+  │◄──200 {accessToken, refreshToken}────────────│                         │
+  │                                                                        │
+  │  (15 min later — access token expired)                                 │
+  │                                                                        │
+  │──POST /refresh────────►│                     │                         │
+  │                       │──RefreshAsync───────►│                         │
+  │                       │                     │──find token in DB───────►│
+  │                       │                     │──validate expiry + revoked│
+  │                       │                     │──SoftDelete(oldToken)───►│
+  │                       │                     │──GenerateJwt (new)      │
+  │                       │                     │──AddAsync(newToken)─────►│
+  │◄──200 {newAccessToken, newRefreshToken}───────│                         │
+```
+
+### Listing: Create → Submit → Admin Approve
+
+```
+Seller           API (ListingsController)   ListingService        AdminService
+  │                       │                     │                      │
+  │──POST /listings───────►│                     │                      │
+  │                       │──CreateAsync────────►│                      │
+  │                       │                     │──AddAsync(listing)   │
+  │                       │                     │  Status=Draft        │
+  │◄──200 {listingId}─────│                     │                      │
+  │                       │                     │                      │
+  │──POST /listings/{id}/submit─►│              │                      │
+  │                       │──SubmitAsync────────►│                      │
+  │                       │                     │──Status=PendingApproval
+  │                       │                     │──SaveChangesAsync    │
+  │                       │                     │──SendEmail(pending)  │
+  │◄──200─────────────────│                     │                      │
+  │                       │                     │                      │
+                    Admin ──POST /admin/listings/{id}/approve──────────►│
+                          │                                             │
+                          │                                  ──Status=Active
+                          │                                  ──LogApproval
+                          │                                  ──SendEmail(approved)
+                    Admin ◄──200────────────────────────────────────────│
+```
+
+### Frontend: API Call with Token Refresh Queue
+
+```
+React Component    api.js (Axios interceptor)    authStore    Backend API
+       │                    │                       │               │
+       │──useQuery──────────►│                       │               │
+       │                    │──GET /listings────────────────────────►│
+       │                    │◄──401 Unauthorized────────────────────│
+       │                    │                                        │
+       │                    │ (isRefreshing=false → start refresh)   │
+       │                    │──POST /auth/refresh───────────────────►│
+       │                    │◄──200 {newAccessToken}─────────────────│
+       │                    │──setTokens(newTokens)──►│              │
+       │                    │                                        │
+       │  (retry queued requests with new token)                     │
+       │                    │──GET /listings (with new token)───────►│
+       │                    │◄──200 {data}──────────────────────────│
+       │◄──unwrapped data───│                                        │
+```
+
+### Order: Checkout Flow
+
+```
+Buyer            API (OrdersController)    OrderService       DB
+  │                     │                      │               │
+  │──POST /checkout─────►│                      │               │
+  │                     │──CheckoutAsync───────►│               │
+  │                     │                      │──validate listings active
+  │                     │                      │──validate quantity available
+  │                     │                      │──compute TotalAmount
+  │                     │                      │──AddAsync(order)──────►│
+  │                     │                      │──AddRange(orderItems)──►│
+  │                     │                      │──decrement quantities──►│
+  │                     │                      │──SaveChangesAsync──────►│
+  │◄──200 {OrderResponse}│                      │               │
+```
+
+---
+
+## Entity Relationship Summary
+
+```
+User ──< Listing (SellerId)
+User ──< Order (BuyerId)
+User ──< RefreshToken
+User ──1 Cart
+User ──1 BusinessProfile ──< UserDocument
+User ──< ListingView
+
+Category ──< Category (self-ref: ParentCategoryId)
+Category ──< CategoryAttribute ──< AttributeOption
+CategoryAttribute ──< CategoryAttribute (self-ref: ConditionAttributeId)
+
+Listing ──< ListingImage
+Listing ──< ListingAttributeValue
+Listing ──< OrderItem
+Listing ──< CartItem
+Listing ──< ListingView
+Listing ──< ListingVersion
+Listing ──< ListingApprovalLog
+
+Order ──< OrderItem
+Cart ──< CartItem
+
+EmailTemplate (standalone, versioned)
+```
+
+**Soft-delete behavior:**
+- All entities extending `BaseEntity` have `IsDeleted` / `DeletedAt`
+- EF global query filter excludes `IsDeleted=true` on every query
+- Exception: Admin queries pass `IncludeDeleted=true` to bypass filter
+
+**Entities with unique constraints:**
+- `User.Email` — unique index
+- `Cart.UserId` — one cart per user
+- `BusinessProfile.UserId` — one profile per user
+- `Order.OrderNumber` — unique
+
+---
+
+## Data Flow
+
+### Request path (backend)
+
+```
+HTTP Request
+  ↓
+ExceptionMiddleware (catch unhandled → ApiResponse failure)
+  ↓
+SerilogRequestLogging
+  ↓
+CORS middleware ("FrontendPolicy")
+  ↓
+JWT Authentication middleware
+  ↓
+Authorization middleware
+  ↓
+Controller action
+  │  FluentValidation runs before action body (auto-registered)
+  ↓
+Application Service method
+  │  Uses IRepository<T>.Query() → composes IQueryable<T>
+  │  Materializes with .ToListAsync()
+  │  Calls .SaveChangesAsync(ct) after mutations
+  ↓
+GenericRepository<T> (Infrastructure)
+  ↓
+AppDbContext (EF Core)
+  │  Global query filters: WHERE IsDeleted=0
+  ↓
+SQL Server
+```
+
+### Frontend request path
+
+```
+React Component (useQuery / useMutation)
+  ↓
+Feature service function (e.g. listingService.getListings())
+  ↓
+api.js Axios instance
+  │  Request interceptor: attach Bearer token from authStore
+  ↓
+Vite dev proxy (/api/* → http://localhost:5000)   [dev only]
+  ↓
+Backend API
+  ↓
+Response interceptor (api.js)
+  │  .data unwrap: caller receives payload, not raw Axios response
+  │  401 handling: queue requests → refresh → retry
+  ↓
+React Query cache
+  ↓
+Component re-render
+```
+
+### Image upload path
+
+```
+User selects file
+  ↓
+POST /api/v1/listings/images (multipart/form-data)
+  ↓
+ListingsController → IListingService.UploadImageAsync()
+  ↓
+IFileStorageService.SaveAsync()
+  ↓
+LocalFileStorageService → wwwroot/uploads/<guid>.<ext>
+  ↓
+Returns relative URL: /uploads/<guid>.<ext>
+  ↓
+Frontend: assetUrl(relativeUrl) → API_BASE_URL + relativeUrl
+  ↓
+Nginx / ASP.NET static files middleware serves the file
+```
+
+---
+
+## Key Design Decisions
+
+| Decision | Rationale |
+|---------|---------|
+| No `IUnitOfWork` | Single `DbContext` per request; `SaveChangesAsync` on `IRepository<T>` is sufficient; avoids over-engineering |
+| `MapInboundClaims = false` | Prevents MS claim-type remapping; `sub` stays `sub`; controllers use `User.FindFirstValue("sub")` |
+| `ForgotPassword` always 200 | Prevents email enumeration attacks |
+| Deterministic GUIDs for seed data | `CreateGuid("category:electronics")` → stable IDs across re-seeds; no duplicate rows |
+| `SmtpEmailService` never throws | Email failures are non-fatal; logged via Serilog; API never returns 500 due to email |
+| `LocalFileStorageService` | Dev convenience; swap to `AzureBlobStorageService` for production by implementing same `IFileStorageService` |
+| Feature-based frontend structure | Co-locates components, hooks, pages, services per feature; prevents cross-feature coupling |
+| Axios response interceptor unwraps `.data` | Callers work with payload directly; 401 refresh is centralized in one place |
