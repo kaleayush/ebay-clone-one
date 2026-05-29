@@ -23,7 +23,8 @@ public record AuctionStatusResponse(
     int BidCount,
     DateTime? AuctionStartAt,
     DateTime? AuctionEndAt,
-    int Status
+    int Status,
+    bool IsCurrentUserWinning = false
 );
 
 public record AuctionBidPlacedEvent(

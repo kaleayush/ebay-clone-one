@@ -22,7 +22,8 @@ public class AuctionsController(IAuctionService auctionService) : ControllerBase
     [HttpGet("{listingId:guid}/status")]
     public async Task<ActionResult<ApiResponse<AuctionStatusResponse>>> GetStatus(Guid listingId, CancellationToken ct)
     {
-        var result = await auctionService.GetAuctionStatusAsync(listingId, ct);
+        Guid? viewerId = User.FindFirstValue("sub") is string sub ? Guid.Parse(sub) : null;
+        var result = await auctionService.GetAuctionStatusAsync(listingId, viewerId, ct);
         return Ok(ApiResponse<AuctionStatusResponse>.Ok(result));
     }
 

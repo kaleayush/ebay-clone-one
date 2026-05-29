@@ -75,7 +75,8 @@ export default function BidPanel({ listing }) {
     : (status.startingBid ?? status.minBidIncrement ?? 1)
 
   const auctionEnded = !timeLeft || timeLeft.ended
-  const canBid = isAuthenticated && !auctionEnded && !isSeller
+  const isCurrentWinner = status.isCurrentUserWinning ?? false
+  const canBid = isAuthenticated && !auctionEnded && !isSeller && !isCurrentWinner
 
   return (
     <div className="space-y-4">
@@ -112,6 +113,11 @@ export default function BidPanel({ listing }) {
         <div className="rounded-lg bg-blue-50 border border-blue-200 p-4 text-center">
           <p className="text-sm font-semibold text-blue-700">This is your listing</p>
           <p className="text-xs text-blue-500 mt-0.5">Sellers cannot bid on their own auctions.</p>
+        </div>
+      ) : isCurrentWinner ? (
+        <div className="rounded-lg bg-green-50 border border-green-200 p-4 text-center">
+          <p className="text-sm font-semibold text-green-700">🏆 You are the highest bidder!</p>
+          <p className="text-xs text-green-600 mt-0.5">You cannot raise your own bid. Wait for another bidder.</p>
         </div>
       ) : canBid ? (
         <div className="space-y-2">

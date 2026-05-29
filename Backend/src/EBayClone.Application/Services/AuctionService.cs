@@ -40,6 +40,9 @@ public class AuctionService(
             if (listing.SellerId == bidderId)
                 throw new InvalidOperationException("Sellers cannot bid on their own listings.");
 
+            if (listing.CurrentBidderId == bidderId)
+                throw new InvalidOperationException("You are already the highest bidder. Wait for another bidder before placing a higher bid.");
+
             var minRequired = listing.CurrentBidAmount.HasValue
                 ? listing.CurrentBidAmount.Value + listing.MinBidIncrement
                 : listing.StartingBid ?? listing.MinBidIncrement;
@@ -187,7 +190,7 @@ public class AuctionService(
             total, page, pageSize);
     }
 
-    public async Task<AuctionStatusResponse> GetAuctionStatusAsync(Guid listingId, CancellationToken ct = default)
+    public async Task<AuctionStatusResponse> GetAuctionStatusAsync(Guid listingId, Guid? viewerId = null, CancellationToken ct = default)
     {
         var listing = await listingRepo.Query()
             .AsNoTracking()
@@ -197,7 +200,9 @@ public class AuctionService(
         var reserveMet = listing.ReservePrice is null ||
             (listing.CurrentBidAmount ?? 0) >= listing.ReservePrice;
 
-        return MapToStatus(listing, reserveMet);
+        var isCurrentUserWinning = viewerId.HasValue && listing.CurrentBidderId == viewerId;
+
+        return MapToStatus(listing, reserveMet, isCurrentUserWinning);
     }
 
     public async Task<PagedResult<AuctionStatusResponse>> GetActiveAuctionsAsync(int page, int pageSize, CancellationToken ct = default)
@@ -404,8 +409,8 @@ public class AuctionService(
         return $"buyer_{hash}";
     }
 
-    private static AuctionStatusResponse MapToStatus(Listing l, bool reserveMet) =>
+    private static AuctionStatusResponse MapToStatus(Listing l, bool reserveMet, bool isCurrentUserWinning = false) =>
         new(l.Id, l.Title, l.StartingBid, l.CurrentBidAmount, l.ReservePrice,
             reserveMet, l.BuyItNowPrice, l.MinBidIncrement,
-            l.BidCount, l.AuctionStartAt, l.AuctionEndAt, (int)l.Status);
+            l.BidCount, l.AuctionStartAt, l.AuctionEndAt, (int)l.Status, isCurrentUserWinning);
 }
