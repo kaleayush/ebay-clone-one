@@ -28,6 +28,20 @@ public static class ServiceExtensions
                     NameClaimType = "sub",
                     RoleClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
                 };
+                // SignalR WebSocket: token arrives via query string
+                options.Events = new Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var token = context.Request.Query["access_token"];
+                        if (!string.IsNullOrEmpty(token) &&
+                            context.HttpContext.Request.Path.StartsWithSegments("/hubs"))
+                        {
+                            context.Token = token;
+                        }
+                        return Task.CompletedTask;
+                    }
+                };
             });
 
         services.AddAuthorization();

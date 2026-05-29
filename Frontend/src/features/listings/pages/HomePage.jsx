@@ -1,10 +1,15 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ChevronRight, Shield, Zap, RotateCcw } from 'lucide-react'
+import { ChevronRight, Shield, Zap, RotateCcw, Gavel } from 'lucide-react'
+import { useQuery } from '@tanstack/react-query'
 import { useListings, useRecentlyViewedListings } from '../hooks/useListings'
 import ListingCard from '../components/ListingCard'
 import ListingGrid from '../components/ListingGrid'
-import { ROUTES } from '@/constants/routes'
+import AuctionBadge from '@/features/auctions/components/AuctionBadge'
+import { auctionService } from '@/features/auctions/services/auctionService'
+import { buildRoute, ROUTES } from '@/constants/routes'
+import { formatCurrency } from '@/utils/formatters'
+import { assetUrl } from '@/utils/assets'
 import { useAuthStore } from '@/store/authStore'
 
 const CATEGORIES = [
@@ -32,10 +37,18 @@ export default function HomePage() {
     page,
     pageSize: 20,
     status: 1,
+    listingType: 0,
     excludeSellerId: isAuthenticated ? user?.id : undefined,
     sortBy: 'updatedAt',
     sortDirection: 'desc',
   })
+
+  const { data: auctionsData } = useQuery({
+    queryKey: ['home-auctions'],
+    queryFn: () => auctionService.getActive(1, 12),
+    staleTime: 30_000,
+  })
+  const liveAuctions = auctionsData?.data?.items ?? []
   const { data: recentViewedData } = useRecentlyViewedListings(
     { days: 3, take: 12 },
     { enabled: isAuthenticated },
@@ -142,6 +155,53 @@ export default function HomePage() {
               <div key={listing.id} className="w-[180px] shrink-0 sm:w-[210px]">
                 <ListingCard listing={listing} />
               </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* ── Live Auctions ── */}
+      {liveAuctions.length > 0 && (
+        <section>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <Gavel size={20} className="text-amber-600" />
+              <div>
+                <h2 className="text-xl font-bold text-gray-900">Live Auctions</h2>
+                <p className="text-sm text-gray-500 mt-0.5">Bid now before time runs out</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-thin">
+            {liveAuctions.map((auction) => (
+              <Link
+                key={auction.listingId}
+                to={buildRoute(ROUTES.LISTING_DETAIL, { id: auction.listingId })}
+                className="w-[180px] shrink-0 sm:w-[210px] card hover:shadow-md transition-all duration-200 flex flex-col overflow-hidden group"
+              >
+                <div className="relative aspect-square bg-gray-100 overflow-hidden">
+                  <div className="w-full h-full flex items-center justify-center text-gray-300">
+                    <Gavel size={36} strokeWidth={1.25} />
+                  </div>
+                  <div className="absolute top-2 left-2">
+                    <AuctionBadge listing={{ listingType: 1, auctionEndAt: auction.auctionEndAt, status: auction.status }} />
+                  </div>
+                </div>
+                <div className="px-3 pb-3 pt-2 flex flex-col flex-1">
+                  <p className="text-xs text-gray-400 mb-0.5 truncate">{auction.bidCount} bid{auction.bidCount !== 1 ? 's' : ''}</p>
+                  <p className="text-sm text-gray-800 font-medium line-clamp-2 leading-snug mb-auto">{auction.title}</p>
+                  <div className="mt-2">
+                    <p className="text-lg font-bold leading-none text-gray-900">
+                      {auction.currentBidAmount
+                        ? formatCurrency(auction.currentBidAmount)
+                        : auction.startingBid
+                        ? `Start ${formatCurrency(auction.startingBid)}`
+                        : 'No bids'}
+                    </p>
+                  </div>
+                </div>
+              </Link>
             ))}
           </div>
         </section>

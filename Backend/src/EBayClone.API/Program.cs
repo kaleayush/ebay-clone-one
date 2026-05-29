@@ -1,6 +1,8 @@
 using EBayClone.API.Extensions;
+using EBayClone.API.Hubs;
 using EBayClone.API.Middleware;
 using EBayClone.Application.Extensions;
+using EBayClone.Application.Interfaces;
 using EBayClone.Infrastructure.Data;
 using EBayClone.Infrastructure.Data.Seed;
 using EBayClone.Infrastructure.Extensions;
@@ -27,6 +29,8 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplication();
 builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddCorsPolicy(builder.Configuration);
+builder.Services.AddSignalR();
+builder.Services.AddScoped<IAuctionNotifier, SignalRAuctionNotifier>();
 
 // ===== App =====
 var app = builder.Build();
@@ -70,6 +74,7 @@ app.UseCors("FrontendPolicy");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+app.MapHub<AuctionHub>("/hubs/auction");
 app.MapHealthChecks("/health");
 
 var urls = Environment.GetEnvironmentVariable("ASPNETCORE_URLS")

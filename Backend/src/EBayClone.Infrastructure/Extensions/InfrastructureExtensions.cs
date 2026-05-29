@@ -25,6 +25,7 @@ public static class InfrastructureExtensions
         services.AddScoped<IEmailService, SmtpEmailService>();
         services.AddSingleton<IBackgroundEmailService, BackgroundEmailService>();
         services.AddScoped<IFileStorageService, LocalFileStorageService>();
+        services.AddHostedService<AuctionEndingBackgroundService>();
 
         return services;
     }

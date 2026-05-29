@@ -14,6 +14,7 @@ Reference files in [`docs/`](docs/):
 | [docs/database.md](docs/database.md) | DB engine, EF Core setup, migration strategy, schema notes |
 | [docs/design.md](docs/design.md) | Tailwind design system, color tokens, component conventions |
 | [docs/coding-rules.md](docs/coding-rules.md) | Naming conventions, patterns, do/don't rules for this codebase |
+| [docs/task.md](docs/task.md) | Completed and pending work tracker (phased task checklist) |
 
 ---
 

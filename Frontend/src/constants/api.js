@@ -64,6 +64,7 @@ export const API_ENDPOINTS = {
   // Business Profile
   BUSINESS_PROFILE: {
     BASE: '/api/v1/business-profile',
+    SUBMIT_FOR_REVIEW: '/api/v1/business-profile/submit-for-review',
     DOCUMENTS: '/api/v1/business-profile/documents',
     DOCUMENT_BY_ID: (id) => `/api/v1/business-profile/documents/${id}`,
   },
@@ -87,6 +88,18 @@ export const API_ENDPOINTS = {
     EMAIL_TEMPLATE_BY_ID: (id) => `/api/v1/admin/email-templates/${id}`,
     EMAIL_TEMPLATE_ACTIVATE: (id) => `/api/v1/admin/email-templates/${id}/activate`,
     EMAIL_TEMPLATE_DEACTIVATE: (id) => `/api/v1/admin/email-templates/${id}/deactivate`,
+  },
+  // Auctions
+  AUCTIONS: {
+    ACTIVE: '/api/v1/auctions/active',
+    STATUS: (listingId) => `/api/v1/auctions/${listingId}/status`,
+    BIDS: (listingId) => `/api/v1/auctions/${listingId}/bids`,
+    PLACE_BID: (listingId) => `/api/v1/auctions/${listingId}/bids`,
+    MY_BIDS: '/api/v1/auctions/my-bids',
+    ADMIN_LIST: '/api/v1/admin/auctions',
+    ADMIN_BIDS: (listingId) => `/api/v1/admin/auctions/${listingId}/bids`,
+    ADMIN_CANCEL: (listingId) => `/api/v1/admin/auctions/${listingId}/cancel`,
+    ADMIN_EXTEND: (listingId) => `/api/v1/admin/auctions/${listingId}/extend`,
   },
   // Listing approval (seller-side)
   LISTING_APPROVAL: {

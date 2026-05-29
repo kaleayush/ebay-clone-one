@@ -47,6 +47,13 @@ const AdminBusinessProfilesPage = lazy(() => import('@/features/admin/pages/Admi
 const AdminEmailTemplatesPage = lazy(() => import('@/features/admin/pages/AdminEmailTemplatesPage'))
 const AdminReviewPage = lazy(() => import('@/features/admin/pages/AdminReviewPage'))
 
+// Profile extras
+const MyBidsPage = lazy(() => import('@/features/profile/pages/MyBidsPage'))
+
+// Admin auction pages
+const AdminAuctionsPage = lazy(() => import('@/features/admin/pages/AdminAuctionsPage'))
+const AdminAuctionDetailPage = lazy(() => import('@/features/admin/pages/AdminAuctionDetailPage'))
+
 // Error pages
 const NotFoundPage = lazy(() => import('@/features/errors/NotFoundPage'))
 const ForbiddenPage = lazy(() => import('@/features/errors/ForbiddenPage'))
@@ -82,6 +89,7 @@ export const router = createBrowserRouter([
           { path: ROUTES.MY_LISTINGS, element: withSuspense(MyListingsPage) },
           { path: ROUTES.SELLER_ORDERS, element: withSuspense(SellerOrdersPage) },
           { path: ROUTES.BUSINESS_PROFILE, element: withSuspense(BusinessProfilePage) },
+          { path: ROUTES.MY_BIDS, element: withSuspense(MyBidsPage) },
         ],
       },
     ],
@@ -105,6 +113,8 @@ export const router = createBrowserRouter([
       { path: 'business-profiles', element: withSuspense(AdminBusinessProfilesPage) },
       { path: 'email-templates', element: withSuspense(AdminEmailTemplatesPage) },
       { path: 'review', element: withSuspense(AdminReviewPage) },
+      { path: 'auctions', element: withSuspense(AdminAuctionsPage) },
+      { path: 'auctions/:listingId', element: withSuspense(AdminAuctionDetailPage) },
     ],
   },
 

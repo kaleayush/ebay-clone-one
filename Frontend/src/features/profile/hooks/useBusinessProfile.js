@@ -21,7 +21,22 @@ export const useSubmitBusinessProfile = () => {
     mutationFn: businessProfileService.submit,
     onSuccess: (data) => {
       queryClient.setQueryData(QUERY_KEY, data)
-      toast.success('Business profile submitted for verification!')
+      toast.success('Business details saved! Upload at least one document, then submit for review.')
+    },
+    onError: (error) => {
+      toast.error(error?.response?.data?.message || 'Save failed. Please try again.')
+    },
+  })
+}
+
+export const useSubmitForReview = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: businessProfileService.submitForReview,
+    onSuccess: (data) => {
+      queryClient.setQueryData(QUERY_KEY, data)
+      toast.success('Profile submitted for admin review!')
     },
     onError: (error) => {
       toast.error(error?.response?.data?.message || 'Submission failed. Please try again.')

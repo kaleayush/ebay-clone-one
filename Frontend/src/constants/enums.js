@@ -120,6 +120,7 @@ export const VerificationStatus = {
   UNDER_REVIEW: 'UnderReview',
   VERIFIED: 'Verified',
   REJECTED: 'Rejected',
+  DRAFT: 'Draft',
 }
 
 export const VerificationStatusLabel = {
@@ -127,6 +128,7 @@ export const VerificationStatusLabel = {
   [VerificationStatus.UNDER_REVIEW]: 'Under Review',
   [VerificationStatus.VERIFIED]: 'Verified',
   [VerificationStatus.REJECTED]: 'Rejected',
+  [VerificationStatus.DRAFT]: 'Draft',
 }
 
 export const DocumentType = {
@@ -143,6 +145,20 @@ export const DocumentTypeLabel = {
   [DocumentType.BUSINESS_REGISTRATION]: 'Business Registration',
   [DocumentType.ADDRESS_PROOF]: 'Address Proof',
   [DocumentType.OTHER]: 'Other Document',
+}
+
+export const AuctionEndReason = {
+  TIME_EXPIRED: 0,
+  ADMIN_CANCELLED: 1,
+  SELLER_CANCELLED: 2,
+  BUY_IT_NOW: 3,
+}
+
+export const AuctionEndReasonLabel = {
+  [AuctionEndReason.TIME_EXPIRED]: 'Time Expired',
+  [AuctionEndReason.ADMIN_CANCELLED]: 'Cancelled by Admin',
+  [AuctionEndReason.SELLER_CANCELLED]: 'Cancelled by Seller',
+  [AuctionEndReason.BUY_IT_NOW]: 'Buy It Now',
 }
 
 export const SortDirection = {

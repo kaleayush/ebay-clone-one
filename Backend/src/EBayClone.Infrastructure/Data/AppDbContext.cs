@@ -24,6 +24,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<EmailTemplate> EmailTemplates => Set<EmailTemplate>();
     public DbSet<ListingVersion> ListingVersions => Set<ListingVersion>();
     public DbSet<ListingApprovalLog> ListingApprovalLogs => Set<ListingApprovalLog>();
+    public DbSet<Bid> Bids => Set<Bid>();
+    public DbSet<AuctionResult> AuctionResults => Set<AuctionResult>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

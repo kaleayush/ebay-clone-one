@@ -49,7 +49,7 @@ export default function ListingsPage() {
   const [maxPrice, setMaxPrice] = useState('')
   const [sortKey, setSortKey] = useState('updatedAt_desc')
   const [freeShipping, setFreeShipping] = useState(false)
-  const [listingType, setListingType] = useState('')
+  const [listingType, setListingType] = useState('0')
   const [attributeFilters, setAttributeFilters] = useState({})
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
 

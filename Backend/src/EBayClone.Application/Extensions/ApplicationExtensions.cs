@@ -18,6 +18,8 @@ public static class ApplicationExtensions
         services.AddScoped<IBusinessProfileService, BusinessProfileService>();
         services.AddScoped<IEmailTemplateService, EmailTemplateService>();
         services.AddScoped<IAdminService, AdminService>();
+        services.AddScoped<IAuctionService, AuctionService>();
+        services.AddSingleton<AuctionBidLockService>();
 
         services.AddValidatorsFromAssembly(typeof(ApplicationExtensions).Assembly);
 

@@ -30,8 +30,14 @@ public class ListingService(
         if (!seller.IsEmailVerified)
             throw new InvalidOperationException("Please verify your email before selling items.");
 
-        if (seller.AccountType == AccountType.Business && seller.BusinessProfile is null)
-            throw new InvalidOperationException("Please submit your business details before selling items.");
+        if (seller.AccountType == AccountType.Business)
+        {
+            if (seller.BusinessProfile is null)
+                throw new InvalidOperationException("Please complete your business profile before selling items.");
+
+            if (seller.BusinessProfile.VerificationStatus != VerificationStatus.Verified)
+                throw new InvalidOperationException("Your business profile must be verified by admin before you can create listings.");
+        }
     }
 
     public async Task<PagedResult<ListingResponse>> GetListingsAsync(ListingQuery query, CancellationToken ct = default)

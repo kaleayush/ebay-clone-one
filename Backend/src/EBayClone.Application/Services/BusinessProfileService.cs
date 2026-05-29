@@ -51,24 +51,13 @@ public class BusinessProfileService(
             BusinessPhone = request.BusinessPhone?.Trim(),
             BusinessEmail = request.BusinessEmail?.ToLower().Trim(),
             BusinessWebsite = request.BusinessWebsite?.Trim(),
-            VerificationStatus = VerificationStatus.Pending,
+            VerificationStatus = VerificationStatus.Draft,
         };
 
         await profileRepository.AddAsync(profile, ct);
         await profileRepository.SaveChangesAsync(ct);
 
-        var user = await userRepository.GetByIdAsync(userId, ct);
-        if (user is not null)
-        {
-            var userEmail = user.Email;
-            var userName = user.FirstName;
-
-            // Send email in background using scoped service
-            backgroundEmailService.EnqueueEmail(s => 
-                s.SendBusinessProfileSubmittedAsync(userEmail, userName, CancellationToken.None));
-        }
-
-        logger.LogInformation("Business profile submitted for user {UserId}", userId);
+        logger.LogInformation("Business profile saved (draft) for user {UserId}", userId);
 
         return MapToResponse(profile);
     }
@@ -83,7 +72,7 @@ public class BusinessProfileService(
         if (profile.VerificationStatus == VerificationStatus.Verified)
             throw new InvalidOperationException("Verified profiles cannot be edited. Contact support for changes.");
 
-        if (profile.VerificationStatus == VerificationStatus.UnderReview)
+        if (profile.VerificationStatus is VerificationStatus.UnderReview or VerificationStatus.Pending)
             throw new InvalidOperationException("Profile is under review and cannot be edited.");
 
         var gstTaken = await profileRepository.ExistsAsync(
@@ -103,14 +92,49 @@ public class BusinessProfileService(
         profile.BusinessPhone = request.BusinessPhone?.Trim();
         profile.BusinessEmail = request.BusinessEmail?.ToLower().Trim();
         profile.BusinessWebsite = request.BusinessWebsite?.Trim();
-        profile.VerificationStatus = VerificationStatus.Pending;
+        profile.VerificationStatus = VerificationStatus.Draft;
         profile.RejectionReason = null;
         profile.UpdatedAt = DateTime.UtcNow;
 
         profileRepository.Update(profile);
         await profileRepository.SaveChangesAsync(ct);
 
-        logger.LogInformation("Business profile updated for user {UserId}", userId);
+        logger.LogInformation("Business profile updated (draft) for user {UserId}", userId);
+
+        return MapToResponse(profile);
+    }
+
+    public async Task<BusinessProfileResponse> SubmitForReviewAsync(Guid userId, CancellationToken ct = default)
+    {
+        var profile = await profileRepository.Query()
+            .Include(p => p.Documents.Where(d => !d.IsDeleted))
+            .FirstOrDefaultAsync(p => p.UserId == userId, ct)
+            ?? throw new KeyNotFoundException("Business profile not found. Please save your details first.");
+
+        if (profile.VerificationStatus is VerificationStatus.Verified)
+            throw new InvalidOperationException("Profile is already verified.");
+
+        if (profile.VerificationStatus is VerificationStatus.Pending or VerificationStatus.UnderReview)
+            throw new InvalidOperationException("Profile is already submitted for review.");
+
+        var docCount = profile.Documents.Count(d => !d.IsDeleted);
+        if (docCount == 0)
+            throw new InvalidOperationException("Upload at least one supporting document before submitting for review.");
+
+        profile.VerificationStatus = VerificationStatus.Pending;
+        profile.UpdatedAt = DateTime.UtcNow;
+
+        profileRepository.Update(profile);
+        await profileRepository.SaveChangesAsync(ct);
+
+        var user = await userRepository.GetByIdAsync(userId, ct);
+        if (user is not null)
+        {
+            backgroundEmailService.EnqueueEmail(s =>
+                s.SendBusinessProfileSubmittedAsync(user.Email, user.FirstName, CancellationToken.None));
+        }
+
+        logger.LogInformation("Business profile submitted for review: user {UserId}", userId);
 
         return MapToResponse(profile);
     }

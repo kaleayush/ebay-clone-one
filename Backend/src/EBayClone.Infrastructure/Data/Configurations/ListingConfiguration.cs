@@ -17,6 +17,8 @@ public class ListingConfiguration : IEntityTypeConfiguration<Listing>
         builder.Property(l => l.StartingBid).HasPrecision(18, 2);
         builder.Property(l => l.ReservePrice).HasPrecision(18, 2);
         builder.Property(l => l.BuyItNowPrice).HasPrecision(18, 2);
+        builder.Property(l => l.CurrentBidAmount).HasPrecision(18, 2);
+        builder.Property(l => l.MinBidIncrement).HasPrecision(18, 2).HasDefaultValue(1.00m);
         builder.Property(l => l.PrimaryImageUrl).HasMaxLength(500);
 
         builder.HasIndex(l => l.SellerId).HasDatabaseName("IX_Listings_SellerId");

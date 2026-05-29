@@ -11,6 +11,7 @@ import {
   useBusinessProfile,
   useSubmitBusinessProfile,
   useUpdateBusinessProfile,
+  useSubmitForReview,
   useUploadDocument,
   useDeleteDocument,
 } from '../hooks/useBusinessProfile'
@@ -32,6 +33,7 @@ const profileSchema = z.object({
 })
 
 const statusConfig = {
+  [VerificationStatus.DRAFT]: { variant: 'default', label: 'Draft' },
   [VerificationStatus.PENDING]: { variant: 'warning', label: VerificationStatusLabel[VerificationStatus.PENDING] },
   [VerificationStatus.UNDER_REVIEW]: { variant: 'info', label: VerificationStatusLabel[VerificationStatus.UNDER_REVIEW] },
   [VerificationStatus.VERIFIED]: { variant: 'success', label: VerificationStatusLabel[VerificationStatus.VERIFIED] },
@@ -42,10 +44,21 @@ export default function BusinessProfilePage() {
   const { data: profile, isLoading } = useBusinessProfile()
   const { mutate: submit, isPending: isSubmitting } = useSubmitBusinessProfile()
   const { mutate: update, isPending: isUpdating } = useUpdateBusinessProfile()
+  const { mutate: submitForReview, isPending: isSubmittingForReview } = useSubmitForReview()
 
   const isEditable = !profile ||
-    profile.verificationStatus === VerificationStatus.PENDING ||
+    profile.verificationStatus === VerificationStatus.DRAFT ||
     profile.verificationStatus === VerificationStatus.REJECTED
+
+  const canSubmitForReview =
+    profile &&
+    (profile.verificationStatus === VerificationStatus.DRAFT ||
+     profile.verificationStatus === VerificationStatus.REJECTED) &&
+    (profile.documents?.length ?? 0) > 0
+
+  const awaitingReview =
+    profile?.verificationStatus === VerificationStatus.PENDING ||
+    profile?.verificationStatus === VerificationStatus.UNDER_REVIEW
 
   const {
     register,
@@ -78,6 +91,8 @@ export default function BusinessProfilePage() {
     else update(payload)
   }
 
+  const handleSubmitForReview = () => submitForReview()
+
   if (isLoading) {
     return (
       <div className="flex justify-center py-20">
@@ -100,12 +115,30 @@ export default function BusinessProfilePage() {
         )}
       </div>
 
+      {profile?.verificationStatus === VerificationStatus.DRAFT && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 space-y-1">
+          <p className="text-sm font-semibold text-blue-800">Step 1 done — details saved</p>
+          <p className="text-sm text-blue-700">
+            Upload at least one supporting document below, then click <strong>Submit for Review</strong>.
+          </p>
+        </div>
+      )}
+
       {profile?.verificationStatus === VerificationStatus.REJECTED && (
         <div className="bg-red-50 border border-red-200 rounded-lg p-4">
           <p className="text-sm font-medium text-red-800">Profile Rejected</p>
           <p className="text-sm text-red-700 mt-1">{profile.rejectionReason}</p>
           <p className="text-xs text-red-600 mt-2">
-            Please update the information below and resubmit.
+            Update details and/or upload documents, then submit for review again.
+          </p>
+        </div>
+      )}
+
+      {awaitingReview && (
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+          <p className="text-sm font-semibold text-amber-800">Under admin review</p>
+          <p className="text-sm text-amber-700 mt-1">
+            Your profile and documents are being reviewed. You can create listings once approved.
           </p>
         </div>
       )}
@@ -191,18 +224,42 @@ export default function BusinessProfilePage() {
               loading={isSubmitting || isUpdating}
               className="w-full sm:w-auto"
             >
-              {profile ? 'Update & Resubmit' : 'Submit for Verification'}
+              {profile ? 'Save Changes' : 'Save Details'}
             </Button>
           )}
         </form>
       </div>
 
-      {/* Documents */}
+      {/* Documents — visible once profile is saved */}
       {profile && (
         <DocumentsSection
           documents={profile.documents}
           profileStatus={profile.verificationStatus}
         />
+      )}
+
+      {/* Submit for Review */}
+      {profile && (profile.verificationStatus === VerificationStatus.DRAFT || profile.verificationStatus === VerificationStatus.REJECTED) && (
+        <div className="card p-5 border-2 border-dashed border-gray-200">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div>
+              <p className="text-sm font-semibold text-gray-800">Ready to submit?</p>
+              <p className="text-xs text-gray-500 mt-0.5">
+                {(profile.documents?.length ?? 0) === 0
+                  ? 'Upload at least one document above before submitting.'
+                  : `${profile.documents.length} document${profile.documents.length > 1 ? 's' : ''} attached — you can submit for review.`}
+              </p>
+            </div>
+            <Button
+              onClick={handleSubmitForReview}
+              loading={isSubmittingForReview}
+              disabled={!canSubmitForReview}
+              className="whitespace-nowrap"
+            >
+              Submit for Review
+            </Button>
+          </div>
+        </div>
       )}
 
       <p className="text-sm text-gray-500 text-center">

@@ -69,6 +69,99 @@ namespace EBayClone.Infrastructure.Migrations
                     b.ToTable("AttributeOptions");
                 });
 
+            modelBuilder.Entity("EBayClone.Domain.Entities.AuctionResult", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("EndReason")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("EndedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("ListingId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("ReserveMet")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("WinnerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal?>("WinningAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ListingId")
+                        .IsUnique()
+                        .HasDatabaseName("IX_AuctionResults_ListingId");
+
+                    b.HasIndex("WinnerId");
+
+                    b.ToTable("AuctionResults");
+                });
+
+            modelBuilder.Entity("EBayClone.Domain.Entities.Bid", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<Guid>("BidderId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsAutoBid")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsWinning")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("ListingId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BidderId")
+                        .HasDatabaseName("IX_Bids_BidderId");
+
+                    b.HasIndex("ListingId")
+                        .HasDatabaseName("IX_Bids_ListingId");
+
+                    b.ToTable("Bids");
+                });
+
             modelBuilder.Entity("EBayClone.Domain.Entities.BusinessProfile", b =>
                 {
                     b.Property<Guid>("Id")
@@ -489,6 +582,12 @@ namespace EBayClone.Infrastructure.Migrations
                     b.Property<DateTime?>("AuctionStartAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<bool>("AutoExtendOnBid")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("BidCount")
+                        .HasColumnType("int");
+
                     b.Property<decimal?>("BuyItNowPrice")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
@@ -498,6 +597,13 @@ namespace EBayClone.Infrastructure.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<decimal?>("CurrentBidAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<Guid?>("CurrentBidderId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
@@ -521,6 +627,12 @@ namespace EBayClone.Infrastructure.Migrations
 
                     b.Property<int>("ListingType")
                         .HasColumnType("int");
+
+                    b.Property<decimal>("MinBidIncrement")
+                        .ValueGeneratedOnAdd()
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)")
+                        .HasDefaultValue(1.00m);
 
                     b.Property<decimal>("Price")
                         .HasPrecision(18, 2)
@@ -804,10 +916,17 @@ namespace EBayClone.Infrastructure.Migrations
                     b.Property<Guid>("BuyerId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("Carrier")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeliveredAt")
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("IsDeleted")
@@ -822,6 +941,21 @@ namespace EBayClone.Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<string>("PaymentMethod")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("PaymentReference")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("PaymentStatus")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ShippedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("ShippingAddress")
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
@@ -833,8 +967,16 @@ namespace EBayClone.Infrastructure.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<string>("TrackingNumber")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("UpiId")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
 
@@ -1100,6 +1242,43 @@ namespace EBayClone.Infrastructure.Migrations
                     b.Navigation("CategoryAttribute");
                 });
 
+            modelBuilder.Entity("EBayClone.Domain.Entities.AuctionResult", b =>
+                {
+                    b.HasOne("EBayClone.Domain.Entities.Listing", "Listing")
+                        .WithOne("AuctionResult")
+                        .HasForeignKey("EBayClone.Domain.Entities.AuctionResult", "ListingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("EBayClone.Domain.Entities.User", "Winner")
+                        .WithMany()
+                        .HasForeignKey("WinnerId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Listing");
+
+                    b.Navigation("Winner");
+                });
+
+            modelBuilder.Entity("EBayClone.Domain.Entities.Bid", b =>
+                {
+                    b.HasOne("EBayClone.Domain.Entities.User", "Bidder")
+                        .WithMany()
+                        .HasForeignKey("BidderId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("EBayClone.Domain.Entities.Listing", "Listing")
+                        .WithMany("Bids")
+                        .HasForeignKey("ListingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Bidder");
+
+                    b.Navigation("Listing");
+                });
+
             modelBuilder.Entity("EBayClone.Domain.Entities.BusinessProfile", b =>
                 {
                     b.HasOne("EBayClone.Domain.Entities.User", "User")
@@ -1363,6 +1542,10 @@ namespace EBayClone.Infrastructure.Migrations
                     b.Navigation("ApprovalLogs");
 
                     b.Navigation("AttributeValues");
+
+                    b.Navigation("AuctionResult");
+
+                    b.Navigation("Bids");
 
                     b.Navigation("CartItems");
 

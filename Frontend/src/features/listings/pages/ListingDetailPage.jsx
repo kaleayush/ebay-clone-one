@@ -12,6 +12,7 @@ import { useCartStore } from '@/store/cartStore'
 import { useAuthStore } from '@/store/authStore'
 import { useWishlistStore } from '@/store/wishlistStore'
 import { ListingStatus, ListingStatusLabel, ListingType, ListingTypeLabel } from '@/constants/enums'
+import BidPanel from '@/features/auctions/components/BidPanel'
 import { ROUTES } from '@/constants/routes'
 import toast from 'react-hot-toast'
 
@@ -191,8 +192,13 @@ export default function ListingDetailPage() {
               : 'Out of Stock'}
           </p>
 
-          {/* Quantity + CTA */}
-          {isAvailable ? (
+          {/* Auction panel */}
+          {listing.listingType === ListingType.AUCTION && (
+            <BidPanel listing={listing} />
+          )}
+
+          {/* Quantity + CTA — fixed price only */}
+          {listing.listingType !== ListingType.AUCTION && isAvailable ? (
             <div className="space-y-3">
               {/* Qty picker */}
               <div className="flex items-center gap-3">
@@ -225,7 +231,7 @@ export default function ListingDetailPage() {
                 {inWishlist ? 'Saved to Wishlist' : 'Add to Wishlist'}
               </Button>
             </div>
-          ) : (
+          ) : listing.listingType !== ListingType.AUCTION ? (
             <div className="space-y-3">
               <div className="bg-gray-50 border border-gray-200 rounded-xl p-5 text-center">
                 <p className="font-semibold text-gray-700 text-base mb-1">Item Unavailable</p>
@@ -236,7 +242,7 @@ export default function ListingDetailPage() {
                 {inWishlist ? 'Saved' : 'Save for Later'}
               </Button>
             </div>
-          )}
+          ) : null}
 
           {/* Trust card */}
           <div className="card p-4 space-y-3 text-sm text-gray-600">

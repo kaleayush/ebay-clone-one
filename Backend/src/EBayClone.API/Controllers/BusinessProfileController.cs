@@ -39,6 +39,14 @@ public class BusinessProfileController(IBusinessProfileService businessProfileSe
         return Ok(ApiResponse<BusinessProfileResponse>.Ok(result, "Business profile updated"));
     }
 
+    [HttpPost("submit-for-review")]
+    public async Task<ActionResult<ApiResponse<BusinessProfileResponse>>> SubmitForReview(CancellationToken ct)
+    {
+        var userId = GetUserId();
+        var result = await businessProfileService.SubmitForReviewAsync(userId, ct);
+        return Ok(ApiResponse<BusinessProfileResponse>.Ok(result, "Profile submitted for admin review"));
+    }
+
     [HttpPost("documents")]
     [RequestSizeLimit(10 * 1024 * 1024)] // 10 MB
     public async Task<ActionResult<ApiResponse<DocumentResponse>>> UploadDocument(

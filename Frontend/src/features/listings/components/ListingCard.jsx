@@ -4,6 +4,7 @@ import { buildRoute, ROUTES } from '@/constants/routes'
 import { formatCurrency } from '@/utils/formatters'
 import { assetUrl } from '@/utils/assets'
 import { useWishlistStore } from '@/store/wishlistStore'
+import AuctionBadge from '@/features/auctions/components/AuctionBadge'
 import toast from 'react-hot-toast'
 
 const getDiscountPercentage = (listing) => {
@@ -65,6 +66,9 @@ export default function ListingCard({ listing }) {
       </div>
 
       <div className={`px-3 pb-3 flex flex-col flex-1 ${listing.freeShipping ? 'pt-0' : 'pt-3'}`}>
+        {listing.listingType === 1 && (
+          <AuctionBadge listing={listing} className="mt-2 mb-0.5" />
+        )}
         {listing.freeShipping && (
           <div className="-mt-2 mb-1 relative z-10">
             <span className="inline-flex text-[10px] uppercase bg-[#f68b1e] text-white px-1.5 py-0.5 rounded font-bold leading-none border border-white shadow-sm">
@@ -77,9 +81,17 @@ export default function ListingCard({ listing }) {
           {listing.title}
         </p>
         <div className="mt-2 flex items-baseline gap-2">
-          <p className="text-lg font-bold leading-none text-gray-900">{formatCurrency(finalPrice)}</p>
-          {hasDiscount && (
-            <p className="text-xs leading-none text-gray-400 line-through">{formatCurrency(listing.price)}</p>
+          {listing.listingType === 1 ? (
+            <p className="text-lg font-bold leading-none text-gray-900">
+              {listing.currentBidAmount ? formatCurrency(listing.currentBidAmount) : listing.startingBid ? `Start ${formatCurrency(listing.startingBid)}` : 'No bids'}
+            </p>
+          ) : (
+            <>
+              <p className="text-lg font-bold leading-none text-gray-900">{formatCurrency(finalPrice)}</p>
+              {hasDiscount && (
+                <p className="text-xs leading-none text-gray-400 line-through">{formatCurrency(listing.price)}</p>
+              )}
+            </>
           )}
         </div>
         {hasDiscount && discountPercentage > 0 && (

@@ -9,6 +9,7 @@ public interface IBusinessProfileService
     Task<BusinessProfileResponse?> GetByUserIdAsync(Guid userId, CancellationToken ct = default);
     Task<BusinessProfileResponse> SubmitAsync(Guid userId, BusinessProfileRequest request, CancellationToken ct = default);
     Task<BusinessProfileResponse> UpdateAsync(Guid userId, BusinessProfileRequest request, CancellationToken ct = default);
+    Task<BusinessProfileResponse> SubmitForReviewAsync(Guid userId, CancellationToken ct = default);
     Task<DocumentResponse> UploadDocumentAsync(Guid userId, Stream fileStream, string fileName, string contentType, long fileSize, DocumentType documentType, CancellationToken ct = default);
     Task DeleteDocumentAsync(Guid userId, Guid documentId, CancellationToken ct = default);
 

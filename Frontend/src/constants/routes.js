@@ -27,6 +27,9 @@ export const ROUTES = {
   ADMIN_BUSINESS_PROFILES: '/admin/business-profiles',
   ADMIN_EMAIL_TEMPLATES: '/admin/email-templates',
   ADMIN_REVIEW: '/admin/review',
+  ADMIN_AUCTIONS: '/admin/auctions',
+  ADMIN_AUCTION_DETAIL: '/admin/auctions/:listingId',
+  MY_BIDS: '/profile/bids',
 }
 
 export const buildRoute = (route, params = {}) => {

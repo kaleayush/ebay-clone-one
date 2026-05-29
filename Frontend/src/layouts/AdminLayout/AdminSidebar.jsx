@@ -1,6 +1,6 @@
 import { NavLink } from 'react-router-dom'
 import {
-  LayoutDashboard, Package, Users, ShoppingBag, Tag, X, ShieldCheck, Briefcase, Mail, ClipboardList,
+  LayoutDashboard, Package, Users, ShoppingBag, Tag, X, ShieldCheck, Briefcase, Mail, ClipboardList, Gavel,
 } from 'lucide-react'
 import { ROUTES } from '@/constants/routes'
 import EbayLogo from '@/components/common/EbayLogo'
@@ -14,6 +14,7 @@ const navItems = [
   { to: ROUTES.ADMIN_CATEGORIES, icon: Tag, label: 'Categories' },
   { to: ROUTES.ADMIN_BUSINESS_PROFILES, icon: Briefcase, label: 'Business Profiles' },
   { to: ROUTES.ADMIN_EMAIL_TEMPLATES, icon: Mail, label: 'Email Templates' },
+  { to: ROUTES.ADMIN_AUCTIONS, icon: Gavel, label: 'Auctions' },
 ]
 
 export default function AdminSidebar({ isOpen, onClose }) {

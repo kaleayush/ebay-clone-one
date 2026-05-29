@@ -28,6 +28,13 @@ public class Listing : BaseEntity
 
     public bool HasPendingVersion { get; set; } = false;
 
+    // Auction live state
+    public decimal? CurrentBidAmount { get; set; }
+    public Guid? CurrentBidderId { get; set; }
+    public int BidCount { get; set; }
+    public decimal MinBidIncrement { get; set; } = 1.00m;
+    public bool AutoExtendOnBid { get; set; } = true;
+
     public ICollection<ListingImage> Images { get; set; } = new List<ListingImage>();
     public ICollection<ListingAttributeValue> AttributeValues { get; set; } = new List<ListingAttributeValue>();
     public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
@@ -35,4 +42,6 @@ public class Listing : BaseEntity
     public ICollection<ListingView> Views { get; set; } = new List<ListingView>();
     public ICollection<ListingVersion> Versions { get; set; } = new List<ListingVersion>();
     public ICollection<ListingApprovalLog> ApprovalLogs { get; set; } = new List<ListingApprovalLog>();
+    public ICollection<Bid> Bids { get; set; } = new List<Bid>();
+    public AuctionResult? AuctionResult { get; set; }
 }

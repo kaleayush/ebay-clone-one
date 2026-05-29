@@ -17,6 +17,9 @@ export const businessProfileService = {
     })
   },
 
+  submitForReview: () =>
+    api.post(API_ENDPOINTS.BUSINESS_PROFILE.SUBMIT_FOR_REVIEW),
+
   deleteDocument: (documentId) =>
     api.delete(API_ENDPOINTS.BUSINESS_PROFILE.DOCUMENT_BY_ID(documentId)),
 

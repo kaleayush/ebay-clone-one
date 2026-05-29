@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using EBayClone.Application.Common;
 using EBayClone.Application.DTOs.Admin;
+using EBayClone.Application.DTOs.Auctions;
 using EBayClone.Application.DTOs.BusinessProfile;
 using EBayClone.Application.DTOs.Listings;
 using EBayClone.Application.DTOs.Orders;
@@ -18,7 +19,8 @@ public class AdminController(
     IUserService userService,
     IBusinessProfileService businessProfileService,
     IListingApprovalService listingApprovalService,
-    IOrderService orderService) : ControllerBase
+    IOrderService orderService,
+    IAuctionService auctionService) : ControllerBase
 {
     [HttpGet("stats")]
     public async Task<ActionResult<ApiResponse<AdminStatsResponse>>> GetStats(CancellationToken ct)
@@ -122,6 +124,35 @@ public class AdminController(
         [FromQuery] PagedQuery query, [FromQuery] string? status, CancellationToken ct)
         => Ok(ApiResponse<PagedResult<AdminBusinessProfileResponse>>.Ok(
             await businessProfileService.GetAllAsync(query, status, ct)));
+
+    [HttpGet("auctions")]
+    public async Task<ActionResult<ApiResponse<PagedResult<AdminAuctionResponse>>>> GetAuctions(
+        [FromQuery] int page = 1, [FromQuery] int pageSize = 15, [FromQuery] int? status = null,
+        CancellationToken ct = default)
+    {
+        var query = new AdminAuctionsQuery(page, pageSize, status);
+        return Ok(ApiResponse<PagedResult<AdminAuctionResponse>>.Ok(await auctionService.GetAdminAuctionsAsync(query, ct)));
+    }
+
+    [HttpGet("auctions/{listingId:guid}/bids")]
+    public async Task<ActionResult<ApiResponse<PagedResult<AdminBidResponse>>>> GetAuctionBids(
+        Guid listingId, [FromQuery] int page = 1, [FromQuery] int pageSize = 50, CancellationToken ct = default)
+        => Ok(ApiResponse<PagedResult<AdminBidResponse>>.Ok(await auctionService.GetAdminBidHistoryAsync(listingId, page, pageSize, ct)));
+
+    [HttpPost("auctions/{listingId:guid}/cancel")]
+    public async Task<ActionResult<ApiResponse>> CancelAuction(Guid listingId, CancellationToken ct)
+    {
+        await auctionService.CancelAuctionAsync(listingId, ct);
+        return Ok(ApiResponse.Ok("Auction cancelled"));
+    }
+
+    [HttpPost("auctions/{listingId:guid}/extend")]
+    public async Task<ActionResult<ApiResponse>> ExtendAuction(
+        Guid listingId, [FromBody] AuctionExtendRequest request, CancellationToken ct)
+    {
+        await auctionService.ExtendAuctionAsync(listingId, request.Minutes, ct);
+        return Ok(ApiResponse.Ok($"Auction extended by {request.Minutes} minutes"));
+    }
 
     [HttpPut("business-profiles/{id:guid}/review")]
     public async Task<ActionResult<ApiResponse<BusinessProfileResponse>>> ReviewBusinessProfile(
