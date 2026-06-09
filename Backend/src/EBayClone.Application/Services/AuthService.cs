@@ -14,13 +14,13 @@ public class AuthService(
     IRepository<RefreshToken> refreshTokenRepository,
     IJwtService jwtService,
     IPasswordHasher passwordHasher,
-    IEmailService emailService,
     IBackgroundEmailService backgroundEmailService,
     ILogger<AuthService> logger) : IAuthService
 {
     public async Task<AuthResponse> RegisterAsync(RegisterRequest request, CancellationToken ct = default)
     {
-        var exists = await userRepository.ExistsAsync(u => u.Email == request.Email.ToLower(), ct);
+        var emailLower = request.Email.ToLower();
+        var exists = await userRepository.ExistsAsync(u => u.Email == emailLower, ct);
         if (exists)
             throw new InvalidOperationException("An account with this email already exists.");
 
@@ -59,9 +59,10 @@ public class AuthService(
 
     public async Task<AuthResponse> LoginAsync(LoginRequest request, CancellationToken ct = default)
     {
+        var loginEmail = request.Email.ToLower();
         var user = await userRepository.Query()
             .Include(u => u.BusinessProfile)
-            .FirstOrDefaultAsync(u => u.Email == request.Email.ToLower(), ct);
+            .FirstOrDefaultAsync(u => u.Email == loginEmail, ct);
 
         if (user is null || !passwordHasher.Verify(request.Password, user.PasswordHash))
             throw new UnauthorizedAccessException("Invalid email or password.");
@@ -162,8 +163,9 @@ public class AuthService(
     public async Task ForgotPasswordAsync(ForgotPasswordRequest request, CancellationToken ct = default)
     {
         // Always return success to prevent email enumeration attacks
+        var forgotEmail = request.Email.ToLower();
         var user = await userRepository.FirstOrDefaultAsync(
-            u => u.Email == request.Email.ToLower(), ct);
+            u => u.Email == forgotEmail, ct);
 
         if (user is null) return;
 

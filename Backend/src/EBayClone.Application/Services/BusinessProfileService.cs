@@ -14,7 +14,6 @@ public class BusinessProfileService(
     IRepository<UserDocument> documentRepository,
     IRepository<User> userRepository,
     IFileStorageService fileStorageService,
-    IEmailService emailService,
     IBackgroundEmailService backgroundEmailService,
     ILogger<BusinessProfileService> logger) : IBusinessProfileService
 {
@@ -33,11 +32,13 @@ public class BusinessProfileService(
         if (existing is not null)
             throw new InvalidOperationException("Business profile already exists. Use update to modify it.");
 
-        var gstTaken = await profileRepository.ExistsAsync(p => p.GstNumber == request.GstNumber.ToUpper(), ct);
+        var gstUpper = request.GstNumber.ToUpper();
+        var gstTaken = await profileRepository.ExistsAsync(p => p.GstNumber == gstUpper, ct);
         if (gstTaken)
             throw new InvalidOperationException("A business with this GST number is already registered.");
 
-        var panTaken = await profileRepository.ExistsAsync(p => p.PanNumber == request.PanNumber.ToUpper(), ct);
+        var panUpper = request.PanNumber.ToUpper();
+        var panTaken = await profileRepository.ExistsAsync(p => p.PanNumber == panUpper, ct);
         if (panTaken)
             throw new InvalidOperationException("A business with this PAN number is already registered.");
 
@@ -75,13 +76,15 @@ public class BusinessProfileService(
         if (profile.VerificationStatus is VerificationStatus.UnderReview or VerificationStatus.Pending)
             throw new InvalidOperationException("Profile is under review and cannot be edited.");
 
+        var updGst = request.GstNumber.ToUpper();
         var gstTaken = await profileRepository.ExistsAsync(
-            p => p.GstNumber == request.GstNumber.ToUpper() && p.Id != profile.Id, ct);
+            p => p.GstNumber == updGst && p.Id != profile.Id, ct);
         if (gstTaken)
             throw new InvalidOperationException("A business with this GST number is already registered.");
 
+        var updPan = request.PanNumber.ToUpper();
         var panTaken = await profileRepository.ExistsAsync(
-            p => p.PanNumber == request.PanNumber.ToUpper() && p.Id != profile.Id, ct);
+            p => p.PanNumber == updPan && p.Id != profile.Id, ct);
         if (panTaken)
             throw new InvalidOperationException("A business with this PAN number is already registered.");
 
@@ -149,7 +152,7 @@ public class BusinessProfileService(
         if (profile.VerificationStatus == VerificationStatus.Verified)
             throw new InvalidOperationException("Cannot upload documents to a verified profile.");
 
-        var fileUrl = await fileStorageService.UploadAsync(fileStream, fileName, contentType, ct);
+        var fileUrl = await fileStorageService.UploadAsync(fileStream, fileName, contentType, "documents", ct);
 
         var document = new UserDocument
         {

@@ -11,7 +11,7 @@ public class LocalFileStorageService(
     private readonly string _uploadBasePath = Path.GetFullPath(
         configuration["FileStorage:UploadDirectory"] ?? "wwwroot/uploads");
 
-    public async Task<string> UploadAsync(Stream fileStream, string fileName, string contentType, CancellationToken ct = default, string folder = "documents")
+    public async Task<string> UploadAsync(Stream fileStream, string fileName, string contentType, string folder = "documents", CancellationToken ct = default)
     {
         var safeFolder = string.IsNullOrWhiteSpace(folder)
             ? "documents"

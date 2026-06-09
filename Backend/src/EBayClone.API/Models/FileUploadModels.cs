@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using EBayClone.Domain.Enums;
 using Microsoft.AspNetCore.Http;
 
@@ -11,5 +12,6 @@ public class ImageUploadRequest
 public class DocumentUploadRequest
 {
     public IFormFile? File { get; set; }
+    [Required]
     public DocumentType DocumentType { get; set; }
 }

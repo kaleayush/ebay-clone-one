@@ -78,15 +78,10 @@ app.MapHub<AuctionHub>("/hubs/auction");
 app.MapHealthChecks("/health");
 
 var urls = Environment.GetEnvironmentVariable("ASPNETCORE_URLS")
-    ?? app.Urls.FirstOrDefault()
- ?? "http://localhost:5005";
+    ?? string.Join(";", app.Urls);
 var baseUrl = urls.Split(';')[0].TrimEnd('/');
 
-Log.Information("===========================================");
-Log.Information("  eBay Clone API");
-Log.Information("  Environment : {Environment}", app.Environment.EnvironmentName);
-Log.Information("  Listening   : {Url}", urls);
-Log.Information("  Swagger     : {Swagger}", $"{baseUrl}/swagger");
-Log.Information("===========================================");
+Log.Information("eBay Clone API started | Environment: {Environment} | Listening: {Url} | Swagger: {Swagger}",
+    app.Environment.EnvironmentName, urls, $"{baseUrl}/swagger");
 
-app.Run();
+await app.RunAsync();

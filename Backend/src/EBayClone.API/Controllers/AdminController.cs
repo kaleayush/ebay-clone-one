@@ -22,6 +22,7 @@ public class AdminController(
     IOrderService orderService,
     IAuctionService auctionService) : ControllerBase
 {
+    private const string DefaultSortBy = "createdAt";
     [HttpGet("stats")]
     public async Task<ActionResult<ApiResponse<AdminStatsResponse>>> GetStats(CancellationToken ct)
         => Ok(ApiResponse<AdminStatsResponse>.Ok(await adminService.GetStatsAsync(ct)));
@@ -31,11 +32,11 @@ public class AdminController(
         [FromQuery] int page = 1, [FromQuery] int pageSize = 15,
         [FromQuery] string? search = null, [FromQuery] int? accountType = null,
         [FromQuery] string? role = null, [FromQuery] string? status = null,
-        [FromQuery] string? sortBy = "createdAt", [FromQuery] string? sortDirection = "desc",
+        [FromQuery] string? sortBy = DefaultSortBy, [FromQuery] string? sortDirection = "desc",
         CancellationToken ct = default)
     {
         var query = new AdminUsersQuery(page, pageSize, search, accountType, role, status,
-            sortBy ?? "createdAt", sortDirection ?? "desc");
+            sortBy ?? DefaultSortBy, sortDirection ?? "desc");
         return Ok(ApiResponse<PagedResult<AdminUserResponse>>.Ok(await adminService.GetUsersAsync(query, ct)));
     }
 
@@ -58,11 +59,11 @@ public class AdminController(
         [FromQuery] int page = 1, [FromQuery] int pageSize = 15,
         [FromQuery] string? search = null, [FromQuery] int? status = null,
         [FromQuery] string? visibility = null,
-        [FromQuery] string? sortBy = "createdAt", [FromQuery] string? sortDirection = "desc",
+        [FromQuery] string? sortBy = DefaultSortBy, [FromQuery] string? sortDirection = "desc",
         CancellationToken ct = default)
     {
         var query = new AdminListingsQuery(page, pageSize, search, status, visibility,
-            sortBy ?? "createdAt", sortDirection ?? "desc");
+            sortBy ?? DefaultSortBy, sortDirection ?? "desc");
         return Ok(ApiResponse<PagedResult<AdminListingResponse>>.Ok(await adminService.GetListingsAsync(query, ct)));
     }
 
@@ -70,11 +71,11 @@ public class AdminController(
     public async Task<ActionResult<ApiResponse<PagedResult<AdminOrderResponse>>>> GetOrders(
         [FromQuery] int page = 1, [FromQuery] int pageSize = 15,
         [FromQuery] string? search = null, [FromQuery] int? status = null,
-        [FromQuery] string? sortBy = "createdAt", [FromQuery] string? sortDirection = "desc",
+        [FromQuery] string? sortBy = DefaultSortBy, [FromQuery] string? sortDirection = "desc",
         CancellationToken ct = default)
     {
         var query = new AdminOrdersQuery(page, pageSize, search, status,
-            sortBy ?? "createdAt", sortDirection ?? "desc");
+            sortBy ?? DefaultSortBy, sortDirection ?? "desc");
         return Ok(ApiResponse<PagedResult<AdminOrderResponse>>.Ok(await adminService.GetOrdersAsync(query, ct)));
     }
 

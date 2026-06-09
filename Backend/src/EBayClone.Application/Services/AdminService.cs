@@ -14,6 +14,7 @@ public class AdminService(
     IRepository<Order> orderRepository,
     IListingApprovalService listingApprovalService) : IAdminService
 {
+    private const string SortStatus = "status";
     public async Task<AdminStatsResponse> GetStatsAsync(CancellationToken ct = default)
     {
         var totalUsers = await userRepository.CountAsync(ct: ct);
@@ -66,8 +67,8 @@ public class AdminService(
             ("accounttype", _) => q.OrderByDescending(u => u.AccountType),
             ("role", "asc") => q.OrderBy(u => u.Role),
             ("role", _) => q.OrderByDescending(u => u.Role),
-            ("status", "asc") => q.OrderBy(u => u.IsDeleted).ThenBy(u => u.IsSuspended).ThenByDescending(u => u.IsEmailVerified),
-            ("status", _) => q.OrderByDescending(u => u.IsDeleted).ThenByDescending(u => u.IsSuspended).ThenBy(u => u.IsEmailVerified),
+            (SortStatus, "asc") => q.OrderBy(u => u.IsDeleted).ThenBy(u => u.IsSuspended).ThenByDescending(u => u.IsEmailVerified),
+            (SortStatus, _) => q.OrderByDescending(u => u.IsDeleted).ThenByDescending(u => u.IsSuspended).ThenBy(u => u.IsEmailVerified),
             ("createdat", "asc") => q.OrderBy(u => u.CreatedAt),
             _ => q.OrderByDescending(u => u.CreatedAt),
         };
@@ -132,8 +133,8 @@ public class AdminService(
             ("seller", _) => q.OrderByDescending(l => l.Seller.FirstName).ThenByDescending(l => l.Seller.LastName),
             ("price", "asc") => q.OrderBy(l => l.Price - l.DiscountAmount),
             ("price", _) => q.OrderByDescending(l => l.Price - l.DiscountAmount),
-            ("status", "asc") => q.OrderBy(l => l.Status),
-            ("status", _) => q.OrderByDescending(l => l.Status),
+            (SortStatus, "asc") => q.OrderBy(l => l.Status),
+            (SortStatus, _) => q.OrderByDescending(l => l.Status),
             ("updatedat", "asc") => q.OrderBy(l => l.UpdatedAt),
             ("updatedat", _) => q.OrderByDescending(l => l.UpdatedAt),
             ("createdat", "asc") => q.OrderBy(l => l.CreatedAt),
@@ -190,8 +191,8 @@ public class AdminService(
             ("itemcount", _) => q.OrderByDescending(o => o.Items.Count),
             ("totalamount", "asc") => q.OrderBy(o => o.TotalAmount),
             ("totalamount", _) => q.OrderByDescending(o => o.TotalAmount),
-            ("status", "asc") => q.OrderBy(o => o.Status),
-            ("status", _) => q.OrderByDescending(o => o.Status),
+            (SortStatus, "asc") => q.OrderBy(o => o.Status),
+            (SortStatus, _) => q.OrderByDescending(o => o.Status),
             ("createdat", "asc") => q.OrderBy(o => o.CreatedAt),
             _ => q.OrderByDescending(o => o.CreatedAt),
         };

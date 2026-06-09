@@ -13,7 +13,8 @@ public class ConsoleEmailService(
     ILogger<ConsoleEmailService> logger) : IEmailService
 {
     private readonly string _frontendUrl =
-        configuration["AppSettings:FrontendUrl"] ?? "http://localhost:5173";
+        configuration["AppSettings:FrontendUrl"]
+        ?? throw new InvalidOperationException("AppSettings:FrontendUrl is not configured.");
 
     public Task SendEmailVerificationAsync(string email, string firstName, string token, CancellationToken ct = default)
     {

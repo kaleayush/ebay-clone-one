@@ -14,7 +14,8 @@ public class SmtpEmailService(
     ILogger<SmtpEmailService> logger) : IEmailService
 {
     private readonly string _frontendUrl =
-        configuration["AppSettings:FrontendUrl"] ?? "http://localhost:5173";
+        configuration["AppSettings:FrontendUrl"]
+        ?? throw new InvalidOperationException("AppSettings:FrontendUrl is not configured.");
 
     private readonly string _supportEmail =
         configuration["SmtpSettings:FromEmail"] ?? "support@ebay-clone.com";

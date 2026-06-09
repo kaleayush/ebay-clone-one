@@ -9,6 +9,7 @@ namespace EBayClone.Application.Services;
 
 public class UserService(IRepository<User> userRepository) : IUserService
 {
+    private const string UserNotFound = "User not found.";
     public async Task<PagedResult<UserResponse>> GetUsersAsync(PagedQuery query, CancellationToken ct = default)
     {
         var q = userRepository.Query().IgnoreQueryFilters().AsNoTracking();
@@ -37,7 +38,7 @@ public class UserService(IRepository<User> userRepository) : IUserService
         var user = await userRepository.Query()
             .Include(u => u.BusinessProfile)
             .FirstOrDefaultAsync(u => u.Id == id, ct)
-            ?? throw new KeyNotFoundException("User not found.");
+            ?? throw new KeyNotFoundException(UserNotFound);
         return MapToResponse(user);
     }
 
@@ -46,10 +47,11 @@ public class UserService(IRepository<User> userRepository) : IUserService
         var user = await userRepository.Query()
             .Include(u => u.BusinessProfile)
             .FirstOrDefaultAsync(u => u.Id == id, ct)
-            ?? throw new KeyNotFoundException("User not found.");
+            ?? throw new KeyNotFoundException(UserNotFound);
 
+        var emailLower = request.Email.ToLower();
         var emailTaken = await userRepository.ExistsAsync(
-            u => u.Email == request.Email.ToLower() && u.Id != id, ct);
+            u => u.Email == emailLower && u.Id != id, ct);
 
         if (emailTaken)
             throw new InvalidOperationException("Email is already in use.");
@@ -71,7 +73,7 @@ public class UserService(IRepository<User> userRepository) : IUserService
         var user = await userRepository.Query()
             .IgnoreQueryFilters()
             .FirstOrDefaultAsync(u => u.Id == id, ct)
-            ?? throw new KeyNotFoundException("User not found.");
+            ?? throw new KeyNotFoundException(UserNotFound);
 
         user.IsSuspended = true;
         user.UpdatedAt = DateTime.UtcNow;
@@ -84,7 +86,7 @@ public class UserService(IRepository<User> userRepository) : IUserService
         var user = await userRepository.Query()
             .IgnoreQueryFilters()
             .FirstOrDefaultAsync(u => u.Id == id, ct)
-            ?? throw new KeyNotFoundException("User not found.");
+            ?? throw new KeyNotFoundException(UserNotFound);
 
         user.IsSuspended = false;
         user.IsDeleted = false;

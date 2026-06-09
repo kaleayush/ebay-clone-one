@@ -18,13 +18,13 @@ public class ListingApprovalService(
     IRepository<ListingAttributeValue> attributeValueRepository,
     IRepository<User> userRepository,
     IListingService listingService,
-    IEmailService emailService,
     IBackgroundEmailService backgroundEmailService,
     IConfiguration configuration,
     ILogger<ListingApprovalService> logger) : IListingApprovalService
 {
     private readonly string _frontendUrl =
-        configuration["AppSettings:FrontendUrl"] ?? "http://localhost:5173";
+        configuration["AppSettings:FrontendUrl"]
+        ?? throw new InvalidOperationException("AppSettings:FrontendUrl is not configured.");
 
     private static readonly JsonSerializerOptions JsonOpts =
         new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };

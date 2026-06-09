@@ -99,7 +99,7 @@ public class ListingsController(
             return BadRequest(ApiResponse.Fail("Only image uploads are allowed"));
 
         await using var stream = request.File.OpenReadStream();
-        var url = await fileStorageService.UploadAsync(stream, request.File.FileName, request.File.ContentType, ct, "listings");
+        var url = await fileStorageService.UploadAsync(stream, request.File.FileName, request.File.ContentType, "listings", ct);
         return Ok(ApiResponse<ListingImageUploadResponse>.Ok(new ListingImageUploadResponse(url), "Image uploaded"));
     }
 

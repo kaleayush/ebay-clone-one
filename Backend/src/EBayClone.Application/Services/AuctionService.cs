@@ -16,11 +16,12 @@ public class AuctionService(
     IRepository<Bid> bidRepo,
     IRepository<AuctionResult> resultRepo,
     IRepository<Order> orderRepo,
-    IRepository<User> userRepo,
     IAuctionNotifier notifier,
     AuctionBidLockService lockService,
     ILogger<AuctionService> logger) : IAuctionService
 {
+    private const string ListingNotFound = "Listing not found.";
+
     public async Task<BidResponse> PlaceBidAsync(Guid listingId, Guid bidderId, decimal amount, CancellationToken ct = default)
     {
         var sem = lockService.GetLock(listingId);
@@ -29,7 +30,7 @@ public class AuctionService(
         {
             var listing = await listingRepo.Query()
                 .FirstOrDefaultAsync(l => l.Id == listingId, ct)
-                ?? throw new KeyNotFoundException("Listing not found.");
+                ?? throw new KeyNotFoundException(ListingNotFound);
 
             if (listing.ListingType != ListingType.Auction)
                 throw new InvalidOperationException("This listing is not an auction.");
@@ -195,7 +196,7 @@ public class AuctionService(
         var listing = await listingRepo.Query()
             .AsNoTracking()
             .FirstOrDefaultAsync(l => l.Id == listingId, ct)
-            ?? throw new KeyNotFoundException("Listing not found.");
+            ?? throw new KeyNotFoundException(ListingNotFound);
 
         var reserveMet = listing.ReservePrice is null ||
             (listing.CurrentBidAmount ?? 0) >= listing.ReservePrice;
@@ -312,7 +313,7 @@ public class AuctionService(
     {
         var listing = await listingRepo.Query()
             .FirstOrDefaultAsync(l => l.Id == listingId, ct)
-            ?? throw new KeyNotFoundException("Listing not found.");
+            ?? throw new KeyNotFoundException(ListingNotFound);
 
         if (listing.ListingType != ListingType.Auction)
             throw new InvalidOperationException("Not an auction listing.");
@@ -342,7 +343,7 @@ public class AuctionService(
 
         var listing = await listingRepo.Query()
             .FirstOrDefaultAsync(l => l.Id == listingId, ct)
-            ?? throw new KeyNotFoundException("Listing not found.");
+            ?? throw new KeyNotFoundException(ListingNotFound);
 
         if (listing.ListingType != ListingType.Auction)
             throw new InvalidOperationException("Not an auction listing.");
