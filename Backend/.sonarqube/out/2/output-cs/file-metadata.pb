@@ -33,9 +33,9 @@ VE:\ebay-clone-one\Backend\src\EBayClone.Infrastructure\Data\Seed\CategoryFormSe
 gE:\ebay-clone-one\Backend\src\EBayClone.Infrastructure\Data\Configurations\UserDocumentConfiguration.csutf-8h
 _E:\ebay-clone-one\Backend\src\EBayClone.Infrastructure\Data\Configurations\UserConfiguration.csutf-8i
 `E:\ebay-clone-one\Backend\src\EBayClone.Infrastructure\Data\Configurations\OrderConfiguration.csutf-8o
-fE:\ebay-clone-one\Backend\src\EBayClone.Infrastructure\Data\Configurations\ListingViewConfiguration.csutf-8r
-iE:\ebay-clone-one\Backend\src\EBayClone.Infrastructure\Data\Configurations\ListingVersionConfiguration.csutf-8k
-bE:\ebay-clone-one\Backend\src\EBayClone.Infrastructure\Data\Configurations\ListingConfiguration.csutf-8y
+fE:\ebay-clone-one\Backend\src\EBayClone.Infrastructure\Data\Configurations\ListingViewConfiguration.csutf-8k
+bE:\ebay-clone-one\Backend\src\EBayClone.Infrastructure\Data\Configurations\ListingConfiguration.csutf-8r
+iE:\ebay-clone-one\Backend\src\EBayClone.Infrastructure\Data\Configurations\ListingVersionConfiguration.csutf-8y
 pE:\ebay-clone-one\Backend\src\EBayClone.Infrastructure\Data\Configurations\ListingAttributeValueConfiguration.csutf-8v
 mE:\ebay-clone-one\Backend\src\EBayClone.Infrastructure\Data\Configurations\ListingApprovalLogConfiguration.csutf-8q
 hE:\ebay-clone-one\Backend\src\EBayClone.Infrastructure\Data\Configurations\EmailTemplateConfiguration.csutf-8l

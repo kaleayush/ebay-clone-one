@@ -99,6 +99,91 @@
         {
           "ruleId": "S1192",
           "level": "warning",
+          "message": "Define a constant instead of using this literal 'SupportEmail' 6 times.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///E:/ebay-clone-one/Backend/src/EBayClone.Infrastructure/Services/SmtpEmailService.cs",
+                "region": {
+                  "startLine": 33,
+                  "startColumn": 14,
+                  "endLine": 33,
+                  "endColumn": 28
+                }
+              }
+            }
+          ],
+          "relatedLocations": [
+            {
+              "physicalLocation": {
+                "uri": "file:///E:/ebay-clone-one/Backend/src/EBayClone.Infrastructure/Services/SmtpEmailService.cs",
+                "region": {
+                  "startLine": 45,
+                  "startColumn": 14,
+                  "endLine": 45,
+                  "endColumn": 28
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "uri": "file:///E:/ebay-clone-one/Backend/src/EBayClone.Infrastructure/Services/SmtpEmailService.cs",
+                "region": {
+                  "startLine": 54,
+                  "startColumn": 14,
+                  "endLine": 54,
+                  "endColumn": 28
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "uri": "file:///E:/ebay-clone-one/Backend/src/EBayClone.Infrastructure/Services/SmtpEmailService.cs",
+                "region": {
+                  "startLine": 79,
+                  "startColumn": 14,
+                  "endLine": 79,
+                  "endColumn": 28
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "uri": "file:///E:/ebay-clone-one/Backend/src/EBayClone.Infrastructure/Services/SmtpEmailService.cs",
+                "region": {
+                  "startLine": 89,
+                  "startColumn": 14,
+                  "endLine": 89,
+                  "endColumn": 28
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "uri": "file:///E:/ebay-clone-one/Backend/src/EBayClone.Infrastructure/Services/SmtpEmailService.cs",
+                "region": {
+                  "startLine": 98,
+                  "startColumn": 14,
+                  "endLine": 98,
+                  "endColumn": 28
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1,
+            "customProperties": {
+              "0": null,
+              "1": null,
+              "2": null,
+              "3": null,
+              "4": null
+            }
+          }
+        },
+        {
+          "ruleId": "S1192",
+          "level": "warning",
           "message": "Define a constant instead of using this literal 'smartphones' 6 times.",
           "locations": [
             {
@@ -275,91 +360,6 @@
               "3": null,
               "4": null,
               "5": null
-            }
-          }
-        },
-        {
-          "ruleId": "S1192",
-          "level": "warning",
-          "message": "Define a constant instead of using this literal 'SupportEmail' 6 times.",
-          "locations": [
-            {
-              "resultFile": {
-                "uri": "file:///E:/ebay-clone-one/Backend/src/EBayClone.Infrastructure/Services/SmtpEmailService.cs",
-                "region": {
-                  "startLine": 33,
-                  "startColumn": 14,
-                  "endLine": 33,
-                  "endColumn": 28
-                }
-              }
-            }
-          ],
-          "relatedLocations": [
-            {
-              "physicalLocation": {
-                "uri": "file:///E:/ebay-clone-one/Backend/src/EBayClone.Infrastructure/Services/SmtpEmailService.cs",
-                "region": {
-                  "startLine": 45,
-                  "startColumn": 14,
-                  "endLine": 45,
-                  "endColumn": 28
-                }
-              }
-            },
-            {
-              "physicalLocation": {
-                "uri": "file:///E:/ebay-clone-one/Backend/src/EBayClone.Infrastructure/Services/SmtpEmailService.cs",
-                "region": {
-                  "startLine": 54,
-                  "startColumn": 14,
-                  "endLine": 54,
-                  "endColumn": 28
-                }
-              }
-            },
-            {
-              "physicalLocation": {
-                "uri": "file:///E:/ebay-clone-one/Backend/src/EBayClone.Infrastructure/Services/SmtpEmailService.cs",
-                "region": {
-                  "startLine": 79,
-                  "startColumn": 14,
-                  "endLine": 79,
-                  "endColumn": 28
-                }
-              }
-            },
-            {
-              "physicalLocation": {
-                "uri": "file:///E:/ebay-clone-one/Backend/src/EBayClone.Infrastructure/Services/SmtpEmailService.cs",
-                "region": {
-                  "startLine": 89,
-                  "startColumn": 14,
-                  "endLine": 89,
-                  "endColumn": 28
-                }
-              }
-            },
-            {
-              "physicalLocation": {
-                "uri": "file:///E:/ebay-clone-one/Backend/src/EBayClone.Infrastructure/Services/SmtpEmailService.cs",
-                "region": {
-                  "startLine": 98,
-                  "startColumn": 14,
-                  "endLine": 98,
-                  "endColumn": 28
-                }
-              }
-            }
-          ],
-          "properties": {
-            "warningLevel": 1,
-            "customProperties": {
-              "0": null,
-              "1": null,
-              "2": null,
-              "3": null,
-              "4": null
             }
           }
         },
@@ -2110,27 +2110,6 @@
           }
         },
         {
-          "ruleId": "S4790",
-          "level": "warning",
-          "message": "Make sure this weak hash algorithm is not used in a sensitive context here.",
-          "locations": [
-            {
-              "resultFile": {
-                "uri": "file:///E:/ebay-clone-one/Backend/src/EBayClone.Infrastructure/Data/Seed/ListingAndUserSeeder.cs",
-                "region": {
-                  "startLine": 466,
-                  "startColumn": 21,
-                  "endLine": 466,
-                  "endColumn": 64
-                }
-              }
-            }
-          ],
-          "properties": {
-            "warningLevel": 1
-          }
-        },
-        {
           "ruleId": "CA1861",
           "level": "note",
           "message": "Prefer 'static readonly' fields over constant array arguments if the called method is called repeatedly and is not mutating the passed array",
@@ -2179,27 +2158,24 @@
           }
         },
         {
-          "ruleId": "CA1861",
-          "level": "note",
-          "message": "Prefer 'static readonly' fields over constant array arguments if the called method is called repeatedly and is not mutating the passed array",
+          "ruleId": "S4790",
+          "level": "warning",
+          "message": "Make sure this weak hash algorithm is not used in a sensitive context here.",
           "locations": [
             {
               "resultFile": {
-                "uri": "file:///E:/ebay-clone-one/Backend/src/EBayClone.Infrastructure/Migrations/20260509071505_Phase2_AuthAndBusinessProfile.cs",
+                "uri": "file:///E:/ebay-clone-one/Backend/src/EBayClone.Infrastructure/Data/Seed/ListingAndUserSeeder.cs",
                 "region": {
-                  "startLine": 111,
-                  "startColumn": 26,
-                  "endLine": 111,
-                  "endColumn": 173
+                  "startLine": 466,
+                  "startColumn": 21,
+                  "endLine": 466,
+                  "endColumn": 64
                 }
               }
             }
           ],
           "properties": {
-            "warningLevel": 1,
-            "customProperties": {
-              "paramName": "columns"
-            }
+            "warningLevel": 1
           }
         },
         {
@@ -2227,6 +2203,30 @@
           }
         },
         {
+          "ruleId": "CA1861",
+          "level": "note",
+          "message": "Prefer 'static readonly' fields over constant array arguments if the called method is called repeatedly and is not mutating the passed array",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///E:/ebay-clone-one/Backend/src/EBayClone.Infrastructure/Migrations/20260509071505_Phase2_AuthAndBusinessProfile.cs",
+                "region": {
+                  "startLine": 111,
+                  "startColumn": 26,
+                  "endLine": 111,
+                  "endColumn": 173
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1,
+            "customProperties": {
+              "paramName": "columns"
+            }
+          }
+        },
+        {
           "ruleId": "S2068",
           "level": "warning",
           "message": "\"password\" detected here, make sure this is not a hard-coded credential.",
@@ -2248,75 +2248,24 @@
           }
         },
         {
-          "ruleId": "CA1861",
-          "level": "note",
-          "message": "Prefer 'static readonly' fields over constant array arguments if the called method is called repeatedly and is not mutating the passed array",
+          "ruleId": "S107",
+          "level": "warning",
+          "message": "Method has 8 parameters, which is greater than the 7 authorized.",
           "locations": [
             {
               "resultFile": {
-                "uri": "file:///E:/ebay-clone-one/Backend/src/EBayClone.Infrastructure/Migrations/20260509084222_Phase4_DynamicCategoriesAndListings.cs",
+                "uri": "file:///E:/ebay-clone-one/Backend/src/EBayClone.Infrastructure/Data/Seed/CategoryFormSeeder.cs",
                 "region": {
-                  "startLine": 166,
-                  "startColumn": 26,
-                  "endLine": 166,
-                  "endColumn": 66
+                  "startLine": 280,
+                  "startColumn": 41,
+                  "endLine": 288,
+                  "endColumn": 22
                 }
               }
             }
           ],
           "properties": {
-            "warningLevel": 1,
-            "customProperties": {
-              "paramName": "columns"
-            }
-          }
-        },
-        {
-          "ruleId": "CA1861",
-          "level": "note",
-          "message": "Prefer 'static readonly' fields over constant array arguments if the called method is called repeatedly and is not mutating the passed array",
-          "locations": [
-            {
-              "resultFile": {
-                "uri": "file:///E:/ebay-clone-one/Backend/src/EBayClone.Infrastructure/Migrations/20260509084222_Phase4_DynamicCategoriesAndListings.cs",
-                "region": {
-                  "startLine": 173,
-                  "startColumn": 26,
-                  "endLine": 173,
-                  "endColumn": 56
-                }
-              }
-            }
-          ],
-          "properties": {
-            "warningLevel": 1,
-            "customProperties": {
-              "paramName": "columns"
-            }
-          }
-        },
-        {
-          "ruleId": "CA1861",
-          "level": "note",
-          "message": "Prefer 'static readonly' fields over constant array arguments if the called method is called repeatedly and is not mutating the passed array",
-          "locations": [
-            {
-              "resultFile": {
-                "uri": "file:///E:/ebay-clone-one/Backend/src/EBayClone.Infrastructure/Migrations/20260509084222_Phase4_DynamicCategoriesAndListings.cs",
-                "region": {
-                  "startLine": 190,
-                  "startColumn": 26,
-                  "endLine": 190,
-                  "endColumn": 70
-                }
-              }
-            }
-          ],
-          "properties": {
-            "warningLevel": 1,
-            "customProperties": {
-              "paramName": "columns"
-            }
+            "warningLevel": 1
           }
         },
         {
@@ -2352,27 +2301,6 @@
                   "startLine": 269,
                   "startColumn": 40,
                   "endLine": 277,
-                  "endColumn": 22
-                }
-              }
-            }
-          ],
-          "properties": {
-            "warningLevel": 1
-          }
-        },
-        {
-          "ruleId": "S107",
-          "level": "warning",
-          "message": "Method has 8 parameters, which is greater than the 7 authorized.",
-          "locations": [
-            {
-              "resultFile": {
-                "uri": "file:///E:/ebay-clone-one/Backend/src/EBayClone.Infrastructure/Data/Seed/CategoryFormSeeder.cs",
-                "region": {
-                  "startLine": 280,
-                  "startColumn": 41,
-                  "endLine": 288,
                   "endColumn": 22
                 }
               }
@@ -2440,6 +2368,78 @@
                   "startColumn": 26,
                   "endLine": 139,
                   "endColumn": 57
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1,
+            "customProperties": {
+              "paramName": "columns"
+            }
+          }
+        },
+        {
+          "ruleId": "CA1861",
+          "level": "note",
+          "message": "Prefer 'static readonly' fields over constant array arguments if the called method is called repeatedly and is not mutating the passed array",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///E:/ebay-clone-one/Backend/src/EBayClone.Infrastructure/Migrations/20260509084222_Phase4_DynamicCategoriesAndListings.cs",
+                "region": {
+                  "startLine": 166,
+                  "startColumn": 26,
+                  "endLine": 166,
+                  "endColumn": 66
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1,
+            "customProperties": {
+              "paramName": "columns"
+            }
+          }
+        },
+        {
+          "ruleId": "CA1861",
+          "level": "note",
+          "message": "Prefer 'static readonly' fields over constant array arguments if the called method is called repeatedly and is not mutating the passed array",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///E:/ebay-clone-one/Backend/src/EBayClone.Infrastructure/Migrations/20260509084222_Phase4_DynamicCategoriesAndListings.cs",
+                "region": {
+                  "startLine": 173,
+                  "startColumn": 26,
+                  "endLine": 173,
+                  "endColumn": 56
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1,
+            "customProperties": {
+              "paramName": "columns"
+            }
+          }
+        },
+        {
+          "ruleId": "CA1861",
+          "level": "note",
+          "message": "Prefer 'static readonly' fields over constant array arguments if the called method is called repeatedly and is not mutating the passed array",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///E:/ebay-clone-one/Backend/src/EBayClone.Infrastructure/Migrations/20260509084222_Phase4_DynamicCategoriesAndListings.cs",
+                "region": {
+                  "startLine": 190,
+                  "startColumn": 26,
+                  "endLine": 190,
+                  "endColumn": 70
                 }
               }
             }

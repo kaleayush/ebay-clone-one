@@ -80,10 +80,10 @@ JE:\ebay-clone-one\Backend\src\EBayClone.Domain\Enums\VerificationStatus.cs
  N
 @E:\ebay-clone-one\Backend\src\EBayClone.Domain\Enums\UserRole.cs
 
- T
-FE:\ebay-clone-one\Backend\src\EBayClone.Domain\Enums\ApprovalAction.cs
+ S
+EE:\ebay-clone-one\Backend\src\EBayClone.Domain\Enums\PaymentStatus.cs
 
- Q
+ Q
 CE:\ebay-clone-one\Backend\src\EBayClone.Domain\Enums\OrderStatus.cs
 
  Z
@@ -110,10 +110,10 @@ HE:\ebay-clone-one\Backend\src\EBayClone.Domain\Enums\AuctionEndReason.cs
  W
 IE:\ebay-clone-one\Backend\src\EBayClone.Domain\Enums\AttributeDataType.cs
 
- S
-EE:\ebay-clone-one\Backend\src\EBayClone.Domain\Enums\PaymentStatus.cs
+ T
+FE:\ebay-clone-one\Backend\src\EBayClone.Domain\Enums\ApprovalAction.cs
 
- Q
+ Q
 CE:\ebay-clone-one\Backend\src\EBayClone.Domain\Enums\AccountType.cs
 
  ©
@@ -253,149 +253,24 @@ DE:\ebay-clone-one\Backend\src\EBayClone.Domain\Entities\OrderItem.cs
 
  
 
-" 'ê
-FE:\ebay-clone-one\Backend\src\EBayClone.Domain\Entities\ListingView.cs
+" '†
+JE:\ebay-clone-one\Backend\src\EBayClone.Domain\Entities\AttributeOption.cs
 
- 
+ 
 
- 
+ #
 
- 
-
-
-
- 
-
- 
-
-  Ï
-LE:\ebay-clone-one\Backend\src\EBayClone.Domain\Entities\CategoryAttribute.cs
-  
-
- 
-
-		 
-
- 
-
- 
-
- 
-
- %
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- %
-
- 0
-
-  1
-
- !
-
-( /
-
-  . ;€
-CE:\ebay-clone-one\Backend\src\EBayClone.Domain\Entities\Category.cs(
-   H P
-
- 
-
- 
-
-		 
+ .
 
 
 
- 
+ 
 
- !
+ 
 
- #
+ 
 
-! .
-
-* 4
-
-  (ç
-CE:\ebay-clone-one\Backend\src\EBayClone.Domain\Entities\CartItem.cs
-
- 
-
- 
-
-		 
-
-
-
- 
-
- 
-
- q
-?E:\ebay-clone-one\Backend\src\EBayClone.Domain\Entities\Cart.cs
-
- 
-
- 
-
- 
-
-
-
-! &Ä
-JE:\ebay-clone-one\Backend\src\EBayClone.Domain\Entities\BusinessProfile.cs
-
- 
-
- 
-
-		 
-
-
-
- 
-
- "
-
-  
-
-  
-
- "
-
- 0
-
- "
-
- 
-
- "
-
- 
-
- 
-
-% .€
+ €
 IE:\ebay-clone-one\Backend\src\EBayClone.Domain\Entities\ListingVersion.cs
 
  
@@ -420,45 +295,20 @@ IE:\ebay-clone-one\Backend\src\EBayClone.Domain\Entities\ListingVersion.cs
 
  
 
- †
->E:\ebay-clone-one\Backend\src\EBayClone.Domain\Entities\Bid.cs
+ ë
+GE:\ebay-clone-one\Backend\src\EBayClone.Domain\Entities\ListingImage.cs
 
- 
+ 
 
- 
+ 
 
  
 
-
-
- 
+		 
 
- 
+ 
 
- 
-
- 
-
- ∂
-HE:\ebay-clone-one\Backend\src\EBayClone.Domain\Entities\AuctionResult.cs
-
- 
-
- 
-
-		 
-
- 
-
- 
-
- !
-
- 
-
- 
-
- %ö
+ ö
 PE:\ebay-clone-one\Backend\src\EBayClone.Domain\Entities\ListingAttributeValue.cs
 
  "
@@ -473,37 +323,7 @@ PE:\ebay-clone-one\Backend\src\EBayClone.Domain\Entities\ListingAttributeValue.c
 
  .
 
- †
-JE:\ebay-clone-one\Backend\src\EBayClone.Domain\Entities\AttributeOption.cs
-
- 
-
- #
-
- .
-
-
-
- 
-
- 
-
- 
-
- ç
-CE:\ebay-clone-one\Backend\src\EBayClone.Domain\Common\BaseEntity.cs
-
-  
-
- 
-
- 
-
- 
-
- 
-
-		 ª
+ ª
 ME:\ebay-clone-one\Backend\src\EBayClone.Domain\Entities\ListingApprovalLog.cs
 
  
@@ -610,17 +430,197 @@ HE:\ebay-clone-one\Backend\src\EBayClone.Domain\Entities\EmailTemplate.cs
 
  
 
- ë
-GE:\ebay-clone-one\Backend\src\EBayClone.Domain\Entities\ListingImage.cs
+ Ï
+LE:\ebay-clone-one\Backend\src\EBayClone.Domain\Entities\CategoryAttribute.cs
+  
 
- 
+ 
 
- 
+		 
+
+ 
+
+ 
+
+ 
+
+ %
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ %
+
+ 0
+
+  1
+
+ !
+
+( /
+
+  . ;q
+?E:\ebay-clone-one\Backend\src\EBayClone.Domain\Entities\Cart.cs
+
+ 
+
+ 
+
+ 
+
+
+
+! &ç
+CE:\ebay-clone-one\Backend\src\EBayClone.Domain\Entities\CartItem.cs
+
+ 
+
+ 
+
+		 
+
+
+
+ 
+
+ 
+
+ †
+>E:\ebay-clone-one\Backend\src\EBayClone.Domain\Entities\Bid.cs
+
+ 
+
+ 
 
  
 
-		 
+
+
+ 
 
- 
+ 
 
- 
+ 
+
+ 
+
+ ê
+FE:\ebay-clone-one\Backend\src\EBayClone.Domain\Entities\ListingView.cs
+
+ 
+
+ 
+
+ 
+
+
+
+ 
+
+ 
+
+  Ä
+JE:\ebay-clone-one\Backend\src\EBayClone.Domain\Entities\BusinessProfile.cs
+
+ 
+
+ 
+
+		 
+
+
+
+ 
+
+ "
+
+  
+
+  
+
+ "
+
+ 0
+
+ "
+
+ 
+
+ "
+
+ 
+
+ 
+
+% .€
+CE:\ebay-clone-one\Backend\src\EBayClone.Domain\Entities\Category.cs(
+   H P
+
+ 
+
+ 
+
+		 
+
+
+
+ 
+
+ !
+
+ #
+
+! .
+
+* 4
+
+  (∂
+HE:\ebay-clone-one\Backend\src\EBayClone.Domain\Entities\AuctionResult.cs
+
+ 
+
+ 
+
+		 
+
+ 
+
+ 
+
+ !
+
+ 
+
+ 
+
+ %ç
+CE:\ebay-clone-one\Backend\src\EBayClone.Domain\Common\BaseEntity.cs
+
+  
+
+ 
+
+ 
+
+ 
+
+ 
+
+		 

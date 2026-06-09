@@ -1,1 +1,1 @@
-]RPE:\ebay-clone-one\Backend\src\EBayClone.Application\EBayClone.Application.csprojòCSharp12
+]RPe:\ebay-clone-one\Backend\src\EBayClone.Application\EBayClone.Application.csprojòCSharp12

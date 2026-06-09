@@ -4,7 +4,7 @@
   <ProjectLanguage>C#</ProjectLanguage>
   <ProjectType>Product</ProjectType>
   <ProjectGuid>b2c3d4e5-f6a7-8901-bcde-f12345678901</ProjectGuid>
-  <FullPath>E:\ebay-clone-one\Backend\src\EBayClone.Application\EBayClone.Application.csproj</FullPath>
+  <FullPath>e:\ebay-clone-one\Backend\src\EBayClone.Application\EBayClone.Application.csproj</FullPath>
   <IsExcluded>false</IsExcluded>
   <AnalysisResultFiles>
     <AnalysisResultFile Id="FilesToAnalyze" Location="E:\ebay-clone-one\Backend\.sonarqube\conf\1\FilesToAnalyze.txt" />

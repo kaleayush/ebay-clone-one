@@ -41,15 +41,15 @@ VE:\ebay-clone-one\Backend\src\EBayClone.Infrastructure\Data\Seed\CategoryFormSe
 gE:\ebay-clone-one\Backend\src\EBayClone.Infrastructure\Data\Configurations\UserDocumentConfiguration.cs 8r	
 ‚Í
 _E:\ebay-clone-one\Backend\src\EBayClone.Infrastructure\Data\Configurations\UserConfiguration.cs 8j4r7	
- !"#%&'(*+,-/01256789:;<=>?@ABC‚% !"#%&'(*+,-/01257<=?@©
+ !"#%&'(*+,-/01256789:;<=>?@ABC‚% !"#%&'(*+,-/01257<=?@«
+bE:\ebay-clone-one\Backend\src\EBayClone.Infrastructure\Data\Configurations\ListingConfiguration.cs 8r"	
+ !"$%&'()‚ !"$%&'¥
+iE:\ebay-clone-one\Backend\src\EBayClone.Infrastructure\Data\Configurations\ListingVersionConfiguration.cs 8r	
+ !"‚ ©
 `E:\ebay-clone-one\Backend\src\EBayClone.Infrastructure\Data\Configurations\OrderConfiguration.cs 8r%	
  "#$%&'()*+‚&'()š
 fE:\ebay-clone-one\Backend\src\EBayClone.Infrastructure\Data\Configurations\ListingViewConfiguration.cs 8r	
- ‚¥
-iE:\ebay-clone-one\Backend\src\EBayClone.Infrastructure\Data\Configurations\ListingVersionConfiguration.cs 8r	
- !"‚ «
-bE:\ebay-clone-one\Backend\src\EBayClone.Infrastructure\Data\Configurations\ListingConfiguration.cs 8r"	
- !"$%&'()‚ !"$%&'£
+ ‚£
 pE:\ebay-clone-one\Backend\src\EBayClone.Infrastructure\Data\Configurations\ListingAttributeValueConfiguration.cs 8r	
 ‚¨
 mE:\ebay-clone-one\Backend\src\EBayClone.Infrastructure\Data\Configurations\ListingApprovalLogConfiguration.cs	 8r	
@@ -57,13 +57,13 @@ mE:\ebay-clone-one\Backend\src\EBayClone.Infrastructure\Data\Configurations\List
 hE:\ebay-clone-one\Backend\src\EBayClone.Infrastructure\Data\Configurations\EmailTemplateConfiguration.cs
  8r	
 ‚
-¯
-cE:\ebay-clone-one\Backend\src\EBayClone.Infrastructure\Data\Configurations\CategoryConfiguration.cs	 8jr#	
- !"#$%&'()*‚ !"#$%&(¶
-lE:\ebay-clone-one\Backend\src\EBayClone.Infrastructure\Data\Configurations\CategoryAttributeConfiguration.cs 8r$	
- "#$%'()*+,‚ "$%'()*®
+®
 _E:\ebay-clone-one\Backend\src\EBayClone.Infrastructure\Data\Configurations\CartConfiguration.cs 8r.	
- !"#$%&')*+,-./01234‚"#$%-./012¥
+ !"#$%&')*+,-./01234‚"#$%-./012¶
+lE:\ebay-clone-one\Backend\src\EBayClone.Infrastructure\Data\Configurations\CategoryAttributeConfiguration.cs 8r$	
+ "#$%'()*+,‚ "$%'()*¯
+cE:\ebay-clone-one\Backend\src\EBayClone.Infrastructure\Data\Configurations\CategoryConfiguration.cs	 8jr#	
+ !"#$%&'()*‚ !"#$%&(¥
 jE:\ebay-clone-one\Backend\src\EBayClone.Infrastructure\Data\Configurations\BusinessProfileConfiguration.cs 8r	
  !‚
 ^E:\ebay-clone-one\Backend\src\EBayClone.Infrastructure\Data\Configurations\BidConfiguration.cs 8r	

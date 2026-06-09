@@ -345,259 +345,6 @@
         {
           "ruleId": "S3776",
           "level": "warning",
-          "message": "Refactor this method to reduce its Cognitive Complexity from 16 to the 15 allowed.",
-          "locations": [
-            {
-              "resultFile": {
-                "uri": "file:///E:/ebay-clone-one/Backend/src/EBayClone.Application/Services/OrderService.cs",
-                "region": {
-                  "startLine": 88,
-                  "startColumn": 38,
-                  "endLine": 88,
-                  "endColumn": 51
-                }
-              }
-            }
-          ],
-          "relatedLocations": [
-            {
-              "physicalLocation": {
-                "uri": "file:///E:/ebay-clone-one/Backend/src/EBayClone.Application/Services/OrderService.cs",
-                "region": {
-                  "startLine": 94,
-                  "startColumn": 9,
-                  "endLine": 94,
-                  "endColumn": 11
-                }
-              }
-            },
-            {
-              "physicalLocation": {
-                "uri": "file:///E:/ebay-clone-one/Backend/src/EBayClone.Application/Services/OrderService.cs",
-                "region": {
-                  "startLine": 97,
-                  "startColumn": 9,
-                  "endLine": 97,
-                  "endColumn": 11
-                }
-              }
-            },
-            {
-              "physicalLocation": {
-                "uri": "file:///E:/ebay-clone-one/Backend/src/EBayClone.Application/Services/OrderService.cs",
-                "region": {
-                  "startLine": 102,
-                  "startColumn": 51,
-                  "endLine": 102,
-                  "endColumn": 53
-                }
-              }
-            },
-            {
-              "physicalLocation": {
-                "uri": "file:///E:/ebay-clone-one/Backend/src/EBayClone.Application/Services/OrderService.cs",
-                "region": {
-                  "startLine": 107,
-                  "startColumn": 9,
-                  "endLine": 107,
-                  "endColumn": 11
-                }
-              }
-            },
-            {
-              "physicalLocation": {
-                "uri": "file:///E:/ebay-clone-one/Backend/src/EBayClone.Application/Services/OrderService.cs",
-                "region": {
-                  "startLine": 107,
-                  "startColumn": 19,
-                  "endLine": 107,
-                  "endColumn": 21
-                }
-              }
-            },
-            {
-              "physicalLocation": {
-                "uri": "file:///E:/ebay-clone-one/Backend/src/EBayClone.Application/Services/OrderService.cs",
-                "region": {
-                  "startLine": 117,
-                  "startColumn": 35,
-                  "endLine": 117,
-                  "endColumn": 36
-                }
-              }
-            },
-            {
-              "physicalLocation": {
-                "uri": "file:///E:/ebay-clone-one/Backend/src/EBayClone.Application/Services/OrderService.cs",
-                "region": {
-                  "startLine": 118,
-                  "startColumn": 38,
-                  "endLine": 118,
-                  "endColumn": 39
-                }
-              }
-            },
-            {
-              "physicalLocation": {
-                "uri": "file:///E:/ebay-clone-one/Backend/src/EBayClone.Application/Services/OrderService.cs",
-                "region": {
-                  "startLine": 119,
-                  "startColumn": 27,
-                  "endLine": 119,
-                  "endColumn": 28
-                }
-              }
-            },
-            {
-              "physicalLocation": {
-                "uri": "file:///E:/ebay-clone-one/Backend/src/EBayClone.Application/Services/OrderService.cs",
-                "region": {
-                  "startLine": 120,
-                  "startColumn": 28,
-                  "endLine": 120,
-                  "endColumn": 29
-                }
-              }
-            },
-            {
-              "physicalLocation": {
-                "uri": "file:///E:/ebay-clone-one/Backend/src/EBayClone.Application/Services/OrderService.cs",
-                "region": {
-                  "startLine": 123,
-                  "startColumn": 9,
-                  "endLine": 123,
-                  "endColumn": 16
-                }
-              }
-            },
-            {
-              "physicalLocation": {
-                "uri": "file:///E:/ebay-clone-one/Backend/src/EBayClone.Application/Services/OrderService.cs",
-                "region": {
-                  "startLine": 128,
-                  "startColumn": 13,
-                  "endLine": 128,
-                  "endColumn": 15
-                }
-              }
-            },
-            {
-              "physicalLocation": {
-                "uri": "file:///E:/ebay-clone-one/Backend/src/EBayClone.Application/Services/OrderService.cs",
-                "region": {
-                  "startLine": 131,
-                  "startColumn": 13,
-                  "endLine": 131,
-                  "endColumn": 15
-                }
-              }
-            },
-            {
-              "physicalLocation": {
-                "uri": "file:///E:/ebay-clone-one/Backend/src/EBayClone.Application/Services/OrderService.cs",
-                "region": {
-                  "startLine": 143,
-                  "startColumn": 13,
-                  "endLine": 143,
-                  "endColumn": 15
-                }
-              }
-            }
-          ],
-          "properties": {
-            "warningLevel": 1,
-            "customProperties": {
-              "0": "+1",
-              "1": "+1",
-              "10": "+2 (incl 1 for nesting)",
-              "11": "+2 (incl 1 for nesting)",
-              "12": "+2 (incl 1 for nesting)",
-              "2": "+1",
-              "3": "+1",
-              "4": "+1",
-              "5": "+1",
-              "6": "+1",
-              "7": "+1",
-              "8": "+1",
-              "9": "+1"
-            }
-          }
-        },
-        {
-          "ruleId": "CA1860",
-          "level": "note",
-          "message": "Prefer comparing 'Count' to 0 rather than using 'Any()', both for clarity and for performance",
-          "locations": [
-            {
-              "resultFile": {
-                "uri": "file:///E:/ebay-clone-one/Backend/src/EBayClone.Application/Services/CategoryService.cs",
-                "region": {
-                  "startLine": 200,
-                  "startColumn": 44,
-                  "endLine": 200,
-                  "endColumn": 50
-                }
-              }
-            }
-          ],
-          "properties": {
-            "warningLevel": 1,
-            "customProperties": {
-              "DiagnosticPropertyKey": "Count"
-            }
-          }
-        },
-        {
-          "ruleId": "CA1860",
-          "level": "note",
-          "message": "Prefer comparing 'Count' to 0 rather than using 'Any()', both for clarity and for performance",
-          "locations": [
-            {
-              "resultFile": {
-                "uri": "file:///E:/ebay-clone-one/Backend/src/EBayClone.Application/Services/CategoryService.cs",
-                "region": {
-                  "startLine": 203,
-                  "startColumn": 72,
-                  "endLine": 203,
-                  "endColumn": 99
-                }
-              }
-            }
-          ],
-          "properties": {
-            "warningLevel": 1,
-            "customProperties": {
-              "DiagnosticPropertyKey": "Count"
-            }
-          }
-        },
-        {
-          "ruleId": "CA1860",
-          "level": "note",
-          "message": "Prefer comparing 'Count' to 0 rather than using 'Any()', both for clarity and for performance",
-          "locations": [
-            {
-              "resultFile": {
-                "uri": "file:///E:/ebay-clone-one/Backend/src/EBayClone.Application/Services/CategoryService.cs",
-                "region": {
-                  "startLine": 217,
-                  "startColumn": 34,
-                  "endLine": 217,
-                  "endColumn": 48
-                }
-              }
-            }
-          ],
-          "properties": {
-            "warningLevel": 1,
-            "customProperties": {
-              "DiagnosticPropertyKey": "Count"
-            }
-          }
-        },
-        {
-          "ruleId": "S3776",
-          "level": "warning",
           "message": "Refactor this method to reduce its Cognitive Complexity from 27 to the 15 allowed.",
           "locations": [
             {
@@ -873,6 +620,187 @@
           }
         },
         {
+          "ruleId": "S3776",
+          "level": "warning",
+          "message": "Refactor this method to reduce its Cognitive Complexity from 16 to the 15 allowed.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///E:/ebay-clone-one/Backend/src/EBayClone.Application/Services/OrderService.cs",
+                "region": {
+                  "startLine": 88,
+                  "startColumn": 38,
+                  "endLine": 88,
+                  "endColumn": 51
+                }
+              }
+            }
+          ],
+          "relatedLocations": [
+            {
+              "physicalLocation": {
+                "uri": "file:///E:/ebay-clone-one/Backend/src/EBayClone.Application/Services/OrderService.cs",
+                "region": {
+                  "startLine": 94,
+                  "startColumn": 9,
+                  "endLine": 94,
+                  "endColumn": 11
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "uri": "file:///E:/ebay-clone-one/Backend/src/EBayClone.Application/Services/OrderService.cs",
+                "region": {
+                  "startLine": 97,
+                  "startColumn": 9,
+                  "endLine": 97,
+                  "endColumn": 11
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "uri": "file:///E:/ebay-clone-one/Backend/src/EBayClone.Application/Services/OrderService.cs",
+                "region": {
+                  "startLine": 102,
+                  "startColumn": 51,
+                  "endLine": 102,
+                  "endColumn": 53
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "uri": "file:///E:/ebay-clone-one/Backend/src/EBayClone.Application/Services/OrderService.cs",
+                "region": {
+                  "startLine": 107,
+                  "startColumn": 9,
+                  "endLine": 107,
+                  "endColumn": 11
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "uri": "file:///E:/ebay-clone-one/Backend/src/EBayClone.Application/Services/OrderService.cs",
+                "region": {
+                  "startLine": 107,
+                  "startColumn": 19,
+                  "endLine": 107,
+                  "endColumn": 21
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "uri": "file:///E:/ebay-clone-one/Backend/src/EBayClone.Application/Services/OrderService.cs",
+                "region": {
+                  "startLine": 117,
+                  "startColumn": 35,
+                  "endLine": 117,
+                  "endColumn": 36
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "uri": "file:///E:/ebay-clone-one/Backend/src/EBayClone.Application/Services/OrderService.cs",
+                "region": {
+                  "startLine": 118,
+                  "startColumn": 38,
+                  "endLine": 118,
+                  "endColumn": 39
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "uri": "file:///E:/ebay-clone-one/Backend/src/EBayClone.Application/Services/OrderService.cs",
+                "region": {
+                  "startLine": 119,
+                  "startColumn": 27,
+                  "endLine": 119,
+                  "endColumn": 28
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "uri": "file:///E:/ebay-clone-one/Backend/src/EBayClone.Application/Services/OrderService.cs",
+                "region": {
+                  "startLine": 120,
+                  "startColumn": 28,
+                  "endLine": 120,
+                  "endColumn": 29
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "uri": "file:///E:/ebay-clone-one/Backend/src/EBayClone.Application/Services/OrderService.cs",
+                "region": {
+                  "startLine": 123,
+                  "startColumn": 9,
+                  "endLine": 123,
+                  "endColumn": 16
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "uri": "file:///E:/ebay-clone-one/Backend/src/EBayClone.Application/Services/OrderService.cs",
+                "region": {
+                  "startLine": 128,
+                  "startColumn": 13,
+                  "endLine": 128,
+                  "endColumn": 15
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "uri": "file:///E:/ebay-clone-one/Backend/src/EBayClone.Application/Services/OrderService.cs",
+                "region": {
+                  "startLine": 131,
+                  "startColumn": 13,
+                  "endLine": 131,
+                  "endColumn": 15
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "uri": "file:///E:/ebay-clone-one/Backend/src/EBayClone.Application/Services/OrderService.cs",
+                "region": {
+                  "startLine": 143,
+                  "startColumn": 13,
+                  "endLine": 143,
+                  "endColumn": 15
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1,
+            "customProperties": {
+              "0": "+1",
+              "1": "+1",
+              "10": "+2 (incl 1 for nesting)",
+              "11": "+2 (incl 1 for nesting)",
+              "12": "+2 (incl 1 for nesting)",
+              "2": "+1",
+              "3": "+1",
+              "4": "+1",
+              "5": "+1",
+              "6": "+1",
+              "7": "+1",
+              "8": "+1",
+              "9": "+1"
+            }
+          }
+        },
+        {
           "ruleId": "S4790",
           "level": "warning",
           "message": "Make sure this weak hash algorithm is not used in a sensitive context here.",
@@ -894,45 +822,75 @@
           }
         },
         {
-          "ruleId": "CA1859",
+          "ruleId": "CA1860",
           "level": "note",
-          "message": "Change return type of method 'BuildTree' from 'System.Collections.Generic.IReadOnlyCollection<EBayClone.Application.Interfaces.CategoryTreeResponse>' to 'System.Collections.Generic.List<EBayClone.Application.Interfaces.CategoryTreeResponse>' for improved performance",
+          "message": "Prefer comparing 'Count' to 0 rather than using 'Any()', both for clarity and for performance",
           "locations": [
             {
               "resultFile": {
                 "uri": "file:///E:/ebay-clone-one/Backend/src/EBayClone.Application/Services/CategoryService.cs",
                 "region": {
-                  "startLine": 331,
-                  "startColumn": 62,
-                  "endLine": 331,
-                  "endColumn": 71
+                  "startLine": 200,
+                  "startColumn": 44,
+                  "endLine": 200,
+                  "endColumn": 50
                 }
               }
             }
           ],
           "properties": {
-            "warningLevel": 1
+            "warningLevel": 1,
+            "customProperties": {
+              "DiagnosticPropertyKey": "Count"
+            }
           }
         },
         {
-          "ruleId": "CA1859",
+          "ruleId": "CA1860",
           "level": "note",
-          "message": "Change return type of method 'FlattenCategoryTree' from 'System.Collections.Generic.IReadOnlyCollection<EBayClone.Domain.Entities.Category>' to 'System.Collections.Generic.List<EBayClone.Domain.Entities.Category>' for improved performance",
+          "message": "Prefer comparing 'Count' to 0 rather than using 'Any()', both for clarity and for performance",
           "locations": [
             {
               "resultFile": {
                 "uri": "file:///E:/ebay-clone-one/Backend/src/EBayClone.Application/Services/CategoryService.cs",
                 "region": {
-                  "startLine": 230,
-                  "startColumn": 50,
-                  "endLine": 230,
-                  "endColumn": 69
+                  "startLine": 203,
+                  "startColumn": 72,
+                  "endLine": 203,
+                  "endColumn": 99
                 }
               }
             }
           ],
           "properties": {
-            "warningLevel": 1
+            "warningLevel": 1,
+            "customProperties": {
+              "DiagnosticPropertyKey": "Count"
+            }
+          }
+        },
+        {
+          "ruleId": "CA1860",
+          "level": "note",
+          "message": "Prefer comparing 'Count' to 0 rather than using 'Any()', both for clarity and for performance",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///E:/ebay-clone-one/Backend/src/EBayClone.Application/Services/CategoryService.cs",
+                "region": {
+                  "startLine": 217,
+                  "startColumn": 34,
+                  "endLine": 217,
+                  "endColumn": 48
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1,
+            "customProperties": {
+              "DiagnosticPropertyKey": "Count"
+            }
           }
         },
         {
@@ -1465,6 +1423,48 @@
               "8": "+2 (incl 1 for nesting)",
               "9": "+2 (incl 1 for nesting)"
             }
+          }
+        },
+        {
+          "ruleId": "CA1859",
+          "level": "note",
+          "message": "Change return type of method 'FlattenCategoryTree' from 'System.Collections.Generic.IReadOnlyCollection<EBayClone.Domain.Entities.Category>' to 'System.Collections.Generic.List<EBayClone.Domain.Entities.Category>' for improved performance",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///E:/ebay-clone-one/Backend/src/EBayClone.Application/Services/CategoryService.cs",
+                "region": {
+                  "startLine": 230,
+                  "startColumn": 50,
+                  "endLine": 230,
+                  "endColumn": 69
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "CA1859",
+          "level": "note",
+          "message": "Change return type of method 'BuildTree' from 'System.Collections.Generic.IReadOnlyCollection<EBayClone.Application.Interfaces.CategoryTreeResponse>' to 'System.Collections.Generic.List<EBayClone.Application.Interfaces.CategoryTreeResponse>' for improved performance",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///E:/ebay-clone-one/Backend/src/EBayClone.Application/Services/CategoryService.cs",
+                "region": {
+                  "startLine": 331,
+                  "startColumn": 62,
+                  "endLine": 331,
+                  "endColumn": 71
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
           }
         },
         {

@@ -4650,7 +4650,63 @@ LE:\ebay-clone-one\Backend\src\EBayClone.Application\Services\AdminService.cs
 ÉÉ 
 ÉÉ 
 áá 
-ââ È
+ââ ú
+NE:\ebay-clone-one\Backend\src\EBayClone.Application\Interfaces\IUserService.cs
+
+ 
+
+$ 1
+
+= B
+
+V X
+
+		 #
+
+		) +
+
+		? A
+
+
+
+ )
+
+
+
+/ 1
+
+
+
+H O
+
+
+
+c e
+
+	 
+
+ !
+
+5 7
+
+	 
+
+  "
+
+6 8õ
+QE:\ebay-clone-one\Backend\src\EBayClone.Application\Interfaces\IPasswordHasher.cs
+
+  
+
+ 
+
+ 
+
+	 
+
+ 
+
+( ,È
 OE:\ebay-clone-one\Backend\src\EBayClone.Application\Interfaces\IOrderService.cs
 
  
@@ -4824,7 +4880,83 @@ QE:\ebay-clone-one\Backend\src\EBayClone.Application\Interfaces\IListingService.
 
 N T
 
-h j—
+h jü
+YE:\ebay-clone-one\Backend\src\EBayClone.Application\Interfaces\IListingApprovalService.cs
+
+ (
+
+ 0
+
+6 ?
+
+F N
+
+b d
+
+	 %
+
++ 4
+
+; C
+
+` g
+
+{ }
+
+ &
+
+, 5
+
+< C
+
+M R
+
+f h
+
+ %
+
++ 4
+
+; B
+
+K Q
+
+[ `
+
+t v
+
+0 @
+
+F O
+
+c e
+
+" 8
+
+> G
+
+[ ]Ø
+ME:\ebay-clone-one\Backend\src\EBayClone.Application\Interfaces\IJwtService.cs
+
+ 
+
+ 
+
+$ (
+
+		 
+
+
+
+ 1
+
+
+
+9 >
+
+	 
+
+# (—
 UE:\ebay-clone-one\Backend\src\EBayClone.Application\Interfaces\IFileStorageService.cs
 
  $
@@ -4908,132 +5040,7 @@ WE:\ebay-clone-one\Backend\src\EBayClone.Application\Interfaces\IEmailTemplateSe
 
 B F
 
-Z \û
-YE:\ebay-clone-one\Backend\src\EBayClone.Application\Interfaces\IBusinessProfileService.cs
-
- (
-
-		# 3
-
-		9 ?
-
-		S U
-
-
-
-" -
-
-
-
-3 9
-
-
-
-R Y
-
-
-
-m o
-
-" -
-
-3 9
-
-R Y
-
-m o
-
-" 6
-
-< B
-
-V X
-
- .
-
-4 :
-
-C M
-
-V ^
-
-g r
-	y Å
-
-ê ú
-
-∞ ≤
-
-	 
-
-" (
-
-/ 9
-
-M O
-
-4 ?
-
-K P
-
-Z f
-
-z |
-
-" -
-
-3 <
-
-C J
-
-Q [
-
-e t
-
-à ä©
-OE:\ebay-clone-one\Backend\src\EBayClone.Application\Interfaces\IAdminService.cs
-
- 
-
- *
-
-= ?
-
-		) 6
-
-		G L
-
-		` b
-
-
-
-, <
-
-
-
-P U
-
-
-
-i k
-
-* 8
-
-J O
-
-c e
-
-% :
-
-@ B
-
-V X
-
-	 
-
-! #
-
-7 9Õ
+Z \Õ
 OE:\ebay-clone-one\Backend\src\EBayClone.Application\Interfaces\IEmailService.cs
 
  
@@ -5130,288 +5137,7 @@ OE:\ebay-clone-one\Backend\src\EBayClone.Application\Interfaces\IEmailService.cs
 
 P \
 
-p rú
-NE:\ebay-clone-one\Backend\src\EBayClone.Application\Interfaces\IUserService.cs
-
- 
-
-$ 1
-
-= B
-
-V X
-
-		 #
-
-		) +
-
-		? A
-
-
-
- )
-
-
-
-/ 1
-
-
-
-H O
-
-
-
-c e
-
-	 
-
- !
-
-5 7
-
-	 
-
-  "
-
-6 8õ
-QE:\ebay-clone-one\Backend\src\EBayClone.Application\Interfaces\IPasswordHasher.cs
-
-  
-
- 
-
- 
-
-	 
-
- 
-
-( ,ü
-YE:\ebay-clone-one\Backend\src\EBayClone.Application\Interfaces\IListingApprovalService.cs
-
- (
-
- 0
-
-6 ?
-
-F N
-
-b d
-
-	 %
-
-+ 4
-
-; C
-
-` g
-
-{ }
-
- &
-
-, 5
-
-< C
-
-M R
-
-f h
-
- %
-
-+ 4
-
-; B
-
-K Q
-
-[ `
-
-t v
-
-0 @
-
-F O
-
-c e
-
-" 8
-
-> G
-
-[ ]Ø
-ME:\ebay-clone-one\Backend\src\EBayClone.Application\Interfaces\IJwtService.cs
-
- 
-
- 
-
-$ (
-
-		 
-
-
-
- 1
-
-
-
-9 >
-
-	 
-
-# (
-YE:\ebay-clone-one\Backend\src\EBayClone.Application\Interfaces\IBackgroundEmailService.cs
-
- (
-
-	 
-
-0 6À
-QE:\ebay-clone-one\Backend\src\EBayClone.Application\Interfaces\IAuctionService.cs
-
-  
-
- #
-
-) 2
-
-9 A
-
-K Q
-
-e g
-
-		# 5
-
-		; D
-
-		J N
-
-		T \
-
-		p r
-
-
-
-  5
-
-
-
-; D
-
-
-
-L T
-
-
-
-o q
-
-- C
-
-H L
-
-R Z
-
-n p
-
-# 1
-
-7 =
-
-C G
-
-M U
-
-i k
-
-	 
-
-# ,
-
-@ B
-
-	 
-
-! *
-
-> @
-
-	 
-
-! *
-
-0 7
-
-K M
-
-, A
-
-U Z
-
-n p
-
-( ?
-
-E N
-
-T X
-
-^ f
-
-z |∆
-RE:\ebay-clone-one\Backend\src\EBayClone.Application\Interfaces\IAuctionNotifier.cs
-
- !
-
-	 
-
- &
-
-> A
-
-U W
-
-	 
-
-  )
-
-1 9
-
-C O
-
-Z g
-
-n x
-
-å é
-
-			 
-
-		  )
-
-		4 <
-
-		P R
-
-
-
-	 
-
-
-
-$ -
-
-
-
-6 <
-
-
-
-P R˜
+p r˜
 RE:\ebay-clone-one\Backend\src\EBayClone.Application\Interfaces\ICategoryService.cs
 
  !
@@ -5644,7 +5370,132 @@ RE:\ebay-clone-one\Backend\src\EBayClone.Application\Interfaces\ICategoryService
 
 oo 
 
-pp	 ƒ
+pp	 û
+YE:\ebay-clone-one\Backend\src\EBayClone.Application\Interfaces\IBusinessProfileService.cs
+
+ (
+
+		# 3
+
+		9 ?
+
+		S U
+
+
+
+" -
+
+
+
+3 9
+
+
+
+R Y
+
+
+
+m o
+
+" -
+
+3 9
+
+R Y
+
+m o
+
+" 6
+
+< B
+
+V X
+
+ .
+
+4 :
+
+C M
+
+V ^
+
+g r
+	y Å
+
+ê ú
+
+∞ ≤
+
+	 
+
+" (
+
+/ 9
+
+M O
+
+4 ?
+
+K P
+
+Z f
+
+z |
+
+" -
+
+3 <
+
+C J
+
+Q [
+
+e t
+
+à ä©
+OE:\ebay-clone-one\Backend\src\EBayClone.Application\Interfaces\IAdminService.cs
+
+ 
+
+ *
+
+= ?
+
+		) 6
+
+		G L
+
+		` b
+
+
+
+, <
+
+
+
+P U
+
+
+
+i k
+
+* 8
+
+J O
+
+c e
+
+% :
+
+@ B
+
+V X
+
+	 
+
+! #
+
+7 9ƒ
 NE:\ebay-clone-one\Backend\src\EBayClone.Application\Interfaces\IAuthService.cs
 
  
@@ -5713,16 +5564,156 @@ NE:\ebay-clone-one\Backend\src\EBayClone.Application\Interfaces\IAuthService.cs
 
 1 8
 
-L Nä
-WE:\ebay-clone-one\Backend\src\EBayClone.Application\Extensions\ApplicationExtensions.cs
- )2 G
+L NÀ
+QE:\ebay-clone-one\Backend\src\EBayClone.Application\Interfaces\IAuctionService.cs
+
+  
+
+ #
+
+) 2
+
+9 A
+
+K Q
+
+e g
+
+		# 5
+
+		; D
+
+		J N
+
+		T \
+
+		p r
 
 
 
-% 3å
+  5
+
 
 
-L T             ¯
+; D
+
+
+
+L T
+
+
+
+o q
+
+- C
+
+H L
+
+R Z
+
+n p
+
+# 1
+
+7 =
+
+C G
+
+M U
+
+i k
+
+	 
+
+# ,
+
+@ B
+
+	 
+
+! *
+
+> @
+
+	 
+
+! *
+
+0 7
+
+K M
+
+, A
+
+U Z
+
+n p
+
+( ?
+
+E N
+
+T X
+
+^ f
+
+z |∆
+RE:\ebay-clone-one\Backend\src\EBayClone.Application\Interfaces\IAuctionNotifier.cs
+
+ !
+
+	 
+
+ &
+
+> A
+
+U W
+
+	 
+
+  )
+
+1 9
+
+C O
+
+Z g
+
+n x
+
+å é
+
+			 
+
+		  )
+
+		4 <
+
+		P R
+
+
+
+	 
+
+
+
+$ -
+
+
+
+6 <
+
+
+
+P R
+YE:\ebay-clone-one\Backend\src\EBayClone.Application\Interfaces\IBackgroundEmailService.cs
+
+ (
+
+	 
+
+0 6¯
 NE:\ebay-clone-one\Backend\src\EBayClone.Application\DTOs\Users\UserResponse.cs
 
  
@@ -5764,7 +5755,16 @@ ME:\ebay-clone-one\Backend\src\EBayClone.Application\DTOs\Users\UserRequest.cs
 
  
 
- î
+ ä
+WE:\ebay-clone-one\Backend\src\EBayClone.Application\Extensions\ApplicationExtensions.cs
+ )2 G
+
+
+
+% 3å
+
+
+L T             î
 PE:\ebay-clone-one\Backend\src\EBayClone.Application\DTOs\Orders\OrderResponse.cs
 
  
@@ -6082,7 +6082,310 @@ SE:\ebay-clone-one\Backend\src\EBayClone.Application\DTOs\Listings\ListingReques
 
 HH 
 
-II  0Ä
+II  0È
+KE:\ebay-clone-one\Backend\src\EBayClone.Application\DTOs\Admin\AdminDtos.cs
+
+  
+
+ 
+
+ 
+
+ 
+
+		 
+
+ 
+
+	 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+	 
+
+	 
+
+	 
+
+ 
+
+ "
+
+	 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+   
+
+!!	 
+
+""	 
+
+## 
+
+&& (
+
+''	 
+
+(( 
+
+)) 
+
+** 
+
+++ 
+
+,, 
+
+-- 
+
+.. 
+
+// 
+
+00	 
+
+11	 
+
+22 
+
+33 *
+
+66  
+
+77	 
+
+88 
+
+99 
+
+:: 
+
+;; 
+
+<< 
+
+== 
+
+>> 
+
+?? 
+
+@@ 
+
+AA 
+
+DD 
+
+EE 
+
+FF 
+
+GG 
+
+HH	 
+
+II 
+
+JJ 
+
+KK 
+
+LL 
+
+OO  
+
+PP 
+
+QQ 
+
+RR 
+
+SS	 
+
+TT 
+
+UU 
+
+VV 
+
+YY 
+
+ZZ 
+
+[[ 
+
+\\ 
+
+]]	 
+
+^^ 
+
+__ ı
+IE:\ebay-clone-one\Backend\src\EBayClone.Application\Common\ApiResponse.cs
+ 
+
+  2
+  
+
+ 
+
+$ % 
+   
+   '! (
+ 3 7
+  &4 :
+
+
+
+! #
+
+
+& *: >
+
+
+3 :* 1
+
+! %
+- 4+ 2
+K Q= C
+   !
+
+  
+( /* 1
+
+" &
+. 5+ 2
+L R= CÊ
+PE:\ebay-clone-one\Backend\src\EBayClone.Application\DTOs\Auctions\AuctionDtos.cs
+
+ 
+
+& ,
+
+ 
+
+	 
+
+	 
+
+ 
+
+		 
+
+
+
+	 
+
+ 
+
+ #
+
+	 
+
+ 
+
+ 
+
+ 
+
+ 
+
+	 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+	 
+
+ #
+
+	 
+
+   
+
+!! 
+
+"" 
+
+## 
+
+&& "
+
+&&' .
+
+(( "
+
+))	 
+
+** 
+
+++ 
+
+,, 
+
+-- 
+
+.. 
+
+// 
+
+00 
+
+11 
+
+22	 
+
+55 
+
+66	 
+
+77	 
+
+88	 
+
+99 
+
+:: 
+
+;; 
+
+<<	 
+
+== 
+
+@@  
+
+@@% )
+
+@@/ 7
+
+@@> DÄ
 XE:\ebay-clone-one\Backend\src\EBayClone.Application\DTOs\Listings\ListingApprovalDtos.cs
 
  (
@@ -6175,7 +6478,43 @@ XE:\ebay-clone-one\Backend\src\EBayClone.Application\DTOs\Listings\ListingApprov
 
 11 
 
-22 #Œ
+22 #Â
+IE:\ebay-clone-one\Backend\src\EBayClone.Application\Common\PagedResult.cs
+  (
+   6 7
+ ! (
+ 
+
+ ## '8 <
+ 		D LE M
+ 		7 A )
+		 
+
+& 0
+
+
+
+ 
+
+ 
+
+! '
+9 > 
+D N, 6
+T X? C
+^ fP X
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ Œ
 \E:\ebay-clone-one\Backend\src\EBayClone.Application\DTOs\EmailTemplates\EmailTemplateDtos.cs
 
  #
@@ -6400,343 +6739,4 @@ LE:\ebay-clone-one\Backend\src\EBayClone.Application\DTOs\Auth\AuthRequest.cs
 
   
 
-( -Ê
-PE:\ebay-clone-one\Backend\src\EBayClone.Application\DTOs\Auctions\AuctionDtos.cs
-
- 
-
-& ,
-
- 
-
-	 
-
-	 
-
- 
-
-		 
-
-
-
-	 
-
- 
-
- #
-
-	 
-
- 
-
- 
-
- 
-
- 
-
-	 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
-	 
-
- #
-
-	 
-
-   
-
-!! 
-
-"" 
-
-## 
-
-&& "
-
-&&' .
-
-(( "
-
-))	 
-
-** 
-
-++ 
-
-,, 
-
--- 
-
-.. 
-
-// 
-
-00 
-
-11 
-
-22	 
-
-55 
-
-66	 
-
-77	 
-
-88	 
-
-99 
-
-:: 
-
-;; 
-
-<<	 
-
-== 
-
-@@  
-
-@@% )
-
-@@/ 7
-
-@@> DÈ
-KE:\ebay-clone-one\Backend\src\EBayClone.Application\DTOs\Admin\AdminDtos.cs
-
-  
-
- 
-
- 
-
- 
-
-		 
-
- 
-
-	 
-
- 
-
- 
-
- 
-
- 
-
- 
-
-	 
-
-	 
-
-	 
-
- 
-
- "
-
-	 
-
- 
-
- 
-
- 
-
- 
-
- 
-
-   
-
-!!	 
-
-""	 
-
-## 
-
-&& (
-
-''	 
-
-(( 
-
-)) 
-
-** 
-
-++ 
-
-,, 
-
--- 
-
-.. 
-
-// 
-
-00	 
-
-11	 
-
-22 
-
-33 *
-
-66  
-
-77	 
-
-88 
-
-99 
-
-:: 
-
-;; 
-
-<< 
-
-== 
-
->> 
-
-?? 
-
-@@ 
-
-AA 
-
-DD 
-
-EE 
-
-FF 
-
-GG 
-
-HH	 
-
-II 
-
-JJ 
-
-KK 
-
-LL 
-
-OO  
-
-PP 
-
-QQ 
-
-RR 
-
-SS	 
-
-TT 
-
-UU 
-
-VV 
-
-YY 
-
-ZZ 
-
-[[ 
-
-\\ 
-
-]]	 
-
-^^ 
-
-__ Â
-IE:\ebay-clone-one\Backend\src\EBayClone.Application\Common\PagedResult.cs
-  (
-   6 7
- ! (
- 
-
- ## '8 <
- 		D LE M
- 		7 A )
-		 
-
-& 0
-
-
-
- 
-
- 
-
-! '
-9 > 
-D N, 6
-T X? C
-^ fP X
-
- 
-
- 
-
- 
-
- 
-
- 
-
- ı
-IE:\ebay-clone-one\Backend\src\EBayClone.Application\Common\ApiResponse.cs
- 
-
-  2
-  
-
- 
-
-$ % 
-   
-   '! (
- 3 7
-  &4 :
-
-
-
-! #
-
-
-& *: >
-
-
-3 :* 1
-
-! %
-- 4+ 2
-K Q= C
-   !
-
-  
-( /* 1
-
-" &
-. 5+ 2
-L R= C
+( -

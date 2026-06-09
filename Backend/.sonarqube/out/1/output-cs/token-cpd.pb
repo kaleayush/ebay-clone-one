@@ -45468,238 +45468,7 @@ Interfaces  *
 default_ f
 )f g
 ;g h
-} Æ
-YE:\ebay-clone-one\Backend\src\EBayClone.Application\Interfaces\IBusinessProfileService.cs
-	namespace 	
-	EBayClone
- 
-. 
-Application 
-.  
-
-Interfaces  *
-;* +
-public 
-	interface #
-IBusinessProfileService (
-{ 
-Task		 
-<		 	#
-BusinessProfileResponse			  
-?		  !
->		! "
-GetByUserIdAsync		# 3
-(		3 4
-Guid		4 8
-userId		9 ?
-,		? @
-CancellationToken		A R
-ct		S U
-=		V W
-default		X _
-)		_ `
-;		` a
-Task
-
- 
-<
-
- 	#
-BusinessProfileResponse
-
-	  
->
-
-  !
-SubmitAsync
-
-" -
-(
-
-- .
-Guid
-
-. 2
-userId
-
-3 9
-,
-
-9 :"
-BusinessProfileRequest
-
-; Q
-request
-
-R Y
-,
-
-Y Z
-CancellationToken
-
-[ l
-ct
-
-m o
-=
-
-p q
-default
-
-r y
-)
-
-y z
-;
-
-z {
-Task 
-< 	#
-BusinessProfileResponse	  
->  !
-UpdateAsync" -
-(- .
-Guid. 2
-userId3 9
-,9 :"
-BusinessProfileRequest; Q
-requestR Y
-,Y Z
-CancellationToken[ l
-ctm o
-=p q
-defaultr y
-)y z
-;z {
-Task 
-< 	#
-BusinessProfileResponse	  
->  ! 
-SubmitForReviewAsync" 6
-(6 7
-Guid7 ;
-userId< B
-,B C
-CancellationTokenD U
-ctV X
-=Y Z
-default[ b
-)b c
-;c d
-Task 
-< 	
-DocumentResponse	 
-> 
-UploadDocumentAsync .
-(. /
-Guid/ 3
-userId4 :
-,: ;
-Stream< B
-
-fileStreamC M
-,M N
-stringO U
-fileNameV ^
-,^ _
-string` f
-contentTypeg r
-,r s
-longt x
-fileSize	y Å
-,
-Å Ç
-DocumentType
-É è
-documentType
-ê ú
-,
-ú ù
-CancellationToken
-û Ø
-ct
-∞ ≤
-=
-≥ ¥
-default
-µ º
-)
-º Ω
-;
-Ω æ
-Task 
-DeleteDocumentAsync	 
-( 
-Guid !
-userId" (
-,( )
-Guid* .
-
-documentId/ 9
-,9 :
-CancellationToken; L
-ctM O
-=P Q
-defaultR Y
-)Y Z
-;Z [
-Task 
-< 	
-PagedResult	 
-< (
-AdminBusinessProfileResponse 1
->1 2
->2 3
-GetAllAsync4 ?
-(? @
-
-PagedQuery@ J
-queryK P
-,P Q
-stringR X
-?X Y
-statusFilterZ f
-,f g
-CancellationTokenh y
-ctz |
-=} ~
-default	 Ü
-)
-Ü á
-;
-á à
-Task 
-< 	#
-BusinessProfileResponse	  
->  !
-ReviewAsync" -
-(- .
-Guid. 2
-	profileId3 <
-,< =
-Guid> B
-adminIdC J
-,J K
-boolL P
-
-isApprovedQ [
-,[ \
-string] c
-?c d
-rejectionReasone t
-,t u
-CancellationToken	v á
-ct
-à ä
-=
-ã å
-default
-ç î
-)
-î ï
-;
-ï ñ
-} ‡
+} ‡
 OE:\ebay-clone-one\Backend\src\EBayClone.Application\Interfaces\IEmailService.cs
 	namespace 	
 	EBayClone
@@ -46552,7 +46321,238 @@ IsRequiredZZ	 
 boolpp 
 IsActivepp	 
 )qq 
-;qq ¶
+;qq Æ
+YE:\ebay-clone-one\Backend\src\EBayClone.Application\Interfaces\IBusinessProfileService.cs
+	namespace 	
+	EBayClone
+ 
+. 
+Application 
+.  
+
+Interfaces  *
+;* +
+public 
+	interface #
+IBusinessProfileService (
+{ 
+Task		 
+<		 	#
+BusinessProfileResponse			  
+?		  !
+>		! "
+GetByUserIdAsync		# 3
+(		3 4
+Guid		4 8
+userId		9 ?
+,		? @
+CancellationToken		A R
+ct		S U
+=		V W
+default		X _
+)		_ `
+;		` a
+Task
+
+ 
+<
+
+ 	#
+BusinessProfileResponse
+
+	  
+>
+
+  !
+SubmitAsync
+
+" -
+(
+
+- .
+Guid
+
+. 2
+userId
+
+3 9
+,
+
+9 :"
+BusinessProfileRequest
+
+; Q
+request
+
+R Y
+,
+
+Y Z
+CancellationToken
+
+[ l
+ct
+
+m o
+=
+
+p q
+default
+
+r y
+)
+
+y z
+;
+
+z {
+Task 
+< 	#
+BusinessProfileResponse	  
+>  !
+UpdateAsync" -
+(- .
+Guid. 2
+userId3 9
+,9 :"
+BusinessProfileRequest; Q
+requestR Y
+,Y Z
+CancellationToken[ l
+ctm o
+=p q
+defaultr y
+)y z
+;z {
+Task 
+< 	#
+BusinessProfileResponse	  
+>  ! 
+SubmitForReviewAsync" 6
+(6 7
+Guid7 ;
+userId< B
+,B C
+CancellationTokenD U
+ctV X
+=Y Z
+default[ b
+)b c
+;c d
+Task 
+< 	
+DocumentResponse	 
+> 
+UploadDocumentAsync .
+(. /
+Guid/ 3
+userId4 :
+,: ;
+Stream< B
+
+fileStreamC M
+,M N
+stringO U
+fileNameV ^
+,^ _
+string` f
+contentTypeg r
+,r s
+longt x
+fileSize	y Å
+,
+Å Ç
+DocumentType
+É è
+documentType
+ê ú
+,
+ú ù
+CancellationToken
+û Ø
+ct
+∞ ≤
+=
+≥ ¥
+default
+µ º
+)
+º Ω
+;
+Ω æ
+Task 
+DeleteDocumentAsync	 
+( 
+Guid !
+userId" (
+,( )
+Guid* .
+
+documentId/ 9
+,9 :
+CancellationToken; L
+ctM O
+=P Q
+defaultR Y
+)Y Z
+;Z [
+Task 
+< 	
+PagedResult	 
+< (
+AdminBusinessProfileResponse 1
+>1 2
+>2 3
+GetAllAsync4 ?
+(? @
+
+PagedQuery@ J
+queryK P
+,P Q
+stringR X
+?X Y
+statusFilterZ f
+,f g
+CancellationTokenh y
+ctz |
+=} ~
+default	 Ü
+)
+Ü á
+;
+á à
+Task 
+< 	#
+BusinessProfileResponse	  
+>  !
+ReviewAsync" -
+(- .
+Guid. 2
+	profileId3 <
+,< =
+Guid> B
+adminIdC J
+,J K
+boolL P
+
+isApprovedQ [
+,[ \
+string] c
+?c d
+rejectionReasone t
+,t u
+CancellationToken	v á
+ct
+à ä
+=
+ã å
+default
+ç î
+)
+î ï
+;
+ï ñ
+} ¶
 YE:\ebay-clone-one\Backend\src\EBayClone.Application\Interfaces\IBackgroundEmailService.cs
 	namespace 	
 	EBayClone
@@ -48402,7 +48402,833 @@ DictionaryII 
 =II1 2
 nullII3 7
 )JJ 
-;JJ ±
+;JJ œ-
+KE:\ebay-clone-one\Backend\src\EBayClone.Application\DTOs\Admin\AdminDtos.cs
+	namespace 	
+	EBayClone
+ 
+. 
+Application 
+.  
+DTOs  $
+.$ %
+Admin% *
+;* +
+public 
+record 
+AdminStatsResponse  
+(  !
+int 
+
+TotalUsers 
+, 
+int 
+ActiveListings 
+, 
+int 
+TotalOrders 
+, 
+decimal		 
+TotalRevenue		 
+)
+
+ 
+;
+
+ 
+public 
+record 
+AdminUserResponse 
+(  
+Guid 
+Id	 
+, 
+string 
+
+	FirstName 
+, 
+string 
+
+LastName 
+, 
+string 
+
+Email 
+, 
+int 
+AccountType 
+, 
+string 
+
+Role 
+, 
+bool 
+IsEmailVerified	 
+, 
+bool 
+IsSuspended	 
+, 
+bool 
+	IsDeleted	 
+, 
+DateTime 
+	CreatedAt 
+) 
+; 
+public 
+record  
+AdminListingResponse "
+(" #
+Guid 
+Id	 
+, 
+string 
+
+Title 
+, 
+string 
+
+
+SellerName 
+, 
+decimal 
+Price 
+, 
+decimal 
+DiscountAmount 
+, 
+decimal 
+
+FinalPrice 
+, 
+int   
+Status   
+,   
+bool!! 
+HasPendingVersion!!	 
+,!! 
+bool"" 
+	IsDeleted""	 
+,"" 
+DateTime## 
+	CreatedAt## 
+)$$ 
+;$$ 
+public&& 
+record&& &
+AdminListingDetailResponse&& (
+(&&( )
+Guid'' 
+Id''	 
+,'' 
+string(( 
+
+Title(( 
+,(( 
+string)) 
+
+Description)) 
+,)) 
+string** 
+
+
+SellerName** 
+,** 
+string++ 
+
+SellerEmail++ 
+,++ 
+decimal,, 
+Price,, 
+,,, 
+decimal-- 
+DiscountAmount-- 
+,-- 
+decimal.. 
+
+FinalPrice.. 
+,.. 
+int// 
+Status// 
+,// 
+bool00 
+HasPendingVersion00	 
+,00 
+bool11 
+	IsDeleted11	 
+,11 
+DateTime22 
+	CreatedAt22 
+,22 "
+ListingVersionResponse33 
+?33 
+PendingVersion33 *
+)44 
+;44 
+public66 
+record66 
+AdminOrderResponse66  
+(66  !
+Guid77 
+Id77	 
+,77 
+string88 
+
+OrderNumber88 
+,88 
+string99 
+
+	BuyerName99 
+,99 
+int:: 
+	ItemCount:: 
+,:: 
+decimal;; 
+TotalAmount;; 
+,;; 
+int<< 
+Status<< 
+,<< 
+string== 
+
+PaymentMethod== 
+,== 
+int>> 
+PaymentStatus>> 
+,>> 
+string?? 
+
+???
+ 
+Carrier?? 
+,?? 
+string@@ 
+
+?@@
+ 
+TrackingNumber@@ 
+,@@ 
+DateTimeAA 
+	CreatedAtAA 
+)BB 
+;BB 
+publicDD 
+recordDD 
+AdminUsersQueryDD 
+(DD 
+intEE 
+PageEE 
+=EE 
+$numEE 
+,EE 
+intFF 
+PageSizeFF 
+=FF 
+$numFF 
+,FF 
+stringGG 
+
+?GG
+ 
+SearchGG 
+=GG 
+nullGG 
+,GG 
+intHH 
+?HH 
+AccountTypeHH	 
+=HH 
+nullHH 
+,HH 
+stringII 
+
+?II
+ 
+RoleII 
+=II 
+nullII 
+,II 
+stringJJ 
+
+?JJ
+ 
+StatusJJ 
+=JJ 
+nullJJ 
+,JJ 
+stringKK 
+
+SortByKK 
+=KK 
+$strKK 
+,KK  
+stringLL 
+
+SortDirectionLL 
+=LL 
+$strLL !
+)MM 
+;MM 
+publicOO 
+recordOO 
+AdminListingsQueryOO  
+(OO  !
+intPP 
+PagePP 
+=PP 
+$numPP 
+,PP 
+intQQ 
+PageSizeQQ 
+=QQ 
+$numQQ 
+,QQ 
+stringRR 
+
+?RR
+ 
+SearchRR 
+=RR 
+nullRR 
+,RR 
+intSS 
+?SS 
+StatusSS	 
+=SS 
+nullSS 
+,SS 
+stringTT 
+
+?TT
+ 
+
+VisibilityTT 
+=TT 
+nullTT 
+,TT 
+stringUU 
+
+SortByUU 
+=UU 
+$strUU 
+,UU  
+stringVV 
+
+SortDirectionVV 
+=VV 
+$strVV !
+)WW 
+;WW 
+publicYY 
+recordYY 
+AdminOrdersQueryYY 
+(YY 
+intZZ 
+PageZZ 
+=ZZ 
+$numZZ 
+,ZZ 
+int[[ 
+PageSize[[ 
+=[[ 
+$num[[ 
+,[[ 
+string\\ 
+
+?\\
+ 
+Search\\ 
+=\\ 
+null\\ 
+,\\ 
+int]] 
+?]] 
+Status]]	 
+=]] 
+null]] 
+,]] 
+string^^ 
+
+SortBy^^ 
+=^^ 
+$str^^ 
+,^^  
+string__ 
+
+SortDirection__ 
+=__ 
+$str__ !
+)`` 
+;`` ã
+IE:\ebay-clone-one\Backend\src\EBayClone.Application\Common\ApiResponse.cs
+	namespace 	
+	EBayClone
+ 
+. 
+Application 
+.  
+Common  &
+;& '
+public 
+class 
+ApiResponse 
+< 
+T 
+> 
+{ 
+public 
+
+bool 
+Success 
+{ 
+get 
+; 
+init #
+;# $
+}% &
+public 
+
+string 
+Message 
+{ 
+get 
+;  
+init! %
+;% &
+}' (
+=) *
+string+ 1
+.1 2
+Empty2 7
+;7 8
+public 
+
+T 
+? 
+Data 
+{ 
+get 
+; 
+init 
+; 
+}  !
+public 
+
+IEnumerable 
+< 
+string 
+> 
+? 
+Errors  &
+{' (
+get) ,
+;, -
+init. 2
+;2 3
+}4 5
+public
+
+ 
+
+static
+
+ 
+ApiResponse
+
+ 
+<
+
+ 
+T
+
+ 
+>
+
+  
+Ok
+
+! #
+(
+
+# $
+T
+
+$ %
+data
+
+& *
+,
+
+* +
+string
+
+, 2
+message
+
+3 :
+=
+
+; <
+$str
+
+= F
+)
+
+F G
+=>
+
+H J
+new 
+( 
+) 
+{ 
+Success 
+= 
+true 
+, 
+Message  '
+=( )
+message* 1
+,1 2
+Data3 7
+=8 9
+data: >
+}? @
+;@ A
+public 
+
+static 
+ApiResponse 
+< 
+T 
+>  
+Fail! %
+(% &
+string& ,
+message- 4
+,4 5
+IEnumerable6 A
+<A B
+stringB H
+>H I
+?I J
+errorsK Q
+=R S
+nullT X
+)X Y
+=>Z \
+new 
+( 
+) 
+{ 
+Success 
+= 
+false 
+,  
+Message! (
+=) *
+message+ 2
+,2 3
+Errors4 :
+=; <
+errors= C
+}D E
+;E F
+} 
+public 
+class 
+ApiResponse 
+: 
+ApiResponse &
+<& '
+object' -
+>- .
+{ 
+public 
+
+static 
+ApiResponse 
+Ok  
+(  !
+string! '
+message( /
+=0 1
+$str2 ;
+); <
+=>= ?
+new 
+( 
+) 
+{ 
+Success 
+= 
+true 
+, 
+Message  '
+=( )
+message* 1
+}2 3
+;3 4
+public 
+
+new 
+static 
+ApiResponse !
+Fail" &
+(& '
+string' -
+message. 5
+,5 6
+IEnumerable7 B
+<B C
+stringC I
+>I J
+?J K
+errorsL R
+=S T
+nullU Y
+)Y Z
+=>[ ]
+new 
+( 
+) 
+{ 
+Success 
+= 
+false 
+,  
+Message! (
+=) *
+message+ 2
+,2 3
+Errors4 :
+=; <
+errors= C
+}D E
+;E F
+} ˙
+PE:\ebay-clone-one\Backend\src\EBayClone.Application\DTOs\Auctions\AuctionDtos.cs
+	namespace 	
+	EBayClone
+ 
+. 
+Application 
+.  
+DTOs  $
+.$ %
+Auctions% -
+;- .
+public 
+record 
+PlaceBidRequest 
+( 
+decimal %
+Amount& ,
+), -
+;- .
+public 
+record 
+BidResponse 
+( 
+Guid 
+Id	 
+, 
+Guid 
+	ListingId	 
+, 
+string 
+
+BidderHandle 
+, 
+decimal		 
+Amount		 
+,		 
+bool
+
+ 
+	IsWinning
+
+	 
+,
+
+ 
+DateTime 
+PlacedAt 
+) 
+; 
+public 
+record !
+AuctionStatusResponse #
+(# $
+Guid 
+	ListingId	 
+, 
+string 
+
+Title 
+, 
+decimal 
+? 
+StartingBid 
+, 
+decimal 
+? 
+CurrentBidAmount 
+, 
+decimal 
+? 
+ReservePrice 
+, 
+bool 
+
+ReserveMet	 
+, 
+decimal 
+? 
+BuyItNowPrice 
+, 
+decimal 
+MinBidIncrement 
+, 
+int 
+BidCount 
+, 
+DateTime 
+? 
+AuctionStartAt 
+, 
+DateTime 
+? 
+AuctionEndAt 
+, 
+int 
+Status 
+, 
+bool  
+IsCurrentUserWinning	 
+= 
+false  %
+) 
+; 
+public 
+record !
+AuctionBidPlacedEvent #
+(# $
+Guid 
+	ListingId	 
+, 
+decimal   
+Amount   
+,   
+int!! 
+BidCount!! 
+,!! 
+DateTime"" 
+?"" 
+AuctionEndAt"" 
+,"" 
+string## 
+
+BidderHandle## 
+)$$ 
+;$$ 
+public&& 
+record&&  
+AuctionExtendRequest&& "
+(&&" #
+int&&# &
+Minutes&&' .
+)&&. /
+;&&/ 0
+public(( 
+record((  
+AdminAuctionResponse(( "
+(((" #
+Guid)) 
+	ListingId))	 
+,)) 
+string** 
+
+Title** 
+,** 
+decimal++ 
+?++ 
+StartingBid++ 
+,++ 
+decimal,, 
+?,, 
+CurrentBidAmount,, 
+,,, 
+decimal-- 
+?-- 
+ReservePrice-- 
+,-- 
+int.. 
+BidCount.. 
+,.. 
+DateTime// 
+?// 
+AuctionEndAt// 
+,// 
+int00 
+Status00 
+,00 
+string11 
+
+
+SellerName11 
+,11 
+Guid22 
+SellerId22	 
+)33 
+;33 
+public55 
+record55 
+AdminBidResponse55 
+(55 
+Guid66 
+Id66	 
+,66 
+Guid77 
+	ListingId77	 
+,77 
+Guid88 
+BidderId88	 
+,88 
+string99 
+
+
+BidderName99 
+,99 
+string:: 
+
+BidderEmail:: 
+,:: 
+decimal;; 
+Amount;; 
+,;; 
+bool<< 
+	IsWinning<<	 
+,<< 
+DateTime== 
+PlacedAt== 
+)>> 
+;>> 
+public@@ 
+record@@ 
+AdminAuctionsQuery@@  
+(@@  !
+int@@! $
+Page@@% )
+,@@) *
+int@@+ .
+PageSize@@/ 7
+,@@7 8
+int@@9 <
+?@@< =
+Status@@> D
+)@@D E
+;@@E F±
 XE:\ebay-clone-one\Backend\src\EBayClone.Application\DTOs\Listings\ListingApprovalDtos.cs
 	namespace 	
 	EBayClone
@@ -48633,7 +49459,218 @@ ReviewedAt"" 
 >22 
 	ImageUrls22 #
 )33 
-;33 ê
+;33 ¸
+IE:\ebay-clone-one\Backend\src\EBayClone.Application\Common\PagedResult.cs
+	namespace 	
+	EBayClone
+ 
+. 
+Application 
+.  
+Common  &
+;& '
+public 
+class 
+PagedResult 
+< 
+T 
+> 
+{ 
+public 
+
+IReadOnlyList 
+< 
+T 
+> 
+Items !
+{" #
+get$ '
+;' (
+init) -
+;- .
+}/ 0
+=1 2
+[3 4
+]4 5
+;5 6
+public 
+
+int 
+Page 
+{ 
+get 
+; 
+init 
+;  
+}! "
+public 
+
+int 
+PageSize 
+{ 
+get 
+; 
+init #
+;# $
+}% &
+public 
+
+int 
+
+TotalCount 
+{ 
+get 
+;  
+init! %
+;% &
+}' (
+public		 
+
+int		 
+
+TotalPages		 
+=>		 
+(		 
+int		 !
+)		! "
+Math		" &
+.		& '
+Ceiling		' .
+(		. /
+(		/ 0
+double		0 6
+)		6 7
+
+TotalCount		7 A
+/		B C
+PageSize		D L
+)		L M
+;		M N
+public
+
+ 
+
+bool
+
+ 
+HasNextPage
+
+ 
+=>
+
+ 
+Page
+
+ #
+<
+
+$ %
+
+TotalPages
+
+& 0
+;
+
+0 1
+public 
+
+bool 
+HasPreviousPage 
+=>  "
+Page# '
+>( )
+$num* +
+;+ ,
+public 
+
+static 
+PagedResult 
+< 
+T 
+>  
+Create! '
+(' (
+IReadOnlyList( 5
+<5 6
+T6 7
+>7 8
+items9 >
+,> ?
+int@ C
+
+totalCountD N
+,N O
+intP S
+pageT X
+,X Y
+intZ ]
+pageSize^ f
+)f g
+=>h j
+new 
+( 
+) 
+{ 
+Items 
+= 
+items 
+, 
+
+TotalCount )
+=* +
+
+totalCount, 6
+,6 7
+Page8 <
+== >
+page? C
+,C D
+PageSizeE M
+=N O
+pageSizeP X
+}Y Z
+;Z [
+} 
+public 
+record 
+
+PagedQuery 
+( 
+int 
+Page 
+= 
+$num 
+, 
+int 
+PageSize 
+= 
+$num 
+, 
+string 
+
+?
+ 
+Search 
+= 
+null 
+, 
+string 
+
+?
+ 
+SortBy 
+= 
+null 
+, 
+string 
+
+?
+ 
+SortDirection 
+= 
+$str "
+) 
+; ê
 \E:\ebay-clone-one\Backend\src\EBayClone.Application\DTOs\EmailTemplates\EmailTemplateDtos.cs
 	namespace 	
 	EBayClone
@@ -49198,1041 +50235,4 @@ LE:\ebay-clone-one\Backend\src\EBayClone.Application\DTOs\Auth\AuthRequest.cs
 string! '
 Token( -
 )- .
-;. /˙
-PE:\ebay-clone-one\Backend\src\EBayClone.Application\DTOs\Auctions\AuctionDtos.cs
-	namespace 	
-	EBayClone
- 
-. 
-Application 
-.  
-DTOs  $
-.$ %
-Auctions% -
-;- .
-public 
-record 
-PlaceBidRequest 
-( 
-decimal %
-Amount& ,
-), -
-;- .
-public 
-record 
-BidResponse 
-( 
-Guid 
-Id	 
-, 
-Guid 
-	ListingId	 
-, 
-string 
-
-BidderHandle 
-, 
-decimal		 
-Amount		 
-,		 
-bool
-
- 
-	IsWinning
-
-	 
-,
-
- 
-DateTime 
-PlacedAt 
-) 
-; 
-public 
-record !
-AuctionStatusResponse #
-(# $
-Guid 
-	ListingId	 
-, 
-string 
-
-Title 
-, 
-decimal 
-? 
-StartingBid 
-, 
-decimal 
-? 
-CurrentBidAmount 
-, 
-decimal 
-? 
-ReservePrice 
-, 
-bool 
-
-ReserveMet	 
-, 
-decimal 
-? 
-BuyItNowPrice 
-, 
-decimal 
-MinBidIncrement 
-, 
-int 
-BidCount 
-, 
-DateTime 
-? 
-AuctionStartAt 
-, 
-DateTime 
-? 
-AuctionEndAt 
-, 
-int 
-Status 
-, 
-bool  
-IsCurrentUserWinning	 
-= 
-false  %
-) 
-; 
-public 
-record !
-AuctionBidPlacedEvent #
-(# $
-Guid 
-	ListingId	 
-, 
-decimal   
-Amount   
-,   
-int!! 
-BidCount!! 
-,!! 
-DateTime"" 
-?"" 
-AuctionEndAt"" 
-,"" 
-string## 
-
-BidderHandle## 
-)$$ 
-;$$ 
-public&& 
-record&&  
-AuctionExtendRequest&& "
-(&&" #
-int&&# &
-Minutes&&' .
-)&&. /
-;&&/ 0
-public(( 
-record((  
-AdminAuctionResponse(( "
-(((" #
-Guid)) 
-	ListingId))	 
-,)) 
-string** 
-
-Title** 
-,** 
-decimal++ 
-?++ 
-StartingBid++ 
-,++ 
-decimal,, 
-?,, 
-CurrentBidAmount,, 
-,,, 
-decimal-- 
-?-- 
-ReservePrice-- 
-,-- 
-int.. 
-BidCount.. 
-,.. 
-DateTime// 
-?// 
-AuctionEndAt// 
-,// 
-int00 
-Status00 
-,00 
-string11 
-
-
-SellerName11 
-,11 
-Guid22 
-SellerId22	 
-)33 
-;33 
-public55 
-record55 
-AdminBidResponse55 
-(55 
-Guid66 
-Id66	 
-,66 
-Guid77 
-	ListingId77	 
-,77 
-Guid88 
-BidderId88	 
-,88 
-string99 
-
-
-BidderName99 
-,99 
-string:: 
-
-BidderEmail:: 
-,:: 
-decimal;; 
-Amount;; 
-,;; 
-bool<< 
-	IsWinning<<	 
-,<< 
-DateTime== 
-PlacedAt== 
-)>> 
-;>> 
-public@@ 
-record@@ 
-AdminAuctionsQuery@@  
-(@@  !
-int@@! $
-Page@@% )
-,@@) *
-int@@+ .
-PageSize@@/ 7
-,@@7 8
-int@@9 <
-?@@< =
-Status@@> D
-)@@D E
-;@@E Fœ-
-KE:\ebay-clone-one\Backend\src\EBayClone.Application\DTOs\Admin\AdminDtos.cs
-	namespace 	
-	EBayClone
- 
-. 
-Application 
-.  
-DTOs  $
-.$ %
-Admin% *
-;* +
-public 
-record 
-AdminStatsResponse  
-(  !
-int 
-
-TotalUsers 
-, 
-int 
-ActiveListings 
-, 
-int 
-TotalOrders 
-, 
-decimal		 
-TotalRevenue		 
-)
-
- 
-;
-
- 
-public 
-record 
-AdminUserResponse 
-(  
-Guid 
-Id	 
-, 
-string 
-
-	FirstName 
-, 
-string 
-
-LastName 
-, 
-string 
-
-Email 
-, 
-int 
-AccountType 
-, 
-string 
-
-Role 
-, 
-bool 
-IsEmailVerified	 
-, 
-bool 
-IsSuspended	 
-, 
-bool 
-	IsDeleted	 
-, 
-DateTime 
-	CreatedAt 
-) 
-; 
-public 
-record  
-AdminListingResponse "
-(" #
-Guid 
-Id	 
-, 
-string 
-
-Title 
-, 
-string 
-
-
-SellerName 
-, 
-decimal 
-Price 
-, 
-decimal 
-DiscountAmount 
-, 
-decimal 
-
-FinalPrice 
-, 
-int   
-Status   
-,   
-bool!! 
-HasPendingVersion!!	 
-,!! 
-bool"" 
-	IsDeleted""	 
-,"" 
-DateTime## 
-	CreatedAt## 
-)$$ 
-;$$ 
-public&& 
-record&& &
-AdminListingDetailResponse&& (
-(&&( )
-Guid'' 
-Id''	 
-,'' 
-string(( 
-
-Title(( 
-,(( 
-string)) 
-
-Description)) 
-,)) 
-string** 
-
-
-SellerName** 
-,** 
-string++ 
-
-SellerEmail++ 
-,++ 
-decimal,, 
-Price,, 
-,,, 
-decimal-- 
-DiscountAmount-- 
-,-- 
-decimal.. 
-
-FinalPrice.. 
-,.. 
-int// 
-Status// 
-,// 
-bool00 
-HasPendingVersion00	 
-,00 
-bool11 
-	IsDeleted11	 
-,11 
-DateTime22 
-	CreatedAt22 
-,22 "
-ListingVersionResponse33 
-?33 
-PendingVersion33 *
-)44 
-;44 
-public66 
-record66 
-AdminOrderResponse66  
-(66  !
-Guid77 
-Id77	 
-,77 
-string88 
-
-OrderNumber88 
-,88 
-string99 
-
-	BuyerName99 
-,99 
-int:: 
-	ItemCount:: 
-,:: 
-decimal;; 
-TotalAmount;; 
-,;; 
-int<< 
-Status<< 
-,<< 
-string== 
-
-PaymentMethod== 
-,== 
-int>> 
-PaymentStatus>> 
-,>> 
-string?? 
-
-???
- 
-Carrier?? 
-,?? 
-string@@ 
-
-?@@
- 
-TrackingNumber@@ 
-,@@ 
-DateTimeAA 
-	CreatedAtAA 
-)BB 
-;BB 
-publicDD 
-recordDD 
-AdminUsersQueryDD 
-(DD 
-intEE 
-PageEE 
-=EE 
-$numEE 
-,EE 
-intFF 
-PageSizeFF 
-=FF 
-$numFF 
-,FF 
-stringGG 
-
-?GG
- 
-SearchGG 
-=GG 
-nullGG 
-,GG 
-intHH 
-?HH 
-AccountTypeHH	 
-=HH 
-nullHH 
-,HH 
-stringII 
-
-?II
- 
-RoleII 
-=II 
-nullII 
-,II 
-stringJJ 
-
-?JJ
- 
-StatusJJ 
-=JJ 
-nullJJ 
-,JJ 
-stringKK 
-
-SortByKK 
-=KK 
-$strKK 
-,KK  
-stringLL 
-
-SortDirectionLL 
-=LL 
-$strLL !
-)MM 
-;MM 
-publicOO 
-recordOO 
-AdminListingsQueryOO  
-(OO  !
-intPP 
-PagePP 
-=PP 
-$numPP 
-,PP 
-intQQ 
-PageSizeQQ 
-=QQ 
-$numQQ 
-,QQ 
-stringRR 
-
-?RR
- 
-SearchRR 
-=RR 
-nullRR 
-,RR 
-intSS 
-?SS 
-StatusSS	 
-=SS 
-nullSS 
-,SS 
-stringTT 
-
-?TT
- 
-
-VisibilityTT 
-=TT 
-nullTT 
-,TT 
-stringUU 
-
-SortByUU 
-=UU 
-$strUU 
-,UU  
-stringVV 
-
-SortDirectionVV 
-=VV 
-$strVV !
-)WW 
-;WW 
-publicYY 
-recordYY 
-AdminOrdersQueryYY 
-(YY 
-intZZ 
-PageZZ 
-=ZZ 
-$numZZ 
-,ZZ 
-int[[ 
-PageSize[[ 
-=[[ 
-$num[[ 
-,[[ 
-string\\ 
-
-?\\
- 
-Search\\ 
-=\\ 
-null\\ 
-,\\ 
-int]] 
-?]] 
-Status]]	 
-=]] 
-null]] 
-,]] 
-string^^ 
-
-SortBy^^ 
-=^^ 
-$str^^ 
-,^^  
-string__ 
-
-SortDirection__ 
-=__ 
-$str__ !
-)`` 
-;`` ¸
-IE:\ebay-clone-one\Backend\src\EBayClone.Application\Common\PagedResult.cs
-	namespace 	
-	EBayClone
- 
-. 
-Application 
-.  
-Common  &
-;& '
-public 
-class 
-PagedResult 
-< 
-T 
-> 
-{ 
-public 
-
-IReadOnlyList 
-< 
-T 
-> 
-Items !
-{" #
-get$ '
-;' (
-init) -
-;- .
-}/ 0
-=1 2
-[3 4
-]4 5
-;5 6
-public 
-
-int 
-Page 
-{ 
-get 
-; 
-init 
-;  
-}! "
-public 
-
-int 
-PageSize 
-{ 
-get 
-; 
-init #
-;# $
-}% &
-public 
-
-int 
-
-TotalCount 
-{ 
-get 
-;  
-init! %
-;% &
-}' (
-public		 
-
-int		 
-
-TotalPages		 
-=>		 
-(		 
-int		 !
-)		! "
-Math		" &
-.		& '
-Ceiling		' .
-(		. /
-(		/ 0
-double		0 6
-)		6 7
-
-TotalCount		7 A
-/		B C
-PageSize		D L
-)		L M
-;		M N
-public
-
- 
-
-bool
-
- 
-HasNextPage
-
- 
-=>
-
- 
-Page
-
- #
-<
-
-$ %
-
-TotalPages
-
-& 0
-;
-
-0 1
-public 
-
-bool 
-HasPreviousPage 
-=>  "
-Page# '
->( )
-$num* +
-;+ ,
-public 
-
-static 
-PagedResult 
-< 
-T 
->  
-Create! '
-(' (
-IReadOnlyList( 5
-<5 6
-T6 7
->7 8
-items9 >
-,> ?
-int@ C
-
-totalCountD N
-,N O
-intP S
-pageT X
-,X Y
-intZ ]
-pageSize^ f
-)f g
-=>h j
-new 
-( 
-) 
-{ 
-Items 
-= 
-items 
-, 
-
-TotalCount )
-=* +
-
-totalCount, 6
-,6 7
-Page8 <
-== >
-page? C
-,C D
-PageSizeE M
-=N O
-pageSizeP X
-}Y Z
-;Z [
-} 
-public 
-record 
-
-PagedQuery 
-( 
-int 
-Page 
-= 
-$num 
-, 
-int 
-PageSize 
-= 
-$num 
-, 
-string 
-
-?
- 
-Search 
-= 
-null 
-, 
-string 
-
-?
- 
-SortBy 
-= 
-null 
-, 
-string 
-
-?
- 
-SortDirection 
-= 
-$str "
-) 
-; ã
-IE:\ebay-clone-one\Backend\src\EBayClone.Application\Common\ApiResponse.cs
-	namespace 	
-	EBayClone
- 
-. 
-Application 
-.  
-Common  &
-;& '
-public 
-class 
-ApiResponse 
-< 
-T 
-> 
-{ 
-public 
-
-bool 
-Success 
-{ 
-get 
-; 
-init #
-;# $
-}% &
-public 
-
-string 
-Message 
-{ 
-get 
-;  
-init! %
-;% &
-}' (
-=) *
-string+ 1
-.1 2
-Empty2 7
-;7 8
-public 
-
-T 
-? 
-Data 
-{ 
-get 
-; 
-init 
-; 
-}  !
-public 
-
-IEnumerable 
-< 
-string 
-> 
-? 
-Errors  &
-{' (
-get) ,
-;, -
-init. 2
-;2 3
-}4 5
-public
-
- 
-
-static
-
- 
-ApiResponse
-
- 
-<
-
- 
-T
-
- 
->
-
-  
-Ok
-
-! #
-(
-
-# $
-T
-
-$ %
-data
-
-& *
-,
-
-* +
-string
-
-, 2
-message
-
-3 :
-=
-
-; <
-$str
-
-= F
-)
-
-F G
-=>
-
-H J
-new 
-( 
-) 
-{ 
-Success 
-= 
-true 
-, 
-Message  '
-=( )
-message* 1
-,1 2
-Data3 7
-=8 9
-data: >
-}? @
-;@ A
-public 
-
-static 
-ApiResponse 
-< 
-T 
->  
-Fail! %
-(% &
-string& ,
-message- 4
-,4 5
-IEnumerable6 A
-<A B
-stringB H
->H I
-?I J
-errorsK Q
-=R S
-nullT X
-)X Y
-=>Z \
-new 
-( 
-) 
-{ 
-Success 
-= 
-false 
-,  
-Message! (
-=) *
-message+ 2
-,2 3
-Errors4 :
-=; <
-errors= C
-}D E
-;E F
-} 
-public 
-class 
-ApiResponse 
-: 
-ApiResponse &
-<& '
-object' -
->- .
-{ 
-public 
-
-static 
-ApiResponse 
-Ok  
-(  !
-string! '
-message( /
-=0 1
-$str2 ;
-); <
-=>= ?
-new 
-( 
-) 
-{ 
-Success 
-= 
-true 
-, 
-Message  '
-=( )
-message* 1
-}2 3
-;3 4
-public 
-
-new 
-static 
-ApiResponse !
-Fail" &
-(& '
-string' -
-message. 5
-,5 6
-IEnumerable7 B
-<B C
-stringC I
->I J
-?J K
-errorsL R
-=S T
-nullU Y
-)Y Z
-=>[ ]
-new 
-( 
-) 
-{ 
-Success 
-= 
-false 
-,  
-Message! (
-=) *
-message+ 2
-,2 3
-Errors4 :
-=; <
-errors= C
-}D E
-;E F
-} 
+;. /

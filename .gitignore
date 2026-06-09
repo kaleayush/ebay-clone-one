@@ -6,6 +6,7 @@ Frontend/.env.local
 Frontend/.env.*.local
 
 # ===== Backend =====
+Backend/sonar-scan.bat
 Backend/bin/
 Backend/obj/
 Backend/**/.vs/
