@@ -238,22 +238,101 @@ public class AuctionService(
 
     public async Task FinalizeAuctionAsync(Guid listingId, CancellationToken ct = default)
     {
-        var listing = await listingRepo.Query()
-            .FirstOrDefaultAsync(l => l.Id == listingId, ct);
-
-        if (listing is null || listing.Status != ListingStatus.Active) return;
-
-        var winningBid = await bidRepo.Query()
-            .Include(b => b.Bidder)
-            .Where(b => b.ListingId == listingId && b.IsWinning)
-            .OrderByDescending(b => b.Amount)
-            .FirstOrDefaultAsync(ct);
-
-        var reserveMet = listing.ReservePrice is null ||
-            (winningBid?.Amount ?? 0) >= listing.ReservePrice;
-
-        if (winningBid is null || !reserveMet)
+        var sem = lockService.GetLock(listingId);
+        await sem.WaitAsync(ct);
+        try
         {
+            var listing = await listingRepo.Query()
+                .FirstOrDefaultAsync(l => l.Id == listingId, ct);
+
+            if (listing is null || listing.Status != ListingStatus.Active) return;
+
+            var winningBid = await bidRepo.Query()
+                .Include(b => b.Bidder)
+                .Where(b => b.ListingId == listingId && b.IsWinning)
+                .OrderByDescending(b => b.Amount)
+                .FirstOrDefaultAsync(ct);
+
+            var reserveMet = listing.ReservePrice is null ||
+                (winningBid?.Amount ?? 0) >= listing.ReservePrice;
+
+            if (winningBid is null || !reserveMet)
+            {
+                listing.Status = ListingStatus.Ended;
+                listingRepo.Update(listing);
+
+                await resultRepo.AddAsync(new AuctionResult
+                {
+                    ListingId = listingId,
+                    ReserveMet = false,
+                    EndedAt = DateTime.UtcNow,
+                    EndReason = AuctionEndReason.TimeExpired,
+                }, ct);
+                await resultRepo.SaveChangesAsync(ct);
+
+                await notifier.AuctionEndedAsync(listingId, null, null, null, false, ct);
+                logger.LogInformation("[EMAIL] Auction Ended - No Winner | Listing: {ListingId}", listingId);
+                return;
+            }
+
+            var order = new Order
+            {
+                OrderNumber = $"AUC-{DateTime.UtcNow:yyyyMMdd}-{Guid.NewGuid().ToString()[..6].ToUpper()}",
+                BuyerId = winningBid.BidderId,
+                Status = OrderStatus.Confirmed,
+                PaymentMethod = "Auction",
+                PaymentStatus = PaymentStatus.Pending,
+                ShippingAddress = "Pending — buyer to provide",
+                TotalAmount = winningBid.Amount,
+            };
+            order.Items.Add(new OrderItem
+            {
+                ListingId = listingId,
+                ListingTitle = listing.Title,
+                Quantity = 1,
+                UnitPrice = winningBid.Amount,
+            });
+            await orderRepo.AddAsync(order, ct);
+
+            listing.Status = ListingStatus.Sold;
+            listingRepo.Update(listing);
+
+            await resultRepo.AddAsync(new AuctionResult
+            {
+                ListingId = listingId,
+                WinnerId = winningBid.BidderId,
+                WinningAmount = winningBid.Amount,
+                ReserveMet = true,
+                EndedAt = DateTime.UtcNow,
+                EndReason = AuctionEndReason.TimeExpired,
+            }, ct);
+            await resultRepo.SaveChangesAsync(ct);
+
+            await notifier.AuctionEndedAsync(listingId, winningBid.BidderId, MaskBidderId(winningBid.BidderId), winningBid.Amount, true, ct);
+            logger.LogInformation("[EMAIL] Auction Won | To: {Email} | Listing: {ListingId} | Amount: {Amount}",
+                winningBid.Bidder.Email, listingId, winningBid.Amount);
+        }
+        finally
+        {
+            sem.Release();
+        }
+    }
+
+    public async Task CancelAuctionAsync(Guid listingId, CancellationToken ct = default)
+    {
+        var sem = lockService.GetLock(listingId);
+        await sem.WaitAsync(ct);
+        try
+        {
+            var listing = await listingRepo.Query()
+                .FirstOrDefaultAsync(l => l.Id == listingId, ct)
+                ?? throw new KeyNotFoundException(ListingNotFound);
+
+            if (listing.ListingType != ListingType.Auction)
+                throw new InvalidOperationException("Not an auction listing.");
+            if (listing.Status != ListingStatus.Active)
+                throw new InvalidOperationException("Only active auctions can be cancelled.");
+
             listing.Status = ListingStatus.Ended;
             listingRepo.Update(listing);
 
@@ -262,78 +341,17 @@ public class AuctionService(
                 ListingId = listingId,
                 ReserveMet = false,
                 EndedAt = DateTime.UtcNow,
-                EndReason = AuctionEndReason.TimeExpired,
+                EndReason = AuctionEndReason.AdminCancelled,
             }, ct);
             await resultRepo.SaveChangesAsync(ct);
 
-            await notifier.AuctionEndedAsync(listingId, null, null, null, false, ct);
-            logger.LogInformation("[EMAIL] Auction Ended - No Winner | Listing: {ListingId}", listingId);
-            return;
+            await notifier.AuctionCancelledAsync(listingId, "Auction cancelled by administrator.", ct);
+            logger.LogInformation("Auction cancelled by admin: {ListingId}", listingId);
         }
-
-        var order = new Order
+        finally
         {
-            OrderNumber = $"AUC-{DateTime.UtcNow:yyyyMMdd}-{Guid.NewGuid().ToString()[..6].ToUpper()}",
-            BuyerId = winningBid.BidderId,
-            Status = OrderStatus.Confirmed,
-            PaymentMethod = "Auction",
-            PaymentStatus = PaymentStatus.Pending,
-            ShippingAddress = "Pending — buyer to provide",
-            TotalAmount = winningBid.Amount,
-        };
-        order.Items.Add(new OrderItem
-        {
-            ListingId = listingId,
-            ListingTitle = listing.Title,
-            Quantity = 1,
-            UnitPrice = winningBid.Amount,
-        });
-        await orderRepo.AddAsync(order, ct);
-
-        listing.Status = ListingStatus.Sold;
-        listingRepo.Update(listing);
-
-        await resultRepo.AddAsync(new AuctionResult
-        {
-            ListingId = listingId,
-            WinnerId = winningBid.BidderId,
-            WinningAmount = winningBid.Amount,
-            ReserveMet = true,
-            EndedAt = DateTime.UtcNow,
-            EndReason = AuctionEndReason.TimeExpired,
-        }, ct);
-        await resultRepo.SaveChangesAsync(ct);
-
-        await notifier.AuctionEndedAsync(listingId, winningBid.BidderId, MaskBidderId(winningBid.BidderId), winningBid.Amount, true, ct);
-        logger.LogInformation("[EMAIL] Auction Won | To: {Email} | Listing: {ListingId} | Amount: {Amount}",
-            winningBid.Bidder.Email, listingId, winningBid.Amount);
-    }
-
-    public async Task CancelAuctionAsync(Guid listingId, CancellationToken ct = default)
-    {
-        var listing = await listingRepo.Query()
-            .FirstOrDefaultAsync(l => l.Id == listingId, ct)
-            ?? throw new KeyNotFoundException(ListingNotFound);
-
-        if (listing.ListingType != ListingType.Auction)
-            throw new InvalidOperationException("Not an auction listing.");
-        if (listing.Status != ListingStatus.Active)
-            throw new InvalidOperationException("Only active auctions can be cancelled.");
-
-        listing.Status = ListingStatus.Ended;
-        listingRepo.Update(listing);
-
-        await resultRepo.AddAsync(new AuctionResult
-        {
-            ListingId = listingId,
-            ReserveMet = false,
-            EndedAt = DateTime.UtcNow,
-            EndReason = AuctionEndReason.AdminCancelled,
-        }, ct);
-        await resultRepo.SaveChangesAsync(ct);
-
-        await notifier.AuctionCancelledAsync(listingId, "Auction cancelled by administrator.", ct);
-        logger.LogInformation("Auction cancelled by admin: {ListingId}", listingId);
+            sem.Release();
+        }
     }
 
     public async Task ExtendAuctionAsync(Guid listingId, int minutes, CancellationToken ct = default)
@@ -341,21 +359,30 @@ public class AuctionService(
         if (minutes <= 0 || minutes > 1440)
             throw new InvalidOperationException("Extension must be between 1 and 1440 minutes.");
 
-        var listing = await listingRepo.Query()
-            .FirstOrDefaultAsync(l => l.Id == listingId, ct)
-            ?? throw new KeyNotFoundException(ListingNotFound);
+        var sem = lockService.GetLock(listingId);
+        await sem.WaitAsync(ct);
+        try
+        {
+            var listing = await listingRepo.Query()
+                .FirstOrDefaultAsync(l => l.Id == listingId, ct)
+                ?? throw new KeyNotFoundException(ListingNotFound);
 
-        if (listing.ListingType != ListingType.Auction)
-            throw new InvalidOperationException("Not an auction listing.");
-        if (listing.Status != ListingStatus.Active)
-            throw new InvalidOperationException("Only active auctions can be extended.");
+            if (listing.ListingType != ListingType.Auction)
+                throw new InvalidOperationException("Not an auction listing.");
+            if (listing.Status != ListingStatus.Active)
+                throw new InvalidOperationException("Only active auctions can be extended.");
 
-        listing.AuctionEndAt = (listing.AuctionEndAt ?? DateTime.UtcNow).AddMinutes(minutes);
-        listingRepo.Update(listing);
-        await listingRepo.SaveChangesAsync(ct);
+            listing.AuctionEndAt = (listing.AuctionEndAt ?? DateTime.UtcNow).AddMinutes(minutes);
+            listingRepo.Update(listing);
+            await listingRepo.SaveChangesAsync(ct);
 
-        await notifier.TimeExtendedAsync(listingId, listing.AuctionEndAt.Value, ct);
-        logger.LogInformation("Auction {ListingId} extended by {Minutes} min", listingId, minutes);
+            await notifier.TimeExtendedAsync(listingId, listing.AuctionEndAt.Value, ct);
+            logger.LogInformation("Auction {ListingId} extended by {Minutes} min", listingId, minutes);
+        }
+        finally
+        {
+            sem.Release();
+        }
     }
 
     public async Task<PagedResult<AdminAuctionResponse>> GetAdminAuctionsAsync(AdminAuctionsQuery query, CancellationToken ct = default)
