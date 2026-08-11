@@ -1,7 +1,7 @@
 {
-  "name": "ebay-clone-mcp-server",
+  "name": "shopease-mcp-server",
   "version": "1.0.0",
-  "description": "MCP server for eBay Clone — exposes listings, orders, users, and admin tools to Claude",
+  "description": "MCP server for ShopEase — exposes listings, orders, users, and admin tools to Claude",
   "type": "module",
   "main": "dist/index.js",
   "scripts": {

@@ -13,8 +13,8 @@ public class JwtService(IConfiguration configuration) : IJwtService
 {
     private readonly string _secret = configuration["JwtSettings:Secret"]
         ?? throw new InvalidOperationException("JwtSettings:Secret is not configured.");
-    private readonly string _issuer = configuration["JwtSettings:Issuer"] ?? "EBayCloneApi";
-    private readonly string _audience = configuration["JwtSettings:Audience"] ?? "EBayCloneFrontend";
+    private readonly string _issuer = configuration["JwtSettings:Issuer"] ?? "ShopEaseApi";
+    private readonly string _audience = configuration["JwtSettings:Audience"] ?? "ShopEaseFrontend";
     private readonly int _expiryMinutes = int.Parse(configuration["JwtSettings:ExpiryMinutes"] ?? "15");
 
     public string GenerateAccessToken(User user)

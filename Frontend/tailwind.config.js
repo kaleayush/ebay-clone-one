@@ -22,7 +22,7 @@ export default {
           500: '#f5af02',
         },
         success: '#86b817',
-        ebay: {
+        shopease: {
           blue: '#0064d2',
           red: '#e53238',
           yellow: '#f5af02',

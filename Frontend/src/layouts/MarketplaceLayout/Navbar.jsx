@@ -12,7 +12,7 @@ import { ROUTES } from '@/constants/routes'
 import { useDebounce } from '@/hooks/useDebounce'
 import { useListingAutocomplete } from '@/features/listings/hooks/useListings'
 import { categoryService } from '@/features/categories/services/categoryService'
-import EbayLogo from '@/components/common/EbayLogo'
+import ShopEaseLogo from '@/components/common/ShopEaseLogo'
 
 const EMOJI_MAP = {
   'Electronics': '📱',
@@ -52,13 +52,13 @@ export default function Navbar() {
   const [highlighted, setHighlighted] = useState(-1)
   const [shopByCatOpen, setShopByCatOpen] = useState(false)
   const [hiUserOpen, setHiUserOpen] = useState(false)
-  const [myEbayOpen, setMyEbayOpen] = useState(false)
+  const [myShopEaseOpen, setMyShopEaseOpen] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
 
   const searchRef = useRef(null)
   const hiUserRef = useRef(null)
   const shopByCatRef = useRef(null)
-  const myEbayRef = useRef(null)
+  const myShopEaseRef = useRef(null)
 
   const debouncedQuery = useDebounce(searchQuery, 300)
   const { data: suggestions = [] } = useListingAutocomplete(
@@ -94,7 +94,7 @@ export default function Navbar() {
       if (searchRef.current && !searchRef.current.contains(e.target)) setAutocompleteOpen(false)
       if (hiUserRef.current && !hiUserRef.current.contains(e.target)) setHiUserOpen(false)
       if (shopByCatRef.current && !shopByCatRef.current.contains(e.target)) setShopByCatOpen(false)
-      if (myEbayRef.current && !myEbayRef.current.contains(e.target)) setMyEbayOpen(false)
+      if (myShopEaseRef.current && !myShopEaseRef.current.contains(e.target)) setMyShopEaseOpen(false)
     }
     document.addEventListener('mousedown', handler)
     return () => document.removeEventListener('mousedown', handler)
@@ -148,10 +148,10 @@ export default function Navbar() {
     navigate(ROUTES.HOME)
     setMobileOpen(false)
     setHiUserOpen(false)
-    setMyEbayOpen(false)
+    setMyShopEaseOpen(false)
   }
 
-  const myEbayLinks = [
+  const myShopEaseLinks = [
     ...(isAdmin ? [{ to: ROUTES.ADMIN_DASHBOARD, icon: LayoutDashboard, label: 'Admin Panel' }] : []),
     { to: ROUTES.MY_LISTINGS, icon: Package, label: 'My Listings' },
     { to: ROUTES.SELLER_ORDERS, icon: Store, label: 'Seller Orders' },
@@ -224,24 +224,24 @@ export default function Navbar() {
             <span className="text-gray-300">|</span>
 
             {isAuthenticated ? (
-              <div className="relative" ref={myEbayRef}>
+              <div className="relative" ref={myShopEaseRef}>
                 <button
-                  onClick={() => setMyEbayOpen((v) => !v)}
+                  onClick={() => setMyShopEaseOpen((v) => !v)}
                   className="flex items-center gap-0.5 font-medium hover:text-primary hover:underline"
                 >
-                  My eBay <ChevronDown size={10} className={`transition-transform ${myEbayOpen ? 'rotate-180' : ''}`} />
+                  My ShopEase <ChevronDown size={10} className={`transition-transform ${myShopEaseOpen ? 'rotate-180' : ''}`} />
                 </button>
-                {myEbayOpen && (
+                {myShopEaseOpen && (
                   <div className="absolute right-0 top-full mt-1 w-52 bg-white border border-gray-200 rounded-lg shadow-xl z-50 py-1 text-sm">
                     <div className="px-4 py-2.5 border-b border-gray-100">
                       <p className="font-semibold text-gray-900 truncate">{user?.firstName} {user?.lastName}</p>
                       <p className="text-xs text-gray-500 truncate mt-0.5">{user?.email}</p>
                     </div>
-                    {myEbayLinks.map(({ to, icon: Icon, label }) => (
+                    {myShopEaseLinks.map(({ to, icon: Icon, label }) => (
                       <Link
                         key={to}
                         to={to}
-                        onClick={() => setMyEbayOpen(false)}
+                        onClick={() => setMyShopEaseOpen(false)}
                         className="flex items-center gap-2.5 px-4 py-2.5 text-gray-700 hover:bg-gray-50 transition-colors"
                       >
                         <Icon size={14} className="text-gray-400" />
@@ -252,7 +252,7 @@ export default function Navbar() {
                 )}
               </div>
             ) : (
-              <Link to={ROUTES.LOGIN} className="hover:text-primary hover:underline">My eBay</Link>
+              <Link to={ROUTES.LOGIN} className="hover:text-primary hover:underline">My ShopEase</Link>
             )}
 
             <span className="text-gray-300">|</span>
@@ -282,7 +282,7 @@ export default function Navbar() {
             </button>
 
             {/* Logo */}
-            <EbayLogo className="shrink-0 text-[2rem] sm:text-[2.2rem]" />
+            <ShopEaseLogo className="shrink-0 text-[2rem] sm:text-[2.2rem]" />
 
             {/* Shop by category (desktop only) */}
             <div className="hidden lg:block relative shrink-0" ref={shopByCatRef}>
@@ -456,7 +456,7 @@ export default function Navbar() {
           <div className="fixed inset-0 bg-black/50 z-50" onClick={() => setMobileOpen(false)} />
           <div className="fixed inset-y-0 left-0 w-72 bg-white z-50 shadow-2xl flex flex-col overflow-hidden">
             <div className="flex items-center justify-between h-14 px-4 border-b border-gray-200 shrink-0">
-              <EbayLogo className="text-xl" onClick={() => setMobileOpen(false)} />
+              <ShopEaseLogo className="text-xl" onClick={() => setMobileOpen(false)} />
               <button onClick={() => setMobileOpen(false)} className="p-2 text-gray-500 hover:text-gray-800 rounded-md">
                 <X size={20} />
               </button>

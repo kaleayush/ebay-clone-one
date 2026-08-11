@@ -7,7 +7,7 @@ import Button from '@/components/common/Button'
 import { useLoginMutation } from '../hooks/useAuthMutations'
 import { authService } from '../services/authService'
 import { ROUTES } from '@/constants/routes'
-import EbayLogo from '@/components/common/EbayLogo'
+import ShopEaseLogo from '@/components/common/ShopEaseLogo'
 
 const emailSchema = z.object({
   email: z.string().email('Enter a valid email'),
@@ -75,7 +75,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-white text-gray-950 flex flex-col">
       <header className="flex items-start justify-between px-4 sm:px-8 pt-5">
-        <EbayLogo className="text-[2.8rem]" />
+        <ShopEaseLogo className="text-[2.8rem]" />
         <a href="mailto:feedback@example.com" className="text-xs sm:text-sm text-gray-900 underline">
           Tell us what you think
         </a>
@@ -97,7 +97,7 @@ export default function LoginPage() {
           <h1 className="text-center text-2xl font-bold text-gray-950 mb-3">Sign in to your account</h1>
 
           <div className="mb-6 flex items-center justify-between rounded-2xl bg-gray-100 p-2 text-sm">
-            <span className="pl-2">New to eBay?</span>
+            <span className="pl-2">New to ShopEase?</span>
             <Link
               to={ROUTES.REGISTER}
               className="rounded-full border border-gray-950 bg-white px-5 py-1.5 text-gray-950 hover:text-gray-950"
@@ -186,7 +186,7 @@ export default function LoginPage() {
       </main>
 
       <footer className="px-4 py-4 text-center text-[11px] text-gray-700">
-        Copyright © 1995-2026 eBay Inc. All Rights Reserved.
+        Copyright © 1995-2026 ShopEase Inc. All Rights Reserved.
         {' '}
         <a className="underline" href="#">User Agreement</a>
         {' '}

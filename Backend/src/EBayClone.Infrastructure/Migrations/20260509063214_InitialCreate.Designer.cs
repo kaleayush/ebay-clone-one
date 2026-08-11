@@ -528,7 +528,7 @@ namespace EBayClone.Infrastructure.Migrations
                             Id = new Guid("00000000-0000-0000-0000-000000000001"),
                             AccountType = 1,
                             CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Email = "admin@ebay-clone.com",
+                            Email = "admin@shopease.com",
                             FirstName = "Admin",
                             IsDeleted = false,
                             IsEmailVerified = true,

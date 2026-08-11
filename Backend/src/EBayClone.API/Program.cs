@@ -64,7 +64,7 @@ app.UseMiddleware<GlobalExceptionMiddleware>();
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "eBay Clone API v1");
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "ShopEase API v1");
     c.RoutePrefix = "swagger";
 });
 
@@ -81,7 +81,7 @@ var urls = Environment.GetEnvironmentVariable("ASPNETCORE_URLS")
     ?? string.Join(";", app.Urls);
 var baseUrl = urls.Split(';')[0].TrimEnd('/');
 
-Log.Information("eBay Clone API started | Environment: {Environment} | Listening: {Url} | Swagger: {Swagger}",
+Log.Information("ShopEase API started | Environment: {Environment} | Listening: {Url} | Swagger: {Swagger}",
     app.Environment.EnvironmentName, urls, $"{baseUrl}/swagger");
 
 await app.RunAsync();

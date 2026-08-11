@@ -41,7 +41,7 @@ public static class EmailTemplateSeeder
     {
         yield return (
             "Email Verification",
-            "Verify your eBay Clone email address",
+            "Verify your ShopEase email address",
             WrapInLayout("Verify Your Email", """
                 <p style="font-size:15px;color:#444;margin:0 0 20px">Hi <strong>{{UserName}}</strong>,</p>
                 <p style="font-size:15px;color:#444;margin:0 0 24px">Thanks for signing up! Please verify your email address to activate your account.</p>
@@ -56,7 +56,7 @@ public static class EmailTemplateSeeder
 
         yield return (
             "Forgot Password",
-            "Reset your eBay Clone password",
+            "Reset your ShopEase password",
             WrapInLayout("&#128065; Reset Your Password", """
                 <p style="font-size:15px;color:#444;margin:0 0 20px">Hi <strong>{{UserName}}</strong>,</p>
                 <p style="font-size:15px;color:#444;margin:0 0 24px">We received a request to reset your password. Click the button below to choose a new one.</p>
@@ -71,7 +71,7 @@ public static class EmailTemplateSeeder
 
         yield return (
             "Password Changed",
-            "Your eBay Clone password has been changed",
+            "Your ShopEase password has been changed",
             WrapInLayout("Password Changed", """
                 <p style="font-size:15px;color:#444;margin:0 0 20px">Hi <strong>{{UserName}}</strong>,</p>
                 <p style="font-size:15px;color:#444;margin:0 0 24px">Your account password was successfully changed.</p>
@@ -168,7 +168,7 @@ public static class EmailTemplateSeeder
                 <!-- Footer -->
                 <tr>
                   <td style="background:#f8f8f8;border-top:1px solid #eee;padding:20px 32px;text-align:center">
-                    <p style="font-size:12px;color:#aaa;margin:0">&copy; {{Year}} eBay Clone. All rights reserved.</p>
+                    <p style="font-size:12px;color:#aaa;margin:0">&copy; {{Year}} ShopEase. All rights reserved.</p>
                     <p style="font-size:12px;color:#aaa;margin:4px 0 0">Questions? <a href="mailto:{{SupportEmail}}" style="color:#0064d2;text-decoration:none">{{SupportEmail}}</a></p>
                   </td>
                 </tr>

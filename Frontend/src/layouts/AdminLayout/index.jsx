@@ -14,10 +14,10 @@ export default function AdminLayout() {
         <main className="flex-1 overflow-auto">
           <div className="border-b border-gray-200 bg-white px-4 sm:px-6 py-2">
             <div className="flex h-1 max-w-7xl gap-1">
-              <span className="w-16 rounded-full bg-ebay-blue" />
-              <span className="w-16 rounded-full bg-ebay-red" />
-              <span className="w-16 rounded-full bg-ebay-yellow" />
-              <span className="w-16 rounded-full bg-ebay-green" />
+              <span className="w-16 rounded-full bg-shopease-blue" />
+              <span className="w-16 rounded-full bg-shopease-red" />
+              <span className="w-16 rounded-full bg-shopease-yellow" />
+              <span className="w-16 rounded-full bg-shopease-green" />
             </div>
           </div>
           <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 py-5">

@@ -72,10 +72,8 @@ function PageShell({ children }) {
     <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
       <div className="card w-full max-w-sm p-10 text-center">
         <div className="flex justify-center items-center gap-0.5 mb-6">
-          <span className="text-ebay-blue font-bold text-3xl">e</span>
-          <span className="text-ebay-red font-bold text-3xl">B</span>
-          <span className="text-ebay-yellow font-bold text-3xl">a</span>
-          <span className="text-ebay-green font-bold text-3xl">y</span>
+          <span className="text-shopease-blue font-bold text-3xl">Shop</span>
+          <span className="text-shopease-green font-bold text-3xl">Ease</span>
         </div>
         {children}
       </div>

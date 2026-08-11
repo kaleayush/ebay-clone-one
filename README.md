@@ -1,4 +1,4 @@
-# eBay Clone — Enterprise Marketplace Platform
+# ShopEase — Enterprise Marketplace Platform
 
 An enterprise-grade e-commerce marketplace built with React 19, ASP.NET Core 8, and SQL Server.  
 Users can buy and sell items through a unified account system.
@@ -121,14 +121,14 @@ Copy `.env.example` to `.env` and fill in values before running Docker Compose.
 # Database
 DB_SERVER=localhost
 DB_PORT=1433
-DB_NAME=EBayCloneDb
+DB_NAME=ShopEaseDb
 DB_USER=sa
 DB_PASSWORD=YourStrong@Passw0rd
 
 # JWT
 JWT_SECRET=replace-with-a-secret-at-least-32-characters-long
-JWT_ISSUER=EBayCloneApi
-JWT_AUDIENCE=EBayCloneFrontend
+JWT_ISSUER=ShopEaseApi
+JWT_AUDIENCE=ShopEaseFrontend
 JWT_EXPIRY_MINUTES=15
 JWT_REFRESH_EXPIRY_DAYS=7
 
@@ -170,7 +170,7 @@ Never commit real production secrets — use environment variables or a secrets 
 
 ```env
 VITE_API_BASE_URL=http://localhost:5000   # Backend base URL
-VITE_APP_NAME=eBay Clone
+VITE_APP_NAME=ShopEase
 VITE_APP_VERSION=1.0.0
 ```
 
@@ -237,11 +237,11 @@ docker-compose up -d
 ## Database
 
 - **Engine**: SQL Server 2022
-- **Default DB name**: `EBayCloneDb` (Docker) / `ebay-clone-one` (Azure)
+- **Default DB name**: `ShopEaseDb` (Docker) / `shopease-one` (Azure)
 - **Migrations**: Applied automatically on startup via `db.Database.MigrateAsync()`
 - **Seed data**:
-  - Admin user: `admin@ebay-clone.com` / `Admin@123`
-  - Sample user: `user@ebay-clone.com` / `User@123`
+  - Admin user: `admin@shopease.com` / `Admin@123`
+  - Sample user: `user@shopease.com` / `User@123`
   - 8 product categories with dynamic attribute definitions
   - Sample listings
 
@@ -281,7 +281,7 @@ All responses use `ApiResponse<T>` envelope. Paginated responses use `ApiRespons
 ## Project Structure
 
 ```
-ebay-clone-one/
+shopease-one/
 ├── .env.example                  # Docker Compose environment template
 ├── docker-compose.yml            # Multi-service container setup
 ├── CLAUDE.md                     # AI assistant context
@@ -321,8 +321,8 @@ ebay-clone-one/
 
 | Role  | Email                   | Password   |
 |-------|-------------------------|------------|
-| Admin | admin@ebay-clone.com    | Admin@123  |
-| User  | user@ebay-clone.com     | User@123   |
+| Admin | admin@shopease.com    | Admin@123  |
+| User  | user@shopease.com     | User@123   |
 
 ---
 
@@ -340,7 +340,7 @@ ebay-clone-one/
 
 ### Postman Collection
 
-Import `postman/ebay-clone.postman_collection.json` into Postman or Insomnia.
+Import `postman/shopease.postman_collection.json` into Postman or Insomnia.
 
 Collection variables (`baseUrl`, `accessToken`, `refreshToken`, `userId`, `listingId`, `orderId`, `categoryId`) auto-populate from login/register responses via test scripts.
 

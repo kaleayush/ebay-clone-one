@@ -20,13 +20,13 @@ Base: `body { font-sans text-gray-900 bg-gray-100 antialiased }`.
 | `accent` | `#f5af02` | Highlights, star ratings, accent pills |
 | `success` | `#86b817` | Positive badges, availability, verified states |
 
-### eBay Aliases
+### ShopEase Aliases
 | Token | Alias |
 |-------|-------|
-| `ebay-blue` | primary |
-| `ebay-red` | secondary |
-| `ebay-yellow` | accent |
-| `ebay-green` | success |
+| `shopease-blue` | primary |
+| `shopease-red` | secondary |
+| `shopease-yellow` | accent |
+| `shopease-green` | success |
 
 ### Structural (Tailwind defaults used)
 | Purpose | Class |

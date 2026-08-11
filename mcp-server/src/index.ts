@@ -2,7 +2,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
 
-const API_BASE = process.env.EBAY_API_URL ?? "http://localhost:5000/api/v1";
+const API_BASE = process.env.SHOPEASE_API_URL ?? "http://localhost:5000/api/v1";
 
 // In-memory token store for the session
 let authToken: string | null = null;
@@ -34,7 +34,7 @@ function formatTable(rows: Record<string, unknown>[]): string {
 }
 
 const server = new McpServer({
-  name: "ebay-clone",
+  name: "shopease",
   version: "1.0.0",
 });
 
@@ -42,7 +42,7 @@ const server = new McpServer({
 
 server.tool(
   "login",
-  "Authenticate with the eBay Clone API. Call this first to get an access token before using admin tools.",
+  "Authenticate with the ShopEase API. Call this first to get an access token before using admin tools.",
   {
     email: z.string().email().describe("Admin email address"),
     password: z.string().describe("Password"),
@@ -309,7 +309,7 @@ server.tool(
 
 server.tool(
   "health_check",
-  "Check if the eBay Clone API is up and running.",
+  "Check if the ShopEase API is up and running.",
   {},
   async () => {
     const res = await fetch(`${API_BASE.replace("/api/v1", "")}/health`);

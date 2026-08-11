@@ -3,7 +3,7 @@ version: '3.9'
 services:
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
-    container_name: ebay-clone-sqlserver
+    container_name: shopease-sqlserver
     environment:
       SA_PASSWORD: "${DB_PASSWORD:-YourStrong@Passw0rd}"
       ACCEPT_EULA: "Y"
@@ -13,7 +13,7 @@ services:
     volumes:
       - sqlserver_data:/var/opt/mssql
     networks:
-      - ebay-network
+      - shopease-network
     healthcheck:
       test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P $${SA_PASSWORD} -Q 'SELECT 1' || exit 1"]
       interval: 10s
@@ -25,13 +25,13 @@ services:
     build:
       context: ./Backend
       dockerfile: Dockerfile
-    container_name: ebay-clone-backend
+    container_name: shopease-backend
     environment:
       ASPNETCORE_ENVIRONMENT: "${ASPNETCORE_ENVIRONMENT:-Development}"
-      ConnectionStrings__DefaultConnection: "Server=sqlserver,1433;Database=${DB_NAME:-EBayCloneDb};User Id=${DB_USER:-sa};Password=${DB_PASSWORD:-YourStrong@Passw0rd};TrustServerCertificate=True;"
+      ConnectionStrings__DefaultConnection: "Server=sqlserver,1433;Database=${DB_NAME:-ShopEaseDb};User Id=${DB_USER:-sa};Password=${DB_PASSWORD:-YourStrong@Passw0rd};TrustServerCertificate=True;"
       JwtSettings__Secret: "${JWT_SECRET:-your-super-secret-key-at-least-32-characters-long}"
-      JwtSettings__Issuer: "${JWT_ISSUER:-EBayCloneApi}"
-      JwtSettings__Audience: "${JWT_AUDIENCE:-EBayCloneFrontend}"
+      JwtSettings__Issuer: "${JWT_ISSUER:-ShopEaseApi}"
+      JwtSettings__Audience: "${JWT_AUDIENCE:-ShopEaseFrontend}"
       JwtSettings__ExpiryMinutes: "${JWT_EXPIRY_MINUTES:-15}"
       JwtSettings__RefreshExpiryDays: "${JWT_REFRESH_EXPIRY_DAYS:-7}"
       CorsSettings__AllowedOrigins: "${FRONTEND_URL:-http://localhost:5173}"
@@ -41,7 +41,7 @@ services:
       sqlserver:
         condition: service_healthy
     networks:
-      - ebay-network
+      - shopease-network
 
   frontend:
     build:
@@ -49,17 +49,17 @@ services:
       dockerfile: Dockerfile
       args:
         VITE_API_BASE_URL: "${BACKEND_URL:-http://localhost:5000}"
-    container_name: ebay-clone-frontend
+    container_name: shopease-frontend
     ports:
       - "80:80"
     depends_on:
       - backend
     networks:
-      - ebay-network
+      - shopease-network
 
 volumes:
   sqlserver_data:
 
 networks:
-  ebay-network:
+  shopease-network:
     driver: bridge

@@ -75,14 +75,12 @@ export default function Footer() {
         <div className="border-t border-gray-100 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-0.5 select-none">
-            <span className="text-ebay-blue  font-extrabold text-xl">e</span>
-            <span className="text-ebay-red   font-extrabold text-xl">B</span>
-            <span className="text-ebay-yellow font-extrabold text-xl">a</span>
-            <span className="text-ebay-green  font-extrabold text-xl">y</span>
+            <span className="text-shopease-blue font-extrabold text-xl">Shop</span>
+            <span className="text-shopease-green font-extrabold text-xl">Ease</span>
           </Link>
 
           <p className="text-xs text-gray-400 order-last md:order-none">
-            © {new Date().getFullYear()} eBay. All rights reserved.
+            © {new Date().getFullYear()} ShopEase. All rights reserved.
           </p>
 
           {/* Social links */}

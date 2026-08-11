@@ -138,8 +138,8 @@ Config per environment:
 | Port | `587` | `587` | `587` |
 | Username | `""` | Mailtrap key | set via env var |
 | Password | `""` | Mailtrap key | set via env var |
-| FromEmail | `noreply@ebay-clone.com` | `ayushkale85.33@gmail.com` | set via env var |
-| FromName | `"eBay Clone"` | `"eBay Clone (Dev)"` | `"eBay Clone"` |
+| FromEmail | `noreply@shopease.com` | `ayushkale85.33@gmail.com` | set via env var |
+| FromName | `"ShopEase"` | `"ShopEase (Dev)"` | `"ShopEase"` |
 | EnableSsl | `true` | `true` | `true` |
 
 Production env vars (Docker / hosting):
@@ -148,7 +148,7 @@ SmtpSettings__Host=smtp.sendgrid.net
 SmtpSettings__Username=apikey
 SmtpSettings__Password=<api-key>
 SmtpSettings__FromEmail=noreply@yourdomain.com
-SmtpSettings__FromName=eBay Clone
+SmtpSettings__FromName=ShopEase
 ```
 
 > `FromName` must not be empty string — use `IsNullOrWhiteSpace` guard (already applied in service).  

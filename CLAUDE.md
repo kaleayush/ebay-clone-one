@@ -52,7 +52,7 @@ docker-compose up -d    # SQL Server + backend + frontend (Nginx on :80)
 
 Default URLs: Frontend `:5173` (dev) / `:80` (Docker), Backend API `:5000`, Swagger `/swagger`, SQL Server `:1433`.
 
-**Database**: Azure SQL (`ebay.database.windows.net`, `Initial Catalog=ebay-clone-one`). Connection string is in `appsettings.json`. The API auto-migrates on startup; seed data (admin user ID `00000000-0000-0000-0000-000000000001` + 8 categories) is applied via EF Core `HasData()`.
+**Database**: Azure SQL (`shopease.database.windows.net`, `Initial Catalog=shopease-one`). Connection string is in `appsettings.json`. The API auto-migrates on startup; seed data (admin user ID `00000000-0000-0000-0000-000000000001` + 8 categories) is applied via EF Core `HasData()`.
 
 ---
 
@@ -148,9 +148,9 @@ src/
 ## UI Design Tokens
 
 Tailwind custom colors:
-- Primary (eBay blue): `#0064d2`
-- Secondary (eBay red): `#e53238`
-- Accent (eBay yellow): `#f5af02`
+- Primary (ShopEase blue): `#0064d2`
+- Secondary (ShopEase red): `#e53238`
+- Accent (ShopEase yellow): `#f5af02`
 - Success: `#86b817`
 - Background: `#f3f3f3`
 - Text primary: `#111820`

@@ -23,11 +23,11 @@ Three ways to run: Local, Docker, Azure. Pick one.
 **Local SQL Server Express** (swap connection string):
 ```json
 // appsettings.json → ConnectionStrings:DefaultConnection
-"Data Source=.\\SQLEXPRESS;Initial Catalog=ebay-clone;Integrated Security=True;TrustServerCertificate=True;"
+"Data Source=.\\SQLEXPRESS;Initial Catalog=shopease;Integrated Security=True;TrustServerCertificate=True;"
 ```
 Create the database first:
 ```sql
-CREATE DATABASE [ebay-clone];
+CREATE DATABASE [shopease];
 ```
 Apply migrations manually if not using auto-migrate:
 ```bash
@@ -69,15 +69,15 @@ Frontend runs at **http://localhost:5173**. All `/api/*` requests are proxied to
 **`.env.development` (default values, works out of the box):**
 ```env
 VITE_API_BASE_URL=http://localhost:5000
-VITE_APP_NAME=eBay Clone
+VITE_APP_NAME=ShopEase
 ```
 
 ### Default Credentials
 
 | Role | Email | Password |
 |------|-------|---------|
-| Admin | admin@ebay-clone.com | Admin@123 |
-| User | user@ebay-clone.com | User@123 |
+| Admin | admin@shopease.com | Admin@123 |
+| User | user@shopease.com | User@123 |
 
 ### Email (Dev)
 
@@ -106,7 +106,7 @@ If `SmtpSettings:Host` is empty, email is logged to console via Serilog (`[EMAIL
 ```bash
 # 1. Clone and enter repo
 git clone <repo-url>
-cd ebay-clone-one
+cd shopease-one
 
 # 2. Create env file
 cp .env.example .env
@@ -125,22 +125,22 @@ Wait for `backend` to log `Application started` before hitting the frontend.
 
 | Container | Port | URL |
 |-----------|------|-----|
-| `ebay-clone-sqlserver` | 1433 | — |
-| `ebay-clone-backend` | 5000 | http://localhost:5000/swagger |
-| `ebay-clone-frontend` | 80 | http://localhost |
+| `shopease-sqlserver` | 1433 | — |
+| `shopease-backend` | 5000 | http://localhost:5000/swagger |
+| `shopease-frontend` | 80 | http://localhost |
 
 ### `.env` Reference
 
 ```env
 # ── Database ────────────────────────────────────────────────
-DB_NAME=EBayCloneDb
+DB_NAME=ShopEaseDb
 DB_USER=sa
 DB_PASSWORD=YourStrong@Passw0rd         # change this
 
 # ── JWT ─────────────────────────────────────────────────────
 JWT_SECRET=replace-with-a-secret-at-least-32-characters-long  # change this
-JWT_ISSUER=EBayCloneApi
-JWT_AUDIENCE=EBayCloneFrontend
+JWT_ISSUER=ShopEaseApi
+JWT_AUDIENCE=ShopEaseFrontend
 JWT_EXPIRY_MINUTES=15
 JWT_REFRESH_EXPIRY_DAYS=7
 
@@ -171,7 +171,7 @@ docker-compose down -v        # stop containers + delete DB volume (full reset)
 ### Prerequisites
 
 - Azure subscription
-- Azure SQL Database (already configured: `ebay.database.windows.net`, DB `ebay-clone-one`)
+- Azure SQL Database (already configured: `shopease.database.windows.net`, DB `shopease-one`)
 - Azure App Service (or Container Apps) for backend
 - Azure Static Web Apps or Blob + CDN for frontend
 
@@ -180,7 +180,7 @@ docker-compose down -v        # stop containers + delete DB volume (full reset)
 1. **Connection string** — set in App Service → Configuration → Connection strings:
    ```
    Name: DefaultConnection
-   Value: Data Source=ebay.database.windows.net;Initial Catalog=ebay-clone-one;User ID=<user>;Password=<pass>;Encrypt=True;TrustServerCertificate=False;
+   Value: Data Source=shopease.database.windows.net;Initial Catalog=shopease-one;User ID=<user>;Password=<pass>;Encrypt=True;TrustServerCertificate=False;
    Type: SQLServer
    ```
 
@@ -188,14 +188,14 @@ docker-compose down -v        # stop containers + delete DB volume (full reset)
    ```
    ASPNETCORE_ENVIRONMENT         = Production
    JwtSettings__Secret            = <min-32-char-secret>
-   JwtSettings__Issuer            = EBayCloneApi
-   JwtSettings__Audience          = EBayCloneFrontend
+   JwtSettings__Issuer            = ShopEaseApi
+   JwtSettings__Audience          = ShopEaseFrontend
    CorsSettings__AllowedOrigins   = https://your-frontend-domain.com
    SmtpSettings__Host             = smtp.sendgrid.net
    SmtpSettings__Username         = apikey
    SmtpSettings__Password         = <sendgrid-api-key>
    SmtpSettings__FromEmail        = noreply@yourdomain.com
-   SmtpSettings__FromName         = eBay Clone
+   SmtpSettings__FromName         = ShopEase
    ```
 
 3. **Deploy** — publish from Visual Studio, GitHub Actions, or `az webapp deploy`.

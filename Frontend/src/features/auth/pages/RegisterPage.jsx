@@ -8,7 +8,7 @@ import Button from '@/components/common/Button'
 import { useRegisterMutation } from '../hooks/useAuthMutations'
 import { ROUTES } from '@/constants/routes'
 import { AccountType } from '@/constants/enums'
-import EbayLogo from '@/components/common/EbayLogo'
+import ShopEaseLogo from '@/components/common/ShopEaseLogo'
 
 const schema = z
   .object({
@@ -61,7 +61,7 @@ export default function RegisterPage() {
   return (
     <div className="min-h-screen bg-white text-gray-950">
       <header className="flex items-start justify-between px-4 sm:px-8 pt-5">
-        <EbayLogo className="text-[2.8rem]" />
+        <ShopEaseLogo className="text-[2.8rem]" />
         <p className="text-sm text-gray-600">
           Already have an account?{' '}
           <Link to={ROUTES.LOGIN} className="underline text-gray-950 hover:text-gray-950">
@@ -180,7 +180,7 @@ export default function RegisterPage() {
                 </p>
                 <label className="flex items-start gap-3 text-sm">
                   <input type="checkbox" className="mt-1 h-4 w-4 rounded border-gray-400" />
-                  <span>I'm only interested in buying on eBay for now</span>
+                  <span>I'm only interested in buying on ShopEase for now</span>
                 </label>
               </>
             )}

@@ -280,7 +280,7 @@ namespace EBayClone.Infrastructure.Migrations
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "AccountType", "AvatarUrl", "CreatedAt", "DeletedAt", "Email", "FirstName", "IsDeleted", "IsEmailVerified", "LastName", "PasswordHash", "PhoneNumber", "Role", "UpdatedAt" },
-                values: new object[] { new Guid("00000000-0000-0000-0000-000000000001"), 1, null, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "admin@ebay-clone.com", "Admin", false, true, "User", "$2a$11$SvPLfZ6NPj1VGSbKw8dJYenMs.6mlv9GCNBRECCnX7BgwJCWlz.hi", null, 1, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc) });
+                values: new object[] { new Guid("00000000-0000-0000-0000-000000000001"), 1, null, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "admin@shopease.com", "Admin", false, true, "User", "$2a$11$SvPLfZ6NPj1VGSbKw8dJYenMs.6mlv9GCNBRECCnX7BgwJCWlz.hi", null, 1, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.CreateIndex(
                 name: "IX_CartItems_CartId",

@@ -1,4 +1,4 @@
-# Project Task Tracker — eBay Clone
+# Project Task Tracker — ShopEase
 
 ## Phase 1: Project Scaffolding & Infrastructure
 

@@ -3,7 +3,7 @@ import {
   LayoutDashboard, Package, Users, ShoppingBag, Tag, X, ShieldCheck, Briefcase, Mail, ClipboardList, Gavel,
 } from 'lucide-react'
 import { ROUTES } from '@/constants/routes'
-import EbayLogo from '@/components/common/EbayLogo'
+import ShopEaseLogo from '@/components/common/ShopEaseLogo'
 
 const navItems = [
   { to: ROUTES.ADMIN_DASHBOARD, icon: LayoutDashboard, label: 'Dashboard' },
@@ -37,7 +37,7 @@ export default function AdminSidebar({ isOpen, onClose }) {
         <div className="h-16 px-5 border-b border-white/10 flex items-center justify-between">
           <div>
             <div className="flex items-center gap-0.5 leading-none">
-              <EbayLogo asLink={false} className="text-2xl" />
+              <ShopEaseLogo asLink={false} className="text-2xl" />
               <span className="ml-2 text-sm font-bold text-white">Admin</span>
             </div>
             <p className="mt-1 text-[11px] font-medium uppercase tracking-wider text-blue-100/70">Seller Operations</p>
@@ -51,7 +51,7 @@ export default function AdminSidebar({ isOpen, onClose }) {
         <div className="px-4 py-4">
           <div className="mb-4 rounded-md border border-white/10 bg-white/5 px-3 py-2">
             <div className="flex items-center gap-2 text-xs font-semibold text-white">
-              <ShieldCheck size={15} className="text-ebay-green" />
+              <ShieldCheck size={15} className="text-shopease-green" />
               Marketplace Control
             </div>
           </div>
@@ -79,10 +79,10 @@ export default function AdminSidebar({ isOpen, onClose }) {
 
         <div className="absolute bottom-0 left-0 right-0 border-t border-white/10 p-4">
           <div className="grid grid-cols-4 gap-1">
-            <span className="h-1 rounded-full bg-ebay-blue" />
-            <span className="h-1 rounded-full bg-ebay-red" />
-            <span className="h-1 rounded-full bg-ebay-yellow" />
-            <span className="h-1 rounded-full bg-ebay-green" />
+            <span className="h-1 rounded-full bg-shopease-blue" />
+            <span className="h-1 rounded-full bg-shopease-red" />
+            <span className="h-1 rounded-full bg-shopease-yellow" />
+            <span className="h-1 rounded-full bg-shopease-green" />
           </div>
         </div>
       </aside>

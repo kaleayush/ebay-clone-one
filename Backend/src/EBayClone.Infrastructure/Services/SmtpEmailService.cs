@@ -18,7 +18,7 @@ public class SmtpEmailService(
         ?? throw new InvalidOperationException("AppSettings:FrontendUrl is not configured.");
 
     private readonly string _supportEmail =
-        configuration["SmtpSettings:FromEmail"] ?? "support@ebay-clone.com";
+        configuration["SmtpSettings:FromEmail"] ?? "support@shopease.com";
 
     // ── Public IEmailService methods ────────────────────────────────────
 
@@ -152,9 +152,9 @@ public class SmtpEmailService(
             var port = int.TryParse(configuration["SmtpSettings:Port"], out var p) ? p : 587;
             var username = configuration["SmtpSettings:Username"] ?? string.Empty;
             var password = configuration["SmtpSettings:Password"] ?? string.Empty;
-            var fromEmail = configuration["SmtpSettings:FromEmail"] ?? "noreply@ebay-clone.com";
+            var fromEmail = configuration["SmtpSettings:FromEmail"] ?? "noreply@shopease.com";
             var fromName = string.IsNullOrWhiteSpace(configuration["SmtpSettings:FromName"])
-                ? "eBay Clone"
+                ? "ShopEase"
                 : configuration["SmtpSettings:FromName"]!;
             var enableSsl = !string.Equals(configuration["SmtpSettings:EnableSsl"], "false", StringComparison.OrdinalIgnoreCase);
 

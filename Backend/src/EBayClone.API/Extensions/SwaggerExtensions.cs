@@ -10,7 +10,7 @@ public static class SwaggerExtensions
         {
             c.SwaggerDoc("v1", new OpenApiInfo
             {
-                Title = "eBay Clone API",
+                Title = "ShopEase API",
                 Version = "v1",
                 Description = "Enterprise marketplace REST API",
             });

@@ -55,7 +55,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             Id = Guid.Parse("00000000-0000-0000-0000-000000000001"),
             FirstName = "Admin",
             LastName = "User",
-            Email = "admin@ebay-clone.com",
+            Email = "admin@shopease.com",
             PasswordHash = "$2a$11$l3lJC3jsNR5QSFrF2rnpG.seNn4lfnarYcu1ph79C.gVsyp69mkYa",
             AccountType = AccountType.Business,
             Role = UserRole.Admin,
